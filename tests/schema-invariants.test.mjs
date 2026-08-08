@@ -149,3 +149,44 @@ test("the excluded listing category stays excluded", () => {
     );
   }
 });
+
+test("the licence is per seat, and a seat is never bought in bulk", () => {
+  // compliance/parental-consent.md §3: consent is per child rather than per
+  // household. counsel-packet-40 records that an institutionally purchased seat
+  // breaks the payment-card consent method, so a quantity above one, or any
+  // gift or bulk path, would take several children's consent in one transaction
+  // naming one of them.
+  // Comments here explain which purchase paths are refused, and so name them.
+  // Strip them: the invariant is about code, as in the schema tests above.
+  const checkout = readFileSync(
+    new URL("../src/lib/billing/checkout.ts", import.meta.url),
+    "utf8",
+  )
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .split("\n")
+    .map((line) => line.replace(/\/\/.*$/, ""))
+    .join("\n");
+
+  const quantities = [...checkout.matchAll(/quantity:\s*([^,\n]+)/g)].map((m) => m[1].trim());
+  assert.deepEqual(quantities, ["1"], "Checkout must buy exactly one seat.");
+
+  for (const banned of ["adjustable_quantity", "gift", "bulk", "seats:"]) {
+    assert.ok(
+      !checkout.includes(banned),
+      `"${banned}" would create a purchase path that does not carry per-child consent.`,
+    );
+  }
+});
+
+test("a seat carries no attribute of the child", () => {
+  const block = schema.slice(
+    schema.indexOf("create table public.seats"),
+    schema.indexOf(");", schema.indexOf("create table public.seats")),
+  );
+  for (const banned of ["name", "birth", "age", "grade", "curriculum"]) {
+    assert.ok(
+      !block.includes(banned),
+      `A seat must not carry "${banned}". The child's name lives in the consent record and nowhere else.`,
+    );
+  }
+});

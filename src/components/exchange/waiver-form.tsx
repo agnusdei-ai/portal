@@ -22,6 +22,14 @@ export function WaiverForm() {
         </span>
       </label>
 
+      <label className="flex items-start gap-3 text-sm">
+        <input type="checkbox" name="accepted_account" required className="mt-0.5 size-4 shrink-0" />
+        <span className="text-ink-soft">
+          I will log out when I have finished and will not let a child use this
+          account. I accept responsibility for what is done through it.
+        </span>
+      </label>
+
       <Button type="submit" disabled={pending}>
         {pending ? "Saving…" : "Accept and continue"}
       </Button>

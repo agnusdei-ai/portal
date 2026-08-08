@@ -9,8 +9,9 @@ import { Alert, Button, Card, Field, Input } from "@/components/ui";
 
 function LoginForm() {
   const params = useSearchParams();
-  const next = params.get("next") ?? "/onboarding";
+  const next = params.get("next") ?? "/portal";
   const isSignup = params.get("mode") === "signup";
+  const expired = params.get("expired") === "1";
 
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
@@ -50,6 +51,15 @@ function LoginForm() {
           ? "Check your email for a sign-in link."
           : "We'll email you a link — no password to remember."}
       </p>
+
+      {expired && status !== "sent" ? (
+        <div className="mt-4">
+          <Alert>
+            You were signed out after a period of inactivity. This is deliberate:
+            the portal reaches an adults-only space, so it does not stay open.
+          </Alert>
+        </div>
+      ) : null}
 
       {status !== "sent" ? (
         <form onSubmit={onSubmit} className="mt-6 space-y-4">

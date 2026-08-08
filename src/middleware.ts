@@ -4,6 +4,22 @@ import { createServerClient } from "@supabase/ssr";
 /** Everything under these prefixes requires a session. */
 const PROTECTED_PREFIXES = ["/portal", "/setup/notice", "/setup/consent", "/exchange/new"];
 
+/**
+ * Idle sign-out.
+ *
+ * The exchange is adults-only and the schema makes that structural: there is no
+ * participant class for a child, so no route reaches one. Credentials defeat
+ * structure, though, and a child sitting down at a machine where a parent left
+ * the portal open is the one way in that the design cannot close.
+ *
+ * The waiver puts the responsibility on the parent, which is the honest
+ * allocation, and a responsibility that the product does nothing to support is
+ * a disclaimer wearing a control's clothes. This is the control. It reduces the
+ * window; it does not remove it, and the waiver says so.
+ */
+const IDLE_LIMIT_MS = 30 * 60 * 1000;
+const ACTIVITY_COOKIE = "adx_seen";
+
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request });
 
@@ -41,6 +57,29 @@ export async function middleware(request: NextRequest) {
     login.pathname = "/login";
     login.searchParams.set("next", pathname);
     return NextResponse.redirect(login);
+  }
+
+  if (user) {
+    const seen = Number(request.cookies.get(ACTIVITY_COOKIE)?.value ?? 0);
+
+    if (seen && Date.now() - seen > IDLE_LIMIT_MS) {
+      // Signing out happens in a route handler rather than here, because the
+      // session has to be terminated on the server and not merely navigated
+      // away from.
+      const idle = request.nextUrl.clone();
+      idle.pathname = "/auth/idle";
+      idle.search = "";
+      return NextResponse.redirect(idle);
+    }
+
+    response.cookies.set(ACTIVITY_COOKIE, String(Date.now()), {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+    });
+  } else {
+    response.cookies.delete(ACTIVITY_COOKIE);
   }
 
   return response;

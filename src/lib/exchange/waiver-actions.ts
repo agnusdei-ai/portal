@@ -24,6 +24,17 @@ export async function acceptWaiver(
     return { ok: false, error: "Please confirm you have read it." };
   }
 
+  // Acknowledged separately from the rest, because a term allocating
+  // responsibility should be agreed to conspicuously rather than swept up in a
+  // single "I agree" covering seven headings.
+  if (formData.get("accepted_account") !== "on") {
+    return {
+      ok: false,
+      error:
+        "Please confirm the second point too: keeping this account to adults is the part we cannot do for you.",
+    };
+  }
+
   const supabase = await createClient();
   const {
     data: { user },

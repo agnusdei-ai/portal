@@ -44,7 +44,15 @@ setup leaves nothing behind because there was nothing to leave.
 
 **There is no free tier that reaches a child-keyed object.**
 `counsel-packet-40.md` records that a free tier, an institutional seat or a gift
-subscription each break the payment-card route, and decision 61 is unanswered.
+subscription each break the payment-card route.
+
+**The licence is per seat, one seat per child**, which follows the grain of the
+consent method: each child's consent arrives with its own charge and its own
+cardholder notification, so the flat-licence awkward case in
+`parental-consent.md` §6 never arises. The hazard it introduces is closed —
+**no bulk purchase, no adjustable quantity, no gift path**, since a seat bought
+by anyone but the child's own parent carries no consent while still looking
+provisioned. A test asserts `quantity: 1` and the absence of any bulk path.
 
 The one exception to "no family object before the charge" is the consent record
 itself, which must precede it: §2 puts the notice acknowledgement before the
@@ -100,6 +108,26 @@ were not providing. `src/lib/consent/waiver.ts` states it in those words.
 
 Withdrawal stops listings being shown and blocks posting and replying. It touches
 neither the household licence nor the parental consent.
+
+## The session risk, and the idle timeout
+
+The adults-only property is structural — no participant class for a child, so
+no route reaches one. **Credentials defeat structure.** A child at a machine
+where a parent left the portal signed in is inside an adults-only space, and no
+arrangement of tables prevents that.
+
+The waiver allocates it to the parent explicitly, with its own conspicuous
+acknowledgement rather than being swept into one "I agree" covering every
+heading. And the portal signs an idle session out after 30 minutes
+(`src/middleware.ts` → `/auth/idle`), because a responsibility the product does
+nothing to support is a disclaimer wearing a control's clothes. The timeout
+narrows the window; it does not close it, and the waiver says so.
+
+The liability term is written "to the fullest extent the law allows" and needs
+counsel: disclaiming liability for one's own negligence is void or narrowed in
+many consumer jurisdictions. It reaches the parent's own account only — it does
+not and cannot disclaim COPPA obligations, which are owed to the child and are
+not the parent's to waive.
 
 ## Fraud
 
@@ -188,5 +216,8 @@ silently degrades every query in the codebase to `never`.
   no screens yet. Vouches must currently be inserted directly.
 - **Retention periods** for the fraud record are unset. `docs/portal.md` §13
   wants `observability.md` §6's treatment applied and that has not been done.
+- **The §6c liability term needs counsel review** before it is relied on.
+- **Decision 61 is only partly answered.** Per-seat settles the licensing
+  granularity; licensed self-hosting versus a hosted service is still open.
 - **Consent withdrawal** (`parental-consent.md` §5) has a function and no route.
 - **Moderator screens** for the report queue.

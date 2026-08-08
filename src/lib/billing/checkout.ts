@@ -35,6 +35,12 @@ export async function createConsentCheckout(args: {
     customer_email: args.customerEmail,
     line_items: [
       {
+        // Always one. The licence is per seat and consent is per child
+        // (parental-consent.md §3), so a quantity above one would be several
+        // children's consent taken in a single transaction naming one of them.
+        // There is deliberately no bulk or gift path: counsel-packet-40 records
+        // that an institutionally purchased seat breaks the consent method,
+        // and a co-operative buying seats for its families is exactly that.
         quantity: 1,
         price_data: {
           currency: SEAT_CURRENCY,

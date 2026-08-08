@@ -14,7 +14,7 @@ import { createHash } from "node:crypto";
  * afterwards would have traded on a guarantee it was not providing. It is stated
  * first, in those words, and not softened.
  */
-export const WAIVER_VERSION = "2026-08-08.1";
+export const WAIVER_VERSION = "2026-08-08.2";
 
 export const WAIVER_LEAD =
   "The exchange is where you talk to other adults about materials, classes and co-operatives. Please read this before you use it, because it does not work the way Locuto messaging works.";
@@ -53,6 +53,14 @@ export const WAIVER_SECTIONS: { heading: string; body: string[] }[] = [
     body: [
       "You arrange handovers yourselves. Meet in a public place. We do not vet the people you meet, we are not a party to what you agree, and we do not hold anyone's money.",
       "Fraud is a crime and we will cooperate with a lawful investigation of one, but the first protection is your own caution.",
+    ],
+  },
+  {
+    heading: "Your account is yours to keep to yourself",
+    body: [
+      "This account is an adult's account, and it reaches an adult space. Log out when you have finished, particularly on a shared or family computer, and do not let a child use it or sign in on your behalf. The same care you would take with online banking or any other account that is yours rather than the household's applies here.",
+      "We sign you out after a period of inactivity, which reduces the risk and does not remove it. Nothing we can build stops a child using a session an adult left open, so keeping this account to adults is yours to do.",
+      "You are responsible for what is done through your account. To the fullest extent the law allows, Agnus Dei is not liable for loss or harm arising from a failure to keep it secure, including where a child has been permitted to use it.",
     ],
   },
   {
