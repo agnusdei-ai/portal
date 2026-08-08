@@ -56,8 +56,20 @@ consent step, and §4 retains the time of both to evidence the ordering.
 initiate contact. A brokering service is strangers finding each other, so the
 exchange is built to leave that claim untouched:
 
+- **Adults only, with no exceptions.** Four participant classes exist — parent,
+  teacher, guide, co-op — and there is no class for a child. A route to a child
+  would have to be a pair in `permitted_axes`, a pair is made of classes, and no
+  class denotes a child. That absence is the enforcement.
+- **The permitted axes are closed**: parent↔parent, parent↔teacher, guide↔co-op.
+  Checked by a database trigger, not just in the application, because an app
+  check is a claim about the deployed code and a trigger is a claim about the
+  database.
+- **A teacher or guide is reachable only through a co-op that vouches for them.**
+  Not a platform credential check, which would build the identity apparatus
+  `identity.md` refuses. A vouch is not the roster §10 prohibits: it names an
+  adult acting publicly for a named institution, not a member family.
 - Posting and replying require an account, which exists only behind the §3 card
-  transaction. The paywall doubles as an adult check.
+  transaction, plus an accepted communication waiver.
 - A listing is not a contact endpoint. Replies land in the portal, never in
   Locuto, and consume no delivery identifier.
 - Becoming Locuto contacts remains the ordinary out-of-band code ceremony.
@@ -66,9 +78,44 @@ exchange is built to leave that claim untouched:
 - There are no profiles, no posting history and no reputation score. A reputation
   system is a person-directory with a number attached.
 
-**Tutoring, childcare and lift-sharing are not carried at all.** Making them safe
-needs identity verification and reputation records that `identity.md` forbids this
-system to build, so declining is the honest answer rather than a gap to fill.
+**Tutoring, childcare and lift-sharing are not carried at all, permanently.**
+Making them safe needs identity verification and reputation records that
+`identity.md` forbids this system to build, so declining is the honest answer
+rather than a gap to fill. A class at a co-op is a different object — several
+families, parents present, an institution accountable — which is why
+`class_offering` is carried and private tutoring is not.
+
+## The communication waiver
+
+Separate from the parental consent, and never presented as one thing with it.
+The parental consent is a parent consenting under COPPA to collection from their
+child, evidenced by a card charge. The waiver is an adult opting in to talk to
+other adults here.
+
+**Its first disclosure is that exchange messages are not end-to-end encrypted.**
+Locuto's whole claim is that the operator cannot read messages; the exchange is
+not that channel, and under fraud regulation the operator must be able to read
+it. Letting a parent discover that afterwards would be trading on a guarantee we
+were not providing. `src/lib/consent/waiver.ts` states it in those words.
+
+Withdrawal stops listings being shown and blocks posting and replying. It touches
+neither the household licence nor the parental consent.
+
+## Fraud
+
+`docs/portal.md` §12. An operator carrying commerce that can establish nothing
+about it cannot answer a card network, an investigation, or a defrauded family.
+So `listings.posted_by_account` is retained — never exposed to any reader, and
+disclosed in the waiver rather than being a quiet asymmetry. This resolved an
+open question in favour of retention.
+
+**A chargeback on the consent transaction is not an ordinary billing event.**
+That charge *is* the parental consent, so a dispute puts the evidence itself in
+question: the webhook suspends the seat and marks the consent record `disputed`.
+Suspended rather than deleted, because the record is what an investigation needs.
+
+Also here: per-account daily listing limits, per-listing reporting, and expiry.
+That is the whole moderation toolkit, and the vouch is the strongest part of it.
 
 ## Getting started
 
@@ -76,13 +123,14 @@ system to build, so declining is the honest answer rather than a gap to fill.
 npm install
 cp .env.example .env.local
 psql "$DATABASE_URL" -f supabase/migrations/0001_zones.sql
+psql "$DATABASE_URL" -f supabase/migrations/0002_participants.sql
 psql "$DATABASE_URL" -f supabase/seed.sql
 npm run dev
 ```
 
 ```bash
 npm run typecheck
-npm test          # schema invariants and listing-content rules
+npm test          # schema invariants, axes, and listing-content rules
 npm run build
 ```
 
@@ -102,10 +150,11 @@ src/
   lib/
     consent/           the notice text, its hash, and every consent-record write
     billing/           Stripe, and the funding check §3 requires
-    exchange/          listing rules and actions
+    exchange/          axes, listing rules, waiver, actions
     db.ts              direct Postgres, for the consent schema only
 supabase/
   migrations/0001_zones.sql
+  migrations/0002_participants.sql
 tests/                 the invariants that keep the prohibitions structural
 ```
 
@@ -135,9 +184,9 @@ silently degrades every query in the codebase to `never`.
 - **Decision 61 is unanswered**, and it governs where the zone boundary falls. The
   current shape assumes a per-seat licence, which makes consent-per-child fall out
   naturally and sidesteps the flat-licence awkwardness in `parental-consent.md` §6.
-- **`listings.posted_by_account` lets the operator resolve a listing to an
-  account.** It is needed to act on a report and is never exposed, but it is in
-  tension with verdict 2 and `docs/portal.md` §12 leaves the trade to the owner.
-- **The co-op director experience** is a role and a policy, with no screens yet.
+- **The co-op director experience** is a role, a policy and a vouch table, with
+  no screens yet. Vouches must currently be inserted directly.
+- **Retention periods** for the fraud record are unset. `docs/portal.md` §13
+  wants `observability.md` §6's treatment applied and that has not been done.
 - **Consent withdrawal** (`parental-consent.md` §5) has a function and no route.
 - **Moderator screens** for the report queue.

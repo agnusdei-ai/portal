@@ -19,13 +19,15 @@ export type ListingCategory =
   | "class_offering"
   | "announcement";
 export type ListingState = "active" | "expired" | "withdrawn" | "removed";
+export type ParticipantClass = "parent" | "teacher" | "guide" | "coop";
 
 export type ConsentMethod = "payment_card" | "fallback_pending";
 export type ConsentState =
   | "notice_acknowledged"
   | "granted"
   | "refused"
-  | "withdrawn";
+  | "withdrawn"
+  | "disputed";
 
 export type Account = {
   id: string;
@@ -42,6 +44,8 @@ export type Seat = {
   licence_issued_at: string | null;
   issued_at: string;
   revoked_at: string | null;
+  suspended_at: string | null;
+  suspension_reason: string | null;
 };
 
 export type UserRole = {
@@ -95,6 +99,7 @@ export type Listing = {
   state_code: string;
   region: string;
   posted_by_account: string;
+  posted_as: ParticipantClass;
   state: ListingState;
   expires_at: string;
   created_at: string;
@@ -139,6 +144,44 @@ export type ConsentRecord = {
   created_at: string;
 };
 
+export type AccountParticipant = {
+  account_id: string;
+  class: ParticipantClass;
+  granted_at: string;
+};
+
+export type CoopAffiliation = {
+  coop_listing_id: string;
+  account_id: string;
+  class: ParticipantClass;
+  vouched_at: string;
+  revoked_at: string | null;
+};
+
+export type PermittedAxis = {
+  a: ParticipantClass;
+  b: ParticipantClass;
+  note: string;
+};
+
+export type CommunicationWaiver = {
+  account_id: string;
+  version: string;
+  sha256: string;
+  accepted_at: string;
+  withdrawn_at: string | null;
+};
+
+export type PaymentDispute = {
+  id: string;
+  seat_id: string | null;
+  processor_reference: string;
+  kind: "dispute" | "refund";
+  opened_at: string;
+  resolved_at: string | null;
+  outcome: string | null;
+};
+
 type Table<Row, Rels extends Relationship[] = []> = {
   Row: Row;
   Insert: Partial<Row>;
@@ -180,6 +223,14 @@ export interface Database {
         ListingReport,
         [FK<"listing_id", "listings">, FK<"reported_by", "accounts">]
       >;
+      permitted_axes: Table<PermittedAxis>;
+      account_participants: Table<AccountParticipant, [FK<"account_id", "accounts">]>;
+      communication_waivers: Table<CommunicationWaiver, [FK<"account_id", "accounts">]>;
+      payment_disputes: Table<PaymentDispute, [FK<"seat_id", "seats">]>;
+      coop_affiliations: Table<
+        CoopAffiliation,
+        [FK<"coop_listing_id", "coop_listings">, FK<"account_id", "accounts">]
+      >;
     };
     Views: { [_ in never]: never };
     Functions: { [_ in never]: never };
@@ -191,6 +242,7 @@ export interface Database {
       listing_state: ListingState;
       consent_method: ConsentMethod;
       consent_state: ConsentState;
+      participant_class: ParticipantClass;
     };
     CompositeTypes: { [_ in never]: never };
   };

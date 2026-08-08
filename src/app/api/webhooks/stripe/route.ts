@@ -2,7 +2,13 @@ import { NextResponse, type NextRequest } from "next/server";
 import type Stripe from "stripe";
 
 import { instrumentEstablishesParent, stripe } from "@/lib/billing/stripe";
-import { getRecord, grantConsent, refuseConsent } from "@/lib/consent/record";
+import {
+  findByProcessorReference,
+  getRecord,
+  grantConsent,
+  markDisputed,
+  refuseConsent,
+} from "@/lib/consent/record";
 import { createServiceClient } from "@/lib/supabase/server";
 
 /**
@@ -32,6 +38,17 @@ export async function POST(request: NextRequest) {
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     return NextResponse.json({ error: `bad signature: ${message}` }, { status: 400 });
+  }
+
+  // A chargeback or refund on the §3 transaction is not an ordinary billing
+  // event. That charge *is* the parental consent, and the cardholder's
+  // notification of it is what verified it, so a dispute puts the evidence
+  // itself in question and the seat it authorised cannot keep standing on it.
+  if (
+    event.type === "charge.dispute.created" ||
+    event.type === "charge.refunded"
+  ) {
+    return handleDisputeOrRefund(event);
   }
 
   if (event.type !== "checkout.session.completed") {
@@ -136,6 +153,12 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Every account holder is a parent for the purposes of the exchange. Teacher
+  // and guide are added only by a co-operative's vouch, never here.
+  await db
+    .from("account_participants")
+    .upsert({ account_id: account.id, class: "parent" }, { onConflict: "account_id,class" });
+
   await grantConsent({
     recordId: consentRecordId,
     accountId: account.id,
@@ -145,4 +168,47 @@ export async function POST(request: NextRequest) {
   });
 
   return NextResponse.json({ received: true, consent: "granted" });
+}
+
+/**
+ * docs/portal.md §13. The seat is suspended rather than deleted: the record of
+ * what happened is exactly what a fraud investigation needs, and destroying it
+ * on the first sign of trouble is the opposite of what the obligation requires.
+ */
+async function handleDisputeOrRefund(event: Stripe.Event) {
+  const object = event.data.object as Stripe.Dispute | Stripe.Charge;
+  const paymentIntent =
+    typeof object.payment_intent === "string"
+      ? object.payment_intent
+      : (object.payment_intent?.id ?? null);
+
+  if (!paymentIntent) return NextResponse.json({ received: true });
+
+  const record = await findByProcessorReference(paymentIntent);
+  if (!record) return NextResponse.json({ received: true });
+
+  const kind = event.type === "charge.dispute.created" ? "dispute" : "refund";
+  const db = createServiceClient();
+
+  await db.from("payment_disputes").upsert(
+    { seat_id: record.seat_id, processor_reference: paymentIntent, kind },
+    { onConflict: "processor_reference" },
+  );
+
+  if (record.seat_id) {
+    await db
+      .from("seats")
+      .update({
+        suspended_at: new Date().toISOString(),
+        suspension_reason:
+          kind === "dispute"
+            ? "The charge that evidenced parental consent has been disputed."
+            : "The charge that evidenced parental consent was refunded.",
+      })
+      .eq("id", record.seat_id);
+  }
+
+  await markDisputed(record.id);
+
+  return NextResponse.json({ received: true, seat: "suspended" });
 }

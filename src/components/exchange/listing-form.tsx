@@ -1,20 +1,34 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 
 import { createListing, EXCHANGE_IDLE } from "@/lib/exchange/actions";
 import { CATEGORIES } from "@/lib/exchange/schema";
+import { CATEGORY_CLASSES, CLASS_COPY } from "@/lib/exchange/axes";
+import type { ParticipantClass } from "@/lib/types";
 import { Alert, Button, Field, Input, Select, Textarea } from "@/components/ui";
 
-export function ListingForm() {
+export function ListingForm({ classes }: { classes: ParticipantClass[] }) {
   const [state, formAction, pending] = useActionState(createListing, EXCHANGE_IDLE);
+  const [category, setCategory] = useState<string>("");
+
+  // Only offer capacities this account actually holds and that the chosen
+  // category permits. The database enforces both regardless.
+  const available = classes.filter((c) =>
+    category ? (CATEGORY_CLASSES[category] ?? []).includes(c) : true,
+  );
 
   return (
     <form action={formAction} className="max-w-lg space-y-5">
       {state.error ? <Alert>{state.error}</Alert> : null}
 
       <Field label="Category" errors={state.fieldErrors?.category}>
-        <Select name="category" required defaultValue="">
+        <Select
+          name="category"
+          required
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+        >
           <option value="" disabled>
             Pick…
           </option>
@@ -25,6 +39,27 @@ export function ListingForm() {
           ))}
         </Select>
       </Field>
+
+      {category ? (
+        <Field
+          label="Posting as"
+          hint="An educator or guide must be vouched for by a co-operative."
+          errors={state.fieldErrors?.posted_as}
+        >
+          <Select name="posted_as" required defaultValue={available[0] ?? ""}>
+            {available.length === 0 ? (
+              <option value="" disabled>
+                You cannot post in this category yet
+              </option>
+            ) : null}
+            {available.map((c) => (
+              <option key={c} value={c}>
+                {CLASS_COPY[c].label} — {CLASS_COPY[c].blurb}
+              </option>
+            ))}
+          </Select>
+        </Field>
+      ) : null}
 
       <Field label="Title" errors={state.fieldErrors?.title}>
         <Input name="title" required maxLength={120} placeholder="Saxon 7/6, good condition" />
@@ -64,7 +99,7 @@ export function ListingForm() {
         </p>
       ) : null}
 
-      <Button type="submit" disabled={pending}>
+      <Button type="submit" disabled={pending || available.length === 0}>
         {pending ? "Posting…" : "Post listing"}
       </Button>
     </form>

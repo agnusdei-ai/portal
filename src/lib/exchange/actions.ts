@@ -10,6 +10,12 @@ import {
   replySchema,
   type ExchangeActionState,
 } from "@/lib/exchange/schema";
+import { CATEGORY_CLASSES } from "@/lib/exchange/axes";
+import { waiverAccepted } from "@/lib/exchange/waiver";
+import type { ParticipantClass } from "@/lib/types";
+
+/** No more than this many listings from one account in twenty-four hours. */
+const DAILY_LISTING_LIMIT = 10;
 
 export { EXCHANGE_IDLE };
 
@@ -48,6 +54,7 @@ export async function createListing(
     body: formData.get("body"),
     state_code: formData.get("state_code"),
     region: formData.get("region"),
+    posted_as: formData.get("posted_as"),
     attested: formData.get("attested"),
   });
 
@@ -66,7 +73,36 @@ export async function createListing(
     };
   }
 
+  if (!(await waiverAccepted(accountId))) {
+    redirect("/exchange/waiver");
+  }
+
+  const postedAs = parsed.data.posted_as;
+  const allowed = CATEGORY_CLASSES[parsed.data.category] ?? [];
+  if (!allowed.includes(postedAs)) {
+    return {
+      ok: false,
+      fieldErrors: { posted_as: ["That category cannot be posted in this capacity."] },
+    };
+  }
+
   const supabase = await createClient();
+
+  // Rate limiting is most of what moderation without identity has available, so
+  // it is checked rather than assumed. docs/portal.md §13.
+  const { count } = await supabase
+    .from("listings")
+    .select("id", { count: "exact", head: true })
+    .eq("posted_by_account", accountId)
+    .gt("created_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
+
+  if ((count ?? 0) >= DAILY_LISTING_LIMIT) {
+    return {
+      ok: false,
+      error: `That is ${DAILY_LISTING_LIMIT} listings in a day, which is the limit. Try again tomorrow.`,
+    };
+  }
+
   const { error } = await supabase.from("listings").insert({
     category: parsed.data.category,
     title: parsed.data.title,
@@ -74,6 +110,7 @@ export async function createListing(
     state_code: parsed.data.state_code,
     region: parsed.data.region,
     posted_by_account: accountId,
+    posted_as: postedAs as ParticipantClass,
   });
 
   if (error) return { ok: false, error: error.message };
@@ -101,6 +138,10 @@ export async function replyToListing(
   const accountId = await currentAccountId();
   if (!accountId) {
     return { ok: false, error: "Replying needs a household licence." };
+  }
+
+  if (!(await waiverAccepted(accountId))) {
+    redirect("/exchange/waiver");
   }
 
   const supabase = await createClient();

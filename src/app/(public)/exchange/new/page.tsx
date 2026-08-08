@@ -19,6 +19,22 @@ export default async function NewListingPage() {
 
   if (!account) redirect("/setup");
 
+  const { data: waiver } = await supabase
+    .from("communication_waivers")
+    .select("account_id")
+    .eq("account_id", account.id)
+    .is("withdrawn_at", null)
+    .maybeSingle();
+
+  if (!waiver) redirect("/exchange/waiver");
+
+  const { data: held } = await supabase
+    .from("account_participants")
+    .select("class")
+    .eq("account_id", account.id);
+
+  const classes = (held ?? []).map((h) => h.class);
+
   return (
     <div className="mx-auto max-w-2xl px-6 py-14">
       <h1 className="text-3xl font-semibold">Post a listing</h1>
@@ -35,6 +51,12 @@ export default async function NewListingPage() {
           <li>A street address. Region only, and you agree where to meet privately.</li>
         </ul>
         <p className="mt-3">
+          The exchange carries adults only. Households talk to each other,
+          parents and educators talk about instruction, and guides and
+          co-operatives talk about leading classes. There is no route that
+          reaches a child, and there is no participant class for one.
+        </p>
+        <p className="mt-3">
           We do not carry tutoring, childcare or lift-sharing at all. Those need
           identity checks and reputation records that this product deliberately
           cannot build, so the honest answer is that we are the wrong place for
@@ -43,7 +65,7 @@ export default async function NewListingPage() {
       </Card>
 
       <div className="mt-8">
-        <ListingForm />
+        <ListingForm classes={classes} />
       </div>
     </div>
   );

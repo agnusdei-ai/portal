@@ -103,6 +103,18 @@ export async function refuseConsent(args: {
   );
 }
 
+/**
+ * The charge that evidenced this consent has been disputed or refunded, so the
+ * consent is no longer evidenced. Recorded rather than deleted: the record is
+ * what a fraud investigation and a card network both ask for.
+ */
+export async function markDisputed(recordId: string): Promise<void> {
+  await consentPool().query(
+    `update consent.consent_records set state = 'disputed' where id = $1`,
+    [recordId],
+  );
+}
+
 /** compliance/parental-consent.md §5. */
 export async function withdrawConsent(recordId: string): Promise<void> {
   await consentPool().query(

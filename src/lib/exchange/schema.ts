@@ -89,6 +89,12 @@ export const listingSchema = z
     category: z.enum(["materials", "coop_opening", "class_offering", "announcement"], {
       errorMap: () => ({ message: "Pick a category." }),
     }),
+    // Which capacity this is posted in. The database checks that the account
+    // actually holds the class and, for teacher and guide, that a co-operative
+    // vouches for them; this only catches a malformed submission early.
+    posted_as: z.enum(["parent", "teacher", "guide", "coop"], {
+      errorMap: () => ({ message: "Pick the capacity you are posting in." }),
+    }),
     title: z.string().trim().min(3, "Give it a title.").max(120),
     body: z.string().trim().min(10, "Say a little more.").max(4000),
     state_code: z
