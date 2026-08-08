@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme {
+  --color-parchment: #faf7f2;
+  --color-parchment-deep: #f2ece1;
+  --color-ink: #1c1917;
+  --color-ink-soft: #57534e;
+  --color-ink-faint: #8a8279;
+  --color-rule: #e2dbcf;
+
+  /* Liturgical deep red — used sparingly, for primary action only. */
+  --color-brand: #7a2230;
+  --color-brand-hover: #641b27;
+  --color-brand-tint: #f7ecec;
+
+  --font-serif: Iowan Old Style, Palatino, "Palatino Linotype", Georgia, serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  background: var(--color-parchment);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-serif);
+  letter-spacing: -0.01em;
+}
+
+/* Consistent focus ring — the wizard is keyboard-heavy. */
+:where(a, button, input, select, textarea):focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
