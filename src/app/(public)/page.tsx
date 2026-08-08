@@ -6,8 +6,8 @@ const LAYERS = [
     body: "Point Bede at the curriculum already on your shelf. It teaches from that scope and sequence — not a generic syllabus it invented.",
   },
   {
-    title: "Bede knows your schedule",
-    body: "Join your co-op with a code. Shared subjects follow the co-op's pacing, and everything else follows yours.",
+    title: "Bede runs on your hardware",
+    body: "Your curriculum, your children's progress, and everything Bede knows about them stays on a machine you own. None of it reaches us, by construction rather than by promise.",
   },
   {
     title: "Bede keeps your records",
@@ -30,9 +30,9 @@ export default function HomePage() {
           you already chose and turns it into a working school year.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
-          <ButtonLink href="/curriculum">Browse curriculum</ButtonLink>
-          <ButtonLink href="/coops" variant="secondary">
-            Find a co-op
+          <ButtonLink href="/exchange">Browse the exchange</ButtonLink>
+          <ButtonLink href="/curriculum" variant="secondary">
+            Browse curriculum
           </ButtonLink>
         </div>
       </section>
@@ -60,11 +60,11 @@ export default function HomePage() {
           <div>
             <h2 className="text-2xl font-semibold">Lead a co-op?</h2>
             <p className="mt-2 max-w-md text-sm text-ink-soft">
-              Publish your shared curriculum and calendar once. Member families join
-              with a code and their setup fills in automatically.
+              List your co-operative so families can find it. We publish what you
+              teach and when you meet, and never hold a list of who belongs.
             </p>
           </div>
-          <ButtonLink href="/login?mode=signup&role=director">
+          <ButtonLink href="/setup?role=director">
             Set up your co-op
           </ButtonLink>
         </Card>

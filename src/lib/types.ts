@@ -1,48 +1,55 @@
 /**
- * Hand-maintained mirror of supabase/migrations. Regenerate with:
- *   npx supabase gen types typescript --linked > src/lib/types.ts
- * once the project is linked; until then this keeps the app type-checked.
+ * Hand-maintained mirror of supabase/migrations/0001_zones.sql.
+ *
+ * Row types must stay `type` aliases rather than `interface`. An interface has
+ * no implicit index signature, so it silently fails supabase-js's GenericSchema
+ * constraint and degrades every query in the codebase to `never`.
+ *
+ * Only the `public` schema is modelled. The `consent` schema is unreachable
+ * through PostgREST by design (docs/portal.md §5), so it has no client types;
+ * server code touches it through src/lib/consent/record.ts.
  */
 
-export type OnboardingStep =
-  | "family"
-  | "students"
-  | "curriculum"
-  | "coop"
-  | "review"
-  | "complete";
-
+export type SeatState = "active" | "revoked";
+export type PortalRole = "account_owner" | "coop_director" | "moderator";
 export type BedeSupport = "native" | "assisted" | "unsupported";
-export type CurriculumSource = "family" | "coop";
-export type HandoffStatus = "pending" | "sent" | "failed";
+export type ListingCategory =
+  | "materials"
+  | "coop_opening"
+  | "class_offering"
+  | "announcement";
+export type ListingState = "active" | "expired" | "withdrawn" | "removed";
 
-export type Profile = {
-  id: string;
-  email: string;
-  full_name: string | null;
-  created_at: string;
-}
+export type ConsentMethod = "payment_card" | "fallback_pending";
+export type ConsentState =
+  | "notice_acknowledged"
+  | "granted"
+  | "refused"
+  | "withdrawn";
 
-export type Family = {
+export type Account = {
   id: string;
-  name: string;
-  owner_id: string;
+  owner_user_id: string;
   state_code: string | null;
-  school_year: string | null;
-  onboarding_step: OnboardingStep;
-  onboarding_completed_at: string | null;
   created_at: string;
-}
+};
 
-export type Student = {
+export type Seat = {
   id: string;
-  family_id: string;
-  first_name: string;
-  birth_year: number | null;
-  grade_level: string;
-  notes: string | null;
-  created_at: string;
-}
+  account_id: string;
+  state: SeatState;
+  licence_token_sha256: string | null;
+  licence_issued_at: string | null;
+  issued_at: string;
+  revoked_at: string | null;
+};
+
+export type UserRole = {
+  user_id: string;
+  role: PortalRole;
+  coop_listing_id: string | null;
+  granted_at: string;
+};
 
 export type Curriculum = {
   id: string;
@@ -56,9 +63,18 @@ export type Curriculum = {
   description: string | null;
   bede_support: BedeSupport;
   created_at: string;
-}
+};
 
-export type Coop = {
+export type ResourceLink = {
+  id: string;
+  title: string;
+  url: string;
+  subject: string | null;
+  description: string | null;
+  created_at: string;
+};
+
+export type CoopListing = {
   id: string;
   slug: string;
   name: string;
@@ -66,60 +82,63 @@ export type Coop = {
   region: string | null;
   description: string | null;
   meeting_day: string | null;
-  join_code: string;
-  director_id: string | null;
+  enquiry_ref: string;
   is_listed: boolean;
   created_at: string;
-}
+};
 
-export type StudentCurriculum = {
+export type Listing = {
   id: string;
-  student_id: string;
-  curriculum_id: string | null;
-  custom_title: string | null;
-  subject: string;
-  source: CurriculumSource;
-  coop_id: string | null;
+  category: ListingCategory;
+  title: string;
+  body: string;
+  state_code: string;
+  region: string;
+  posted_by_account: string;
+  state: ListingState;
+  expires_at: string;
   created_at: string;
-}
+};
 
-export type BedeHandoff = {
+export type ListingReply = {
   id: string;
-  family_id: string;
-  status: HandoffStatus;
-  payload: unknown;
-  error: string | null;
+  listing_id: string;
+  from_account: string;
+  body: string;
   created_at: string;
-  completed_at: string | null;
-}
+};
 
-export type FamilyMember = {
-  family_id: string;
-  user_id: string;
-  role: string;
+export type ListingReport = {
+  id: string;
+  listing_id: string;
+  reported_by: string | null;
+  reason: string;
+  resolved_at: string | null;
   created_at: string;
-}
-
-export type CoopMembership = {
-  coop_id: string;
-  family_id: string;
-  role: string;
-  status: string;
-  created_at: string;
-}
-
-export type CoopCurriculum = {
-  coop_id: string;
-  curriculum_id: string;
-  grade_level: string | null;
-}
+};
 
 /**
- * Writes go through Partial<Row> rather than precise Insert types. Defaults and
- * generated columns live in the migration, and the server actions validate with
- * Zod before they get here, so this trades a little insert-time strictness for
- * a type file that stays readable until codegen replaces it.
+ * The consent record. Modelled for server-side use only; there is no PostgREST
+ * route to it. Fields are exactly compliance/parental-consent.md §4's retained
+ * list, and adding one here without a citation there is a compliance change
+ * rather than a schema change.
  */
+export type ConsentRecord = {
+  id: string;
+  owner_user_id: string;
+  account_id: string | null;
+  notice_version: string;
+  notice_acknowledged_at: string;
+  consent_completed_at: string | null;
+  processor_reference: string | null;
+  child_account_name: string;
+  method: ConsentMethod;
+  state: ConsentState;
+  refusal_reason: string | null;
+  seat_id: string | null;
+  created_at: string;
+};
+
 type Table<Row, Rels extends Relationship[] = []> = {
   Row: Row;
   Insert: Partial<Row>;
@@ -127,11 +146,6 @@ type Table<Row, Rels extends Relationship[] = []> = {
   Relationships: Rels;
 };
 
-/**
- * Foreign keys, declared so embedded selects (`students(*, student_curricula(*))`)
- * type-check. Without these, postgrest-js can't resolve the join and the embed
- * comes back as a SelectQueryError instead of rows.
- */
 type Relationship = {
   foreignKeyName: string;
   columns: string[];
@@ -148,51 +162,35 @@ type FK<Column extends string, Referenced extends string> = {
   referencedColumns: ["id"];
 };
 
-/**
- * Must satisfy supabase-js's GenericSchema — Views, Functions, Enums, and
- * CompositeTypes are all required, and every query silently resolves to `never`
- * without them.
- */
 export interface Database {
   public: {
     Tables: {
-      profiles: Table<Profile>;
+      accounts: Table<Account>;
       curricula: Table<Curriculum>;
-      families: Table<Family, [FK<"owner_id", "profiles">]>;
-      students: Table<Student, [FK<"family_id", "families">]>;
-      coops: Table<Coop, [FK<"director_id", "profiles">]>;
-      bede_handoffs: Table<BedeHandoff, [FK<"family_id", "families">]>;
-      family_members: Table<
-        FamilyMember,
-        [FK<"family_id", "families">, FK<"user_id", "profiles">]
+      resource_links: Table<ResourceLink>;
+      coop_listings: Table<CoopListing>;
+      user_roles: Table<UserRole>;
+      seats: Table<Seat, [FK<"account_id", "accounts">]>;
+      listings: Table<Listing, [FK<"posted_by_account", "accounts">]>;
+      listing_replies: Table<
+        ListingReply,
+        [FK<"listing_id", "listings">, FK<"from_account", "accounts">]
       >;
-      student_curricula: Table<
-        StudentCurriculum,
-        [
-          FK<"student_id", "students">,
-          FK<"curriculum_id", "curricula">,
-          FK<"coop_id", "coops">,
-        ]
-      >;
-      coop_memberships: Table<
-        CoopMembership,
-        [FK<"coop_id", "coops">, FK<"family_id", "families">]
-      >;
-      coop_curricula: Table<
-        CoopCurriculum,
-        [FK<"coop_id", "coops">, FK<"curriculum_id", "curricula">]
+      listing_reports: Table<
+        ListingReport,
+        [FK<"listing_id", "listings">, FK<"reported_by", "accounts">]
       >;
     };
     Views: { [_ in never]: never };
     Functions: { [_ in never]: never };
     Enums: {
-      onboarding_step: OnboardingStep;
+      seat_state: SeatState;
+      portal_role: PortalRole;
       bede_support: BedeSupport;
-      curriculum_source: CurriculumSource;
-      handoff_status: HandoffStatus;
-      family_role: "owner" | "parent" | "viewer";
-      coop_role: "director" | "member";
-      membership_status: "pending" | "active" | "removed";
+      listing_category: ListingCategory;
+      listing_state: ListingState;
+      consent_method: ConsentMethod;
+      consent_state: ConsentState;
     };
     CompositeTypes: { [_ in never]: never };
   };

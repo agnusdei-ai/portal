@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
-import { listCurricula } from "@/lib/onboarding/queries";
-import { SUBJECTS } from "@/lib/onboarding/schema";
+import { createClient } from "@/lib/supabase/server";
+import { SUBJECTS } from "@/lib/catalogue";
 import { ButtonLink, Card, SupportBadge } from "@/components/ui";
 
 export const metadata: Metadata = {
@@ -16,7 +16,11 @@ export default async function CurriculumPage({
   searchParams: Promise<{ subject?: string }>;
 }) {
   const { subject } = await searchParams;
-  const curricula = await listCurricula({ subject });
+  const supabase = await createClient();
+  let q = supabase.from("curricula").select("*").order("publisher").order("title");
+  if (subject) q = q.eq("subject", subject);
+  const { data } = await q;
+  const curricula = data ?? [];
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-14">
@@ -40,8 +44,8 @@ export default async function CurriculumPage({
 
       {curricula.length === 0 ? (
         <Card className="mt-8 text-sm text-ink-soft">
-          Nothing listed yet{subject ? ` under ${subject}` : ""}. Seed the catalog with
-          <code className="mx-1 rounded bg-parchment-deep px-1">supabase/seed.sql</code>
+          Nothing listed yet{subject ? ` under ${subject}` : ""}. Seed the catalogue
+          with <code className="mx-1 rounded bg-parchment-deep px-1">supabase/seed.sql</code>
           to populate this page.
         </Card>
       ) : (
@@ -63,7 +67,7 @@ export default async function CurriculumPage({
                   {c.philosophy ? ` · ${c.philosophy}` : ""}
                 </p>
                 <div className="mt-4">
-                  <ButtonLink href={`/login?mode=signup&curriculum=${c.slug}`}>
+                  <ButtonLink href={`/setup?curriculum=${c.slug}`}>
                     Use this with Bede
                   </ButtonLink>
                 </div>

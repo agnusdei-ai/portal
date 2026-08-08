@@ -23,11 +23,14 @@ export async function SiteHeader() {
           <Link href="/coops" className="hover:text-ink">
             Co-ops
           </Link>
+          <Link href="/exchange" className="hover:text-ink">
+            Exchange
+          </Link>
         </nav>
 
         <div className="ml-auto flex items-center gap-3 text-sm">
           {user ? (
-            <ButtonLink href="/dashboard" variant="secondary">
+            <ButtonLink href="/portal" variant="secondary">
               Portal
             </ButtonLink>
           ) : (
@@ -35,7 +38,7 @@ export async function SiteHeader() {
               <Link href="/login" className="text-ink-soft hover:text-ink">
                 Sign in
               </Link>
-              <ButtonLink href="/login?mode=signup">Start with Bede</ButtonLink>
+              <ButtonLink href="/setup">Start with Bede</ButtonLink>
             </>
           )}
         </div>

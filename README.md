@@ -1,108 +1,143 @@
 # Agnus Dei — parent portal
 
-The portal parents use to onboard **Bede** with the curriculum they already own.
+**`locuto/docs/portal.md` is normative over this repository.** Where this code and
+that document disagree, that document governs and this code is wrong. Read it
+before changing anything here.
 
-## The split this codebase encodes
+## The three zones
 
-The directory is free and public; the **binding** is what's paid for.
+| Zone | Auth | Holds |
+| --- | --- | --- |
+| **Public** | none, indexable | Curriculum catalogue, resource links, co-op listings, the exchange |
+| **Portal** | after the consent transaction | The account, seats, billing, and the consent record |
+| **Household** | not here at all | Children, the child-to-curriculum join, tutoring configuration, Bede |
 
-| | Where | Auth | Why |
-|---|---|---|---|
-| Co-op and curriculum directory | `/curriculum`, `/coops` | none | Commodity data. Gating it would trade away SEO and word-of-mouth for revenue it was never going to earn. |
-| Curriculum → student → Bede binding | `/onboarding/*` | required | Proprietary, high-effort, and not reproducible with a search engine. This is the product. |
-| Planning, records, compliance | `/dashboard` | required | The recurring value that keeps the subscription alive. |
+The third zone is the one to understand. Children and everything about what they
+study live on hardware the household owns. `storage.md` §10.2 resolves the
+plaintext boundary as client-side only and reads client-side to include
+household-hosted, so a Bede built inside a home is *inside* the trust boundary and
+may read all of it. What is excluded is any path carrying it out of the household,
+including a third-party model API however strong its contractual guarantees.
 
-Parents don't pay to *find* curriculum — most chose theirs years ago. They pay for
-the thing that turns a shelf of books into a working school year. So the gate sits
-on **activation**, not on browsing.
+**This schema therefore has no `students` table, no child-to-curriculum join, and
+no co-op roster.** That is not an omission to be filled in later.
+`parental-consent.md` §4 requires the separation to be structural rather than
+procedural, so `tests/schema-invariants.test.mjs` fails the build if any of them
+reappears.
 
-Co-ops are distribution, not just rows in a table: a director who onboards thirty
-families outweighs thirty cold signups. That's why `coops` is a tenancy root of its
-own rather than a field on `families`.
+## The transaction is three things at once
 
-## Stack
+`parental-consent.md` §3 makes the parent's payment-card transaction the verifiable
+parental consent: the issuer's notification to the cardholder is what supplies
+verification. `docs/portal.md` §3 puts the public-to-portal boundary at the same
+event. So one charge is simultaneously the paywall, the consent instrument and the
+data boundary, and three things follow.
 
-Next.js 15 (App Router) · React 19 · TypeScript · Tailwind v4 · Supabase (Postgres + auth + RLS)
+**It must be a genuine captured charge.** An authorisation hold released without
+notice, or a zero-amount trial, notifies nobody and silently voids the consent
+method. `src/lib/billing/checkout.ts` uses `mode: "payment"` with automatic
+capture for this reason.
+
+**Nothing keyed to a family may exist before it.** The account row is created in
+the webhook, after the charge succeeds, not at the start of setup. An abandoned
+setup leaves nothing behind because there was nothing to leave.
+
+**There is no free tier that reaches a child-keyed object.**
+`counsel-packet-40.md` records that a free tier, an institutional seat or a gift
+subscription each break the payment-card route, and decision 61 is unanswered.
+
+The one exception to "no family object before the charge" is the consent record
+itself, which must precede it: §2 puts the notice acknowledgement before the
+consent step, and §4 retains the time of both to evidence the ordering.
+
+## The exchange, and why it does not endanger the safety claim
+
+`user-safety.md` §2 certifies that a stranger cannot find a child and cannot
+initiate contact. A brokering service is strangers finding each other, so the
+exchange is built to leave that claim untouched:
+
+- Posting and replying require an account, which exists only behind the §3 card
+  transaction. The paywall doubles as an adult check.
+- A listing is not a contact endpoint. Replies land in the portal, never in
+  Locuto, and consume no delivery identifier.
+- Becoming Locuto contacts remains the ordinary out-of-band code ceremony.
+- Listings expire in thirty days, carry a region rather than an address, and are
+  validated against contact details and street addresses (`src/lib/exchange/schema.ts`).
+- There are no profiles, no posting history and no reputation score. A reputation
+  system is a person-directory with a number attached.
+
+**Tutoring, childcare and lift-sharing are not carried at all.** Making them safe
+needs identity verification and reputation records that `identity.md` forbids this
+system to build, so declining is the honest answer rather than a gap to fill.
 
 ## Getting started
 
 ```bash
 npm install
-cp .env.example .env.local     # fill in your Supabase project values
+cp .env.example .env.local
+psql "$DATABASE_URL" -f supabase/migrations/0001_zones.sql
+psql "$DATABASE_URL" -f supabase/seed.sql
 npm run dev
 ```
 
-Apply the schema and seed the catalog:
-
 ```bash
-psql "$DATABASE_URL" -f supabase/migrations/0001_init.sql
-psql "$DATABASE_URL" -f supabase/seed.sql
+npm run typecheck
+npm test          # schema invariants and listing-content rules
+npm run build
 ```
 
-Auth is passwordless email links. Set your Supabase project's redirect URL to
-`{SITE_URL}/auth/callback`.
+Stripe webhooks locally: `stripe listen --forward-to localhost:3000/api/webhooks/stripe`.
+The webhook is excluded from the middleware matcher because it is authenticated
+by its signature and its raw body must not be touched.
 
 ## Layout
 
 ```
 src/
   app/
-    (public)/            free directory — no account, indexed
-    login/               passwordless email link
-    auth/callback/       session exchange
-    onboarding/          the wizard (family → students → curriculum → co-op → review)
-    dashboard/           post-setup home
+    (public)/          catalogue, co-op listings, the exchange
+    setup/             age gate, notice, consent, completion
+    portal/            seats and licence keys
+    api/webhooks/      the processor callback that grants consent
   lib/
-    onboarding/
-      steps.ts           step order, resume, and deep-link guards
-      schema.ts          Zod validation shared by every step
-      actions.ts         server actions — the only place that writes
-      queries.ts         server-side reads
-    bede/handoff.ts      the payload contract between the portal and Bede
-    supabase/            browser, server, and service-role clients
+    consent/           the notice text, its hash, and every consent-record write
+    billing/           Stripe, and the funding check §3 requires
+    exchange/          listing rules and actions
+    db.ts              direct Postgres, for the consent schema only
 supabase/
-  migrations/0001_init.sql
-  seed.sql
+  migrations/0001_zones.sql
+tests/                 the invariants that keep the prohibitions structural
 ```
 
-## The onboarding wizard
+## Things a reader will want to know
 
-Five steps, with progress recorded on `families.onboarding_step`:
+**Why direct Postgres alongside Supabase.** The consent record lives in a
+`consent` schema that Supabase does not expose through PostgREST, so no client
+holding any token can reach it. Exposing it to make the SDK usable there would
+undo the separation the schema exists to create.
 
-1. **Family** — name and state. State drives which recordkeeping output Bede generates.
-2. **Students** — Bede plans per child.
-3. **Curriculum** — the binding. Catalog picks *or* free text, because plenty of
-   real curriculum will never be in the catalog and refusing it would strand
-   parents at the most important step.
-4. **Co-op** *(optional)* — join by code; shared courses adopt the co-op's pacing.
-5. **Review** — shows the exact payload, then hands it to Bede.
+**Why the licence token is minted from the portal, not the webhook.** A token
+minted in a webhook is a secret coming into existence with nobody present to
+receive it, and the only places left to put it are the database in plaintext or
+the processor's metadata. The parent mints it from their own session; only the
+hash is kept, and re-issuing rotates it.
 
-Progress only ever moves forward, so revisiting step 2 after reaching step 4 doesn't
-cost a parent their place. `guardStep()` bounces anyone who deep-links past where
-they actually are.
+**Why the funding type is not stored.** §3 needs it to decide whether the
+instrument establishes a parent, and §4's retained list is exhaustive. It is used
+and discarded.
 
-The final step is transactional in spirit: onboarding is marked complete **only if
-Bede accepts the payload**. A failed handoff leaves the family on `/review` with a
-retryable error rather than a portal that looks provisioned but isn't.
+**Row types must stay `type` aliases, not `interface`.** An interface has no
+implicit index signature, so it fails supabase-js's `GenericSchema` constraint and
+silently degrades every query in the codebase to `never`.
 
-## Bede handoff
+## Not done
 
-`buildHandoffPayload()` produces the versioned contract in `src/lib/bede/handoff.ts`,
-POSTed to `${BEDE_API_URL}/v1/provision`. Every attempt is recorded in
-`bede_handoffs` with its payload and outcome.
-
-With `BEDE_API_URL` unset the payload is still recorded and treated as a success, so
-onboarding is testable end to end before Bede's provisioning endpoint exists.
-
-## Notes for whoever picks this up
-
-- `src/lib/types.ts` is hand-written. Replace it with
-  `npx supabase gen types typescript --linked` once the project is linked. Row types
-  must stay `type` aliases, not `interface` — interfaces have no implicit index
-  signature and silently fail supabase-js's `GenericSchema` constraint, which
-  degrades every query to `never`.
-- Billing is not wired up. The gate is structural (routes and RLS), not yet
-  enforced by a subscription check.
-- The co-op **director** experience doesn't exist yet — co-ops and their course
-  lists are seeded directly. `coop_role` and `is_listed` are in the schema ready
-  for it.
+- **Decision 61 is unanswered**, and it governs where the zone boundary falls. The
+  current shape assumes a per-seat licence, which makes consent-per-child fall out
+  naturally and sidesteps the flat-licence awkwardness in `parental-consent.md` §6.
+- **`listings.posted_by_account` lets the operator resolve a listing to an
+  account.** It is needed to act on a report and is never exposed, but it is in
+  tension with verdict 2 and `docs/portal.md` §12 leaves the trade to the owner.
+- **The co-op director experience** is a role and a policy, with no screens yet.
+- **Consent withdrawal** (`parental-consent.md` §5) has a function and no route.
+- **Moderator screens** for the report queue.
