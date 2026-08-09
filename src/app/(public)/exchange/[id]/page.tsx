@@ -14,7 +14,7 @@ export default async function ListingPage({
   const { id } = await params;
   const supabase = await createClient();
 
-  const { data } = await supabase.from("listings").select("*").eq("id", id).maybeSingle();
+  const { data } = await supabase.from("listings").select("id, category, title, body, state_code, region, posted_as, state, expires_at, created_at").eq("id", id).maybeSingle();
   if (!data) notFound();
   const listing = data as Listing;
 

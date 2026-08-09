@@ -22,7 +22,7 @@ export default async function ExchangePage({
 
   let query = supabase
     .from("listings")
-    .select("*")
+    .select("id, category, title, body, state_code, region, posted_as, state, expires_at, created_at")
     .eq("state", "active")
     .gt("expires_at", new Date().toISOString())
     .order("created_at", { ascending: false })

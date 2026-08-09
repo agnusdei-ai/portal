@@ -161,11 +161,33 @@ npm run dev
 
 ```bash
 npm run typecheck
-npm test          # schema invariants, axes, and listing-content rules
+npm test          # 30 tests: schema text, axes, listing rules, billing rules
 npm run build
 ```
 
-Stripe webhooks locally: `stripe listen --forward-to localhost:3000/api/webhooks/stripe`.
+**Behavioural tests need a database.** The text-scanning suites prove a migration
+*says* the right thing; these prove Postgres *does* it, which is the claim the
+safety properties actually rest on. Both bugs in migration 0003 were invisible to
+a text scan and obvious on first execution.
+
+```bash
+npm run db:setup                                  # creates and migrates portal_test
+TEST_DATABASE_URL=postgresql://... npm test       # 41 tests
+```
+
+`tests/fixtures/platform.sql` stands in for the Supabase platform objects
+(`auth.users`, `auth.uid()`, the `anon`/`authenticated`/`service_role` roles) so
+the schema runs on a bare Postgres.
+
+**Stripe is verified only as far as credentials allow.** The instrument rule and
+webhook signature verification are covered by `tests/billing.test.mjs`. A real
+charge, the refund on refusal, and the dispute that suspends a seat need a test
+key:
+
+```bash
+stripe listen --forward-to localhost:3000/api/webhooks/stripe
+stripe trigger charge.dispute.created
+```
 The webhook is excluded from the middleware matcher because it is authenticated
 by its signature and its raw body must not be touched.
 
