@@ -1,28 +1,12 @@
 import "server-only";
 
 import { SEAT_CURRENCY, SEAT_PRICE_MINOR, stripe } from "@/lib/billing/stripe";
-import { consentStatement, NOTICE_VERSION } from "@/lib/consent/notice";
+import { consentStatement, NOTICE } from "@/lib/consent/notice";
 
 /**
- * Creates the transaction that is simultaneously the paywall, the consent
- * instrument and the data boundary (docs/portal.md §3).
- *
- * Three properties are load-bearing and each is a line below.
- *
- * `mode: "payment"` produces a genuine charge rather than an authorisation hold.
- * compliance/parental-consent.md §3: "the notification to the cardholder is what
- * supplies verification, so the transaction must be a genuine charge rather than
- * an authorization hold that is released without notice." A setup-mode session
- * or a trial with a zero charge would leave nothing for the issuer to notify,
- * and would silently void the consent method.
- *
- * The consent statement appears on the purchase screen itself. §3: the
- * transaction is "presented as the consent step rather than merely coinciding
- * with it, meaning the purchase screen states in terms that completing the
- * purchase constitutes parental consent."
- *
- * The line item names the child account. §3: the screen "identifies the child
- * account by the name the parent chose for it during setup."
+ * The transaction that is at once paywall, consent instrument and data boundary
+ * (portal.md §3). Three details are load-bearing, each marked below; changing
+ * any of them voids the consent method rather than merely altering checkout.
  */
 export async function createConsentCheckout(args: {
   consentRecordId: string;
@@ -35,12 +19,10 @@ export async function createConsentCheckout(args: {
     customer_email: args.customerEmail,
     line_items: [
       {
-        // Always one. The licence is per seat and consent is per child
-        // (parental-consent.md §3), so a quantity above one would be several
-        // children's consent taken in a single transaction naming one of them.
-        // There is deliberately no bulk or gift path: counsel-packet-40 records
-        // that an institutionally purchased seat breaks the consent method,
-        // and a co-operative buying seats for its families is exactly that.
+        // Load-bearing: one seat per transaction. Consent is per child, so a
+        // higher quantity takes several children's consent in one charge naming
+        // one of them, and a bulk or gift path breaks it outright
+        // (counsel-packet-40).
         quantity: 1,
         price_data: {
           currency: SEAT_CURRENCY,
@@ -53,17 +35,19 @@ export async function createConsentCheckout(args: {
         },
       },
     ],
+    // Load-bearing: the consent statement is on the purchase screen itself, and
+    // the line item above names the child account (parental-consent.md §3).
     custom_text: {
       submit: { message: consentStatement(args.childAccountName) },
     },
-    // Read back by the webhook. Metadata is Stripe-side and is not the consent
-    // record; §4's retained list lives in the consent schema.
+    // The processor holds an opaque id only; the retained record is ours.
     metadata: {
       consent_record_id: args.consentRecordId,
-      notice_version: NOTICE_VERSION,
+      notice_version: NOTICE.version,
     },
     payment_intent_data: {
-      // Captured immediately, so the cardholder is notified of a real charge.
+      // Load-bearing: a real captured charge, not a hold. The issuer's
+      // notification to the cardholder is what verifies the consent.
       capture_method: "automatic",
       metadata: { consent_record_id: args.consentRecordId },
     },

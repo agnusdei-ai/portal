@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readStripped } from "./helpers.mjs";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
@@ -11,18 +11,8 @@ import assert from "node:assert/strict";
  * pair appears that would open a route to a child.
  */
 
-const raw = readFileSync(
+const schema = readStripped(
   new URL("../supabase/migrations/0002_participants.sql", import.meta.url),
-  "utf8",
-);
-const schema = raw
-  .split("\n")
-  .map((line) => line.replace(/--.*$/, ""))
-  .join("\n");
-
-const axesModule = readFileSync(
-  new URL("../src/lib/exchange/axes.ts", import.meta.url),
-  "utf8",
 );
 
 test("there is no participant class for a child", () => {
@@ -58,23 +48,6 @@ test("the axis table holds exactly the agreed pairs", () => {
     inserted.sort(),
     expected.sort(),
     "The permitted axes must be exactly parent<->parent, parent<->teacher and guide<->coop.",
-  );
-});
-
-test("the application mirror matches the database", () => {
-  // Scoped to the PERMITTED_AXES literal: CATEGORY_CLASSES lower down is also a
-  // list of class pairs and is a different thing entirely.
-  const block = axesModule.slice(
-    axesModule.indexOf("PERMITTED_AXES"),
-    axesModule.indexOf("];", axesModule.indexOf("PERMITTED_AXES")),
-  );
-  const pairs = [...block.matchAll(/\["(\w+)",\s*"(\w+)"\]/g)].map(
-    ([, a, b]) => `${a}->${b}`,
-  );
-  assert.deepEqual(
-    pairs.sort(),
-    ["parent->parent", "parent->teacher", "teacher->parent", "guide->coop", "coop->guide"].sort(),
-    "src/lib/exchange/axes.ts has drifted from the axis table.",
   );
 });
 

@@ -157,15 +157,6 @@ export async function replyToListing(
   return { ok: true };
 }
 
-export async function withdrawListing(formData: FormData): Promise<void> {
-  const id = String(formData.get("listing_id") ?? "");
-  if (!id) return;
-
-  const supabase = await createClient();
-  await supabase.from("listings").update({ state: "withdrawn" }).eq("id", id);
-  revalidatePath("/exchange");
-}
-
 export async function reportListing(
   _prev: ExchangeActionState,
   formData: FormData,

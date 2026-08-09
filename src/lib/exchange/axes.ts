@@ -1,32 +1,12 @@
 import type { ParticipantClass } from "@/lib/types";
 
 /**
- * Mirror of `public.permitted_axes`, for giving a usable error before the
- * database gives an unusable one. The trigger in migration 0002 is the
- * enforcement; this is the courtesy.
+ * Display copy and the category-to-capacity map the posting form needs.
  *
- * docs/portal.md §6a: the set is closed. There is no participant class for a
- * child, so there is no pair that could include one, which is what makes "no
- * adult-to-child interaction" a property of the schema rather than a promise in
- * a policy.
+ * The permitted axes themselves are not mirrored here. They live in
+ * `public.permitted_axes` and are enforced by triggers in migration 0002; a copy
+ * in TypeScript would be a second source of truth kept honest by a drift test.
  */
-export const PERMITTED_AXES: [ParticipantClass, ParticipantClass][] = [
-  ["parent", "parent"],
-  ["parent", "teacher"],
-  ["teacher", "parent"],
-  ["guide", "coop"],
-  ["coop", "guide"],
-];
-
-export function axisPermitted(a: ParticipantClass, b: ParticipantClass): boolean {
-  return PERMITTED_AXES.some(([x, y]) => x === a && y === b);
-}
-
-/** The classes that may reply to a listing posted in `posted_as`. */
-export function repliersFor(posted_as: ParticipantClass): ParticipantClass[] {
-  return PERMITTED_AXES.filter(([a]) => a === posted_as).map(([, b]) => b);
-}
-
 export const CLASS_COPY: Record<ParticipantClass, { label: string; blurb: string }> = {
   parent: {
     label: "As a household",
@@ -46,10 +26,7 @@ export const CLASS_COPY: Record<ParticipantClass, { label: string; blurb: string
   },
 };
 
-/**
- * Classes a listing category may be posted in. Keeps a co-op opening from being
- * posted by a household, which the axis table alone would permit.
- */
+/** Which capacities may post in each category. */
 export const CATEGORY_CLASSES: Record<string, ParticipantClass[]> = {
   materials: ["parent"],
   coop_opening: ["coop"],

@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readStripped } from "./helpers.mjs";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
@@ -14,17 +14,9 @@ import assert from "node:assert/strict";
  * would be one someone could argue with.
  */
 
-const raw = readFileSync(
+const schema = readStripped(
   new URL("../supabase/migrations/0001_zones.sql", import.meta.url),
-  "utf8",
 );
-
-// Comments explain what the schema refuses to hold, and naturally name the very
-// things it refuses to hold. The invariants are about columns, so strip them.
-const schema = raw
-  .split("\n")
-  .map((line) => line.replace(/--.*$/, ""))
-  .join("\n");
 
 const tableNames = [...schema.matchAll(/create table (?:public\.|consent\.)?(\w+)/g)].map(
   (m) => m[1],
@@ -156,16 +148,7 @@ test("the licence is per seat, and a seat is never bought in bulk", () => {
   // breaks the payment-card consent method, so a quantity above one, or any
   // gift or bulk path, would take several children's consent in one transaction
   // naming one of them.
-  // Comments here explain which purchase paths are refused, and so name them.
-  // Strip them: the invariant is about code, as in the schema tests above.
-  const checkout = readFileSync(
-    new URL("../src/lib/billing/checkout.ts", import.meta.url),
-    "utf8",
-  )
-    .replace(/\/\*[\s\S]*?\*\//g, "")
-    .split("\n")
-    .map((line) => line.replace(/\/\/.*$/, ""))
-    .join("\n");
+  const checkout = readStripped(new URL("../src/lib/billing/checkout.ts", import.meta.url));
 
   const quantities = [...checkout.matchAll(/quantity:\s*([^,\n]+)/g)].map((m) => m[1].trim());
   assert.deepEqual(quantities, ["1"], "Checkout must buy exactly one seat.");

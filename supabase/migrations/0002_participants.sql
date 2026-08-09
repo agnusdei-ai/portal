@@ -244,22 +244,6 @@ create table public.payment_disputes (
   outcome text
 );
 
--- Rate limiting is the other half of moderation-without-identity. Counted per
--- account per day rather than per address, since an address is not something
--- this design holds.
-create or replace function public.listings_today(target_account uuid)
-returns integer
-language sql
-security definer
-stable
-set search_path = public
-as $$
-  select count(*)::int
-  from public.listings
-  where posted_by_account = target_account
-    and created_at > now() - interval '24 hours';
-$$;
-
 -- ===========================================================================
 -- RLS
 -- ===========================================================================

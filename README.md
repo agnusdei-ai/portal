@@ -4,6 +4,9 @@
 that document disagree, that document governs and this code is wrong. Read it
 before changing anything here.
 
+**`CLAUDE.md` is the immutable engineering rule: lean, zero code bloat.** It
+governs how much code is allowed to do the above. Read it before writing any.
+
 ## The three zones
 
 | Zone | Auth | Holds |
@@ -219,5 +222,7 @@ silently degrades every query in the codebase to `never`.
 - **The §6c liability term needs counsel review** before it is relied on.
 - **Decision 61 is only partly answered.** Per-seat settles the licensing
   granularity; licensed self-hosting versus a hosted service is still open.
-- **Consent withdrawal** (`parental-consent.md` §5) has a function and no route.
-- **Moderator screens** for the report queue.
+- **Consent withdrawal** (`parental-consent.md` §5) is not built. The function
+  that existed had no caller and was deleted rather than left as inventory.
+- **Moderator screens** for the report queue. `reportListing` is kept because
+  §12 needs the path and the queue is next; nothing else unwired survives.

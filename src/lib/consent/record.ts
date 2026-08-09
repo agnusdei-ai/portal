@@ -1,7 +1,7 @@
 import "server-only";
 
 import { consentPool } from "@/lib/db";
-import { NOTICE_SHA256, NOTICE_VERSION } from "@/lib/consent/notice";
+import { NOTICE, NOTICE_SHA256 } from "@/lib/consent/notice";
 import type { ConsentRecord } from "@/lib/types";
 
 /**
@@ -15,7 +15,7 @@ export async function ensureNoticeVersion(): Promise<void> {
     `insert into consent.notice_versions (version, sha256)
      values ($1, decode($2, 'hex'))
      on conflict (version) do nothing`,
-    [NOTICE_VERSION, NOTICE_SHA256],
+    [NOTICE.version, NOTICE_SHA256],
   );
 }
 
@@ -41,7 +41,7 @@ export async function openRecord(args: {
        (owner_user_id, notice_version, notice_acknowledged_at, child_account_name, state)
      values ($1, $2, $3, $4, 'notice_acknowledged')
      returning id`,
-    [args.ownerUserId, NOTICE_VERSION, args.acknowledgedAt, args.childAccountName],
+    [args.ownerUserId, NOTICE.version, args.acknowledgedAt, args.childAccountName],
   );
 
   return rows[0].id;
@@ -111,14 +111,6 @@ export async function refuseConsent(args: {
 export async function markDisputed(recordId: string): Promise<void> {
   await consentPool().query(
     `update consent.consent_records set state = 'disputed' where id = $1`,
-    [recordId],
-  );
-}
-
-/** compliance/parental-consent.md §5. */
-export async function withdrawConsent(recordId: string): Promise<void> {
-  await consentPool().query(
-    `update consent.consent_records set state = 'withdrawn' where id = $1`,
     [recordId],
   );
 }

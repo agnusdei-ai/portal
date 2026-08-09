@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { documentHash, type ConsentDocument } from "@/lib/consent/document";
 
 /**
  * The direct notice to parents.
@@ -14,9 +14,9 @@ import { createHash } from "node:crypto";
  * retains the version and hash in order to establish what a parent was actually
  * shown rather than what the current notice says.
  */
-export const NOTICE_VERSION = "2026-08-08.1";
+const VERSION = "2026-08-08.1";
 
-export const NOTICE_SECTIONS: { heading: string; body: string[] }[] = [
+const SECTIONS = [
   {
     heading: "What Locuto is",
     body: [
@@ -57,7 +57,7 @@ export const NOTICE_SECTIONS: { heading: string; body: string[] }[] = [
   },
 ];
 
-export const NOTICE_LEAD =
+const LEAD =
   "Before a Locuto account is set up for a child under thirteen, a parent or guardian is asked to read this and to give consent.";
 
 /**
@@ -72,17 +72,5 @@ export function consentStatement(childAccountName: string): string {
   return `Completing this purchase constitutes your parental consent to the creation of a Locuto account for ${childAccountName}, and to the collection described above.`;
 }
 
-/**
- * Hash of the exact text rendered, so the retained hash cannot drift from what
- * was on screen. Computed from the same constants the page renders rather than
- * from a separate copy of the wording.
- */
-export const NOTICE_SHA256: string = createHash("sha256")
-  .update(
-    JSON.stringify({
-      version: NOTICE_VERSION,
-      lead: NOTICE_LEAD,
-      sections: NOTICE_SECTIONS,
-    }),
-  )
-  .digest("hex");
+export const NOTICE: ConsentDocument = { version: VERSION, lead: LEAD, sections: SECTIONS };
+export const NOTICE_SHA256 = documentHash(NOTICE);

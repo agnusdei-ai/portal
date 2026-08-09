@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { WAIVER_SHA256, WAIVER_VERSION } from "@/lib/consent/waiver";
+import { WAIVER, WAIVER_SHA256 } from "@/lib/consent/waiver";
 import { createClient } from "@/lib/supabase/server";
 import type { ExchangeActionState } from "@/lib/exchange/schema";
 
@@ -52,7 +52,7 @@ export async function acceptWaiver(
   const { error } = await supabase.from("communication_waivers").upsert(
     {
       account_id: account.id,
-      version: WAIVER_VERSION,
+      version: WAIVER.version,
       sha256: `\\x${WAIVER_SHA256}`,
       accepted_at: new Date().toISOString(),
       withdrawn_at: null,

@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { documentHash, type ConsentDocument } from "@/lib/consent/document";
 
 /**
  * The communication waiver.
@@ -14,12 +14,12 @@ import { createHash } from "node:crypto";
  * afterwards would have traded on a guarantee it was not providing. It is stated
  * first, in those words, and not softened.
  */
-export const WAIVER_VERSION = "2026-08-08.2";
+const VERSION = "2026-08-08.2";
 
-export const WAIVER_LEAD =
+const LEAD =
   "The exchange is where you talk to other adults about materials, classes and co-operatives. Please read this before you use it, because it does not work the way Locuto messaging works.";
 
-export const WAIVER_SECTIONS: { heading: string; body: string[] }[] = [
+const SECTIONS = [
   {
     heading: "These messages are not end-to-end encrypted",
     body: [
@@ -71,12 +71,5 @@ export const WAIVER_SECTIONS: { heading: string; body: string[] }[] = [
   },
 ];
 
-export const WAIVER_SHA256: string = createHash("sha256")
-  .update(
-    JSON.stringify({
-      version: WAIVER_VERSION,
-      lead: WAIVER_LEAD,
-      sections: WAIVER_SECTIONS,
-    }),
-  )
-  .digest("hex");
+export const WAIVER: ConsentDocument = { version: VERSION, lead: LEAD, sections: SECTIONS };
+export const WAIVER_SHA256 = documentHash(WAIVER);
