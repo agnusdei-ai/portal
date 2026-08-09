@@ -26,7 +26,6 @@
 -- stops being true.
 
 create extension if not exists "pgcrypto";
-create extension if not exists "citext";
 
 -- ===========================================================================
 -- ZONE: portal. Separated into its own Postgres schema.
