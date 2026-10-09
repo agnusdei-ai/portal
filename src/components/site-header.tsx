@@ -20,6 +20,9 @@ export async function SiteHeader() {
           <Link href="/curriculum" className="hover:text-ink">
             Curriculum
           </Link>
+          <Link href="/search" className="hover:text-ink">
+            Search
+          </Link>
           <Link href="/coops" className="hover:text-ink">
             Co-ops
           </Link>
