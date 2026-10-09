@@ -88,6 +88,11 @@ export type CoopListing = {
   meeting_day: string | null;
   enquiry_ref: string;
   is_listed: boolean;
+  // 0005_coop_geo.sql — coarse, director-published meeting areas; never a
+  // street address or postcode (docs/portal.md §7).
+  meeting_area_lat: number | null;
+  meeting_area_lng: number | null;
+  meeting_area_radius_mi: number | null;
   created_at: string;
 };
 
