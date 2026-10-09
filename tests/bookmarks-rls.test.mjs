@@ -29,8 +29,12 @@ const USER_B = "22222222-2222-2222-2222-222222222222";
 
 function psql(database, sql) {
   const target = BASE ? `${BASE.replace(/\/+$/, "")}/${database}` : database;
+  // The connection target is psql's first positional. A stray program name at
+  // the front of the argument list made psql read the URL as the username and
+  // fail peer authentication — which the availability probe swallowed, so the
+  // test skipped although Postgres was up.
   const args = BASE
-    ? ["psql", "-v", "ON_ERROR_STOP=1", "-tA", target]
+    ? ["-v", "ON_ERROR_STOP=1", "-tA", target]
     : ["-u", "postgres", "psql", database, "-v", "ON_ERROR_STOP=1", "-tA"];
   return execFileSync(BASE ? "psql" : "sudo", args, {
     input: sql,
