@@ -58,3 +58,81 @@ export async function recordAbuseEvent(
   });
   return error ? [`abuse_events insert failed: ${error.message}`] : [];
 }
+
+export type TerminationInput = {
+  /** The session to revoke, when the caller has one. */
+  sessionId: string | null;
+  accountId: string | null;
+  kind?: AbuseKind;
+  detail?: Record<string, unknown>;
+};
+
+export type TerminationResult = {
+  /** Whether a live session was found and revoked. */
+  revoked: boolean;
+  /** Whether the abuse_events row was written. */
+  recorded: boolean;
+  /** Every failure, for the caller to surface — none are swallowed here. */
+  errors: string[];
+};
+
+/**
+ * Terminates an abusive caller: revokes the session through the Supabase
+ * admin API and records the event (spec art_ztdch8TP, "Layer 3"). The record
+ * is written even when the revocation fails, and the action is honest about
+ * what happened — a session that could not be revoked is recorded as
+ * `blocked`, because `session_terminated` would be a claim the record cannot
+ * support.
+ */
+export async function terminateAbusiveSession(
+  admin: AdminClient,
+  input: TerminationInput,
+): Promise<TerminationResult> {
+  const errors: string[] = [];
+  let revoked = false;
+
+  if (input.sessionId) {
+    const { error } = await admin.auth.admin.signOut(input.sessionId);
+    if (error) {
+      errors.push(`session ${input.sessionId} could not be revoked: ${error.message}`);
+    } else {
+      revoked = true;
+    }
+  }
+
+  const insertErrors = await recordAbuseEvent(admin, {
+    accountId: input.accountId,
+    kind: input.kind ?? "rate_limit",
+    action: revoked ? "session_terminated" : "blocked",
+    detail: input.detail,
+  });
+  errors.push(...insertErrors);
+
+  return { revoked, recorded: insertErrors.length === 0, errors };
+}
+
+/**
+ * The session a live access token belongs to. GoTrue access tokens carry the
+ * session id as a claim, and the admin revoke is keyed by it. A token that
+ * will not parse simply yields nothing to revoke — the abuse event is still
+ * recorded — because an unparseable token arriving in an abusive request is
+ * not trustworthy input to begin with.
+ */
+export function sessionIdFromAccessToken(
+  accessToken: string | null | undefined,
+): string | null {
+  if (!accessToken) return null;
+
+  const parts = accessToken.split(".");
+  if (parts.length !== 3) return null;
+
+  try {
+    // JWTs are base64url; atob wants padded base64.
+    const base64 = parts[1].replaceAll("-", "+").replaceAll("_", "/");
+    const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4);
+    const payload = JSON.parse(atob(padded)) as { session_id?: unknown };
+    return typeof payload.session_id === "string" ? payload.session_id : null;
+  } catch {
+    return null;
+  }
+}
