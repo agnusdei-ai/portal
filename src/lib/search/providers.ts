@@ -42,7 +42,14 @@ export async function configuredProviders(): Promise<SearchProvider[]> {
       baseUrl: process.env.GOOGLE_SEARCH_BASE_URL,
     }),
     ...(domains.length
-      ? [createGoogleProvider("homeschool", { apiKey, cx, lensDomains: domains })]
+      ? [
+          createGoogleProvider("homeschool", {
+            apiKey,
+            cx,
+            lensDomains: domains,
+            baseUrl: process.env.GOOGLE_SEARCH_BASE_URL,
+          }),
+        ]
       : []),
   ];
 }
