@@ -178,6 +178,9 @@ export async function replyToListing(
   if (error) return { ok: false, error: error.message };
 
   revalidatePath(`/exchange/${parsed.data.listing_id}`);
+  // The inbox threads the same replies inline; a reply sent from either
+  // surface must refresh both.
+  revalidatePath("/portal/inbox");
   return { ok: true };
 }
 
