@@ -15,12 +15,42 @@ import {
 import { CATEGORY_CLASSES } from "@/lib/exchange/axes";
 import { waiverAccepted } from "@/lib/exchange/waiver";
 import { requireVerifiedAccount } from "@/lib/verification/gate";
+import { findCryptoSolicitation } from "@/lib/exchange/schema";
+import { recordAbuseEvent } from "@/lib/abuse/events";
+import { createServiceClient } from "@/lib/supabase/server";
 import type { ParticipantClass } from "@/lib/types";
 
 /** No more than this many listings from one account in twenty-four hours. */
 const DAILY_LISTING_LIMIT = 10;
 
 export { EXCHANGE_IDLE };
+
+/**
+ * A crypto refusal is recorded as well as returned (spec art_ztdch8TP,
+ * "Layer 1"): the submission was blocked, and the event is how the block
+ * becomes visible for safety review without storing the refused text. The
+ * refused submission itself returns the same field errors it always would —
+ * a failure to record must never turn into a different outcome for the
+ * parent, so it is logged and left there.
+ */
+async function recordCryptoRefusal(accountId: string | null): Promise<void> {
+  try {
+    const errors = await recordAbuseEvent(createServiceClient(), {
+      accountId,
+      kind: "crypto_solicitation",
+      action: "blocked",
+    });
+    for (const message of errors) console.error(`abuse event not recorded: ${message}`);
+  } catch (error) {
+    console.error("abuse event not recorded:", error);
+  }
+}
+
+function solicitsCrypto(...values: (string | null | undefined)[]): boolean {
+  return values.some((value) =>
+    typeof value === "string" ? findCryptoSolicitation(value) !== null : false,
+  );
+}
 
 export async function createListing(
   _prev: ExchangeActionState,
@@ -39,9 +69,13 @@ export async function createListing(
   });
 
   if (!parsed.success) {
+    const fieldErrors = parsed.error.flatten().fieldErrors as Record<string, string[]>;
+    if (solicitsCrypto(String(formData.get("title") ?? ""), String(formData.get("body") ?? ""))) {
+      await recordCryptoRefusal(await currentAccountId());
+    }
     return {
       ok: false,
-      fieldErrors: parsed.error.flatten().fieldErrors as Record<string, string[]>,
+      fieldErrors,
     };
   }
 
@@ -113,9 +147,13 @@ export async function replyToListing(
   });
 
   if (!parsed.success) {
+    const fieldErrors = parsed.error.flatten().fieldErrors as Record<string, string[]>;
+    if (solicitsCrypto(String(formData.get("body") ?? ""))) {
+      await recordCryptoRefusal(await currentAccountId());
+    }
     return {
       ok: false,
-      fieldErrors: parsed.error.flatten().fieldErrors as Record<string, string[]>,
+      fieldErrors,
     };
   }
 
