@@ -6,7 +6,6 @@ import { Pool } from "pg";
  * requires; routing it through the SDK would undo it.
  */
 declare global {
-  // eslint-disable-next-line no-var
   var __consentPool: Pool | undefined;
 }
 

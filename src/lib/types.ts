@@ -136,6 +136,17 @@ export type ListingReport = {
   created_at: string;
 };
 
+export type Bookmark = {
+  id: string;
+  account_id: string;
+  url: string;
+  title: string;
+  source_label: string | null;
+  subject: string;
+  note: string | null;
+  created_at: string;
+};
+
 /**
  * The consent record. Modelled for server-side use only; there is no PostgREST
  * route to it. Fields are exactly compliance/parental-consent.md §4's retained
@@ -256,6 +267,7 @@ export interface Database {
         ListingReport,
         [FK<"listing_id", "listings">, FK<"reported_by", "accounts">]
       >;
+      bookmarks: Table<Bookmark, [FK<"account_id", "accounts">]>;
       permitted_axes: Table<PermittedAxis>;
       account_participants: Table<AccountParticipant, [FK<"account_id", "accounts">]>;
       communication_waivers: Table<CommunicationWaiver, [FK<"account_id", "accounts">]>;
