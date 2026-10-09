@@ -3,9 +3,9 @@ import type { OnboardingPersona } from "@/lib/types";
 /**
  * The per-persona guides (spec art_ztdch8TP, "Personas and guided onboarding").
  * Plain language on purpose: the reader is on their first day. The tutor
- * persona's workflow and docs are deferred pending the operator's ruling on
- * the portal-hosted assistant; its index slot is a promise of a place, not a
- * page.
+ * persona's docs ship with phase B (option C, ruled 2026-10-09): the same
+ * trust path as every persona, plus the agent-interface guide for
+ * household-systems integrators.
  */
 
 export type DocSection = { heading: string; body: string[] };
@@ -280,13 +280,69 @@ export const DOC_SETS: PersonaDocs[] = [
       },
     ],
   },
+  {
+    persona: "tutor",
+    label: "For tutors (agent to agent)",
+    intro: "The same identity check as everyone, a co-operative's vouch, and an API your own systems call.",
+    docs: [
+      {
+        slug: "tutor-onboarding",
+        persona: "tutor",
+        title: "Tutor onboarding",
+        intro: "The path from a paid household account to a household agent system that can find your standing.",
+        sections: [
+          {
+            heading: "The order of things",
+            body: [
+              "Verify first: the same one-time adult check every account passes. The tutor path adds nothing to it and exempts nothing from it.",
+              "Then vouching: an identified co-operative names you as one of its tutors. That vouch — not the platform — is what elevates your account to the tutor's teaching class, the same class an educator's vouch grants. The platform does not credential tutors: a co-operative's vouch is what elevates your account, and it can be revoked by the co-operative that made it, with the class going with it.",
+              CERTIFIES_ADULTHOOD,
+              STANDING_IS_EARNED,
+              "Then, and only then, the agent: point the tutoring system you own at the portal's vetted discovery API. It answers as you, only while you are signed in, and only with trust signals.",
+            ],
+          },
+          {
+            heading: "What the portal never does",
+            body: [
+              "The portal does not tutor. Your tutoring configuration — how your agent works, what it says, when it runs — and every tutoring session live in household-owned systems. The portal keeps no table for any of it, on purpose: there is nothing here to enroll into, and nothing here that could leak how you teach.",
+              "The portal does not host an assistant for tutors either. That idea waits on its own specification and safety review; the API that exists today is discovery and standing, read-only.",
+            ],
+          },
+        ],
+      },
+      {
+        slug: "tutor-agent-interface",
+        persona: "tutor",
+        title: "The agent-interface guide",
+        intro: "For household-systems integrators: how an agent signs in as you, what the discovery API returns, and where the portal's part ends.",
+        sections: [
+          {
+            heading: "Enrollment: the session is the credential",
+            body: [
+              "There are no API keys to mint and no tokens to store. A household agent system calls the API as you — it presents your own signed-in portal session, the same cookies your browser holds — so it inherits every rule your session already carries: the 30-minute idle sign-out, and the second factor when one is enrolled.",
+              "Because the agent acts as your principal, the account gates apply to it in the same order they apply to you: a valid session, the second-factor challenge when enrolled, and a verified-adult attestation. A refusal comes back as a typed error — unauthenticated, assurance-required, or verification-required — with the fix named in the repo's agent-interface guide, never a redirect.",
+            ],
+          },
+          {
+            heading: "What the API returns — trust signals, never identity PII",
+            body: [
+              "GET /api/agents/tutors returns standing: an opaque account handle, the vouch classes held, when each vouch was made, and the co-operative that made it — its own published name and region, nothing more. It also returns which communication axes connect you to them.",
+              "What it never returns: names, contact details, addresses, birthdates, document data, or any other person's verification state. The response is marked no-store, so trust data about other adults does not sit in caches. Your agent does not need more than this to answer \"who is vouched, by whom, and can we talk?\" — if a build asks for more, the build is asking the wrong question.",
+            ],
+          },
+          {
+            heading: "The boundary: tutoring runs in household systems",
+            body: [
+              "The portal's part ends at that response. Sessions with students, scheduling, tutoring records, and the agent's own behaviour live in the systems you own and control. The portal never brokers contact either: reaching a family still travels the way it always has, through the exchange reply relay or a co-operative's enquiry path.",
+              CERTIFIES_ADULTHOOD,
+              STANDING_IS_EARNED,
+            ],
+          },
+        ],
+      },
+    ],
+  },
 ];
-
-/** The tutor slot on the docs index: a place held, not a page shipped. */
-export const TUTOR_SLOT = {
-  label: "For tutors (agent to agent)",
-  note: "In preparation — the tutor's guided workflow and docs wait on the portal-assistant ruling. The discovery API for household-owned agent systems is already live.",
-};
 
 export function getDoc(slug: string): Doc | undefined {
   for (const set of DOC_SETS) {
