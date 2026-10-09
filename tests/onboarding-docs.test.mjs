@@ -5,7 +5,6 @@ import {
   CERTIFIES_ADULTHOOD,
   DOC_SETS,
   STANDING_IS_EARNED,
-  TUTOR_SLOT,
   allDocs,
   getDoc,
 } from "@/lib/docs/content";
@@ -38,12 +37,13 @@ test("each persona has exactly its guides", () => {
       "guide-coop-publishing",
       "guide-moderation-disputes",
     ],
+    tutor: ["tutor-onboarding", "tutor-agent-interface"],
   };
 
   assert.deepEqual(
     DOC_SETS.map((set) => set.persona),
-    ["parent", "educator", "guide"],
-    "the tutor persona is deferred; no doc set ships for it",
+    ["parent", "educator", "guide", "tutor"],
+    "every persona has a shelf; the tutor's filled the slot PR #11 held",
   );
   for (const [persona, slugs] of Object.entries(expected)) {
     const set = DOC_SETS.find((s) => s.persona === persona);
@@ -53,7 +53,7 @@ test("each persona has exactly its guides", () => {
       `${persona}'s guides`,
     );
   }
-  assert.equal(allDocs().length, 11);
+  assert.equal(allDocs().length, 13);
 });
 
 test("every doc renders with a title, an intro, and sectioned body text", () => {
@@ -107,13 +107,41 @@ test("the parent docs answer residency and the waiver's readability", () => {
   assert.ok(waiver.includes("not end-to-end encrypted"), "the central disclosure, plainly");
 });
 
-test("the tutor slot is a promise of a place, not a page", () => {
-  assert.ok(TUTOR_SLOT.label.length > 0);
-  assert.ok(TUTOR_SLOT.note.length > 0);
-  assert.equal(getDoc("tutor-onboarding"), undefined, "no tutor doc ships yet");
+test("the tutor onboarding doc carries the trust path and the phase-B boundary", () => {
+  const onboarding = docText(getDoc("tutor-onboarding"));
+  assert.ok(onboarding.includes("does not credential tutors"), "vouching, not the platform");
   assert.ok(
-    !allDocs().some((d) => d.slug.startsWith("tutor-")),
-    "deferred: the tutor's workflow waits on the architecture ruling",
+    onboarding.includes("tutor's teaching class"),
+    "the vouch's class is named",
+  );
+  assert.ok(
+    /household-owned/.test(onboarding),
+    "tutoring configuration and sessions live in household-owned systems",
+  );
+  assert.ok(
+    onboarding.includes("The portal does not tutor"),
+    "the boundary is stated in the portal's own voice",
+  );
+});
+
+test("the agent-interface guide covers enrollment, the PII refusal, and the boundary", () => {
+  const guide = docText(getDoc("tutor-agent-interface"));
+  assert.ok(guide.includes("GET /api/agents/tutors"), "the shipped endpoint, named");
+  assert.ok(
+    /no API keys/.test(guide),
+    "enrollment is the account holder's own session, not a credential",
+  );
+  assert.ok(
+    /never returns/i.test(guide),
+    "the PII refusal is stated as a refusal",
+  );
+  assert.ok(
+    /no-store/.test(guide),
+    "trust data's cache posture is stated",
+  );
+  assert.ok(
+    /household/.test(guide),
+    "the household-systems boundary is stated for integrators",
   );
 });
 

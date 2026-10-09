@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import { renderToStaticMarkup } from "react-dom/server";
 
 import { OnboardingChecklist } from "@/components/onboarding/checklist";
+import { buildChecklist } from "@/lib/onboarding/checklist";
 import { allDocs } from "@/lib/docs/content";
 
 /**
@@ -85,13 +86,51 @@ test("the docs [slug] route generates exactly the content module's slugs", async
   const generated = page.generateStaticParams().map((p) => p.slug).sort();
   const expected = allDocs().map((d) => d.slug).sort();
   assert.deepEqual(generated, expected);
-  assert.equal(generated.length, 11);
+  assert.equal(generated.length, 13);
 });
 
-test("the docs index wires the persona shelves and the tutor slot", () => {
+test("the docs index wires the persona shelves, with no held slot left", () => {
   const src = readFileSync("src/app/(public)/docs/page.tsx", "utf8");
   assert.ok(src.includes("DOC_SETS"), "shelves come from the content module");
-  assert.ok(src.includes("TUTOR_SLOT"), "the deferred tutor persona keeps its place");
+  assert.ok(
+    !src.includes("TUTOR_SLOT"),
+    "the deferred tutor slot is filled — no promise of a page remains",
+  );
+});
+
+test("the tutor checklist renders: the vouch-locked enroll step is explained, never offered", () => {
+  const steps = buildChecklist("tutor", {
+    hasAccount: true,
+    verificationState: "verified",
+    vouched: false,
+    hasParticipated: false,
+    markedSteps: [],
+  });
+  const html = renderToStaticMarkup(OnboardingChecklist({ steps }));
+  assert.ok(html.includes(VOUCH_LOCKED), "the lock is explained, as on the educator path");
+  assert.ok(
+    !html.includes("Read the agent-interface guide"),
+    "no action link while locked — only the ever-present guide anchor",
+  );
+  assert.equal(
+    (html.match(/Mark done/g) || []).length,
+    0,
+    "the self-markable enroll step earns no button while the vouch is owed",
+  );
+});
+
+test("the tutor checklist renders: once vouched, enroll is offered with its guide and mark", () => {
+  const steps = buildChecklist("tutor", {
+    hasAccount: true,
+    verificationState: "verified",
+    vouched: true,
+    hasParticipated: false,
+    markedSteps: [],
+  });
+  const html = renderToStaticMarkup(OnboardingChecklist({ steps }));
+  assert.ok(!html.includes(VOUCH_LOCKED), "the gate lifted");
+  assert.ok(html.includes('href="/docs/tutor-agent-interface"'), "the agent-interface guide");
+  assert.equal((html.match(/Mark done/g) || []).length, 1, "the one markable step");
 });
 
 test("the [slug] page 404s unknown slugs and renders only module content", () => {
