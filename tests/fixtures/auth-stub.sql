@@ -21,15 +21,28 @@ language sql stable as $$
   select nullif(current_setting('request.jwt.claims', true)::jsonb->>'role', '');
 $$;
 
+-- Roles are cluster-wide but each test file bootstraps its own database
+-- concurrently, so the plain check-then-create races on the rolname unique
+-- index. The loser of that race catches duplicate_object: by the time it is
+-- raised the winner's create has committed, so the grants below are safe.
 do $$ begin
   if not exists (select from pg_roles where rolname = 'anon') then
-    create role anon nologin;
+    begin
+      create role anon nologin;
+    exception when duplicate_object then null;
+    end;
   end if;
   if not exists (select from pg_roles where rolname = 'authenticated') then
-    create role authenticated nologin;
+    begin
+      create role authenticated nologin;
+    exception when duplicate_object then null;
+    end;
   end if;
   if not exists (select from pg_roles where rolname = 'service_role') then
-    create role service_role nologin;
+    begin
+      create role service_role nologin;
+    exception when duplicate_object then null;
+    end;
   end if;
 end $$;
 
