@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 import { requireAal2 } from "@/lib/auth/enforcement";
+import { currentAccountId } from "@/lib/account";
 import {
   EXCHANGE_IDLE,
   listingSchema,
@@ -20,31 +21,6 @@ import type { ParticipantClass } from "@/lib/types";
 const DAILY_LISTING_LIMIT = 10;
 
 export { EXCHANGE_IDLE };
-
-/**
- * The account of the signed-in user, or null.
- *
- * Posting and replying both require one, which is what makes the exchange
- * adult-to-adult in docs/portal.md §6's sense: an account exists only behind the
- * §3 card transaction, so every participant is an adult who completed one. That
- * is a stronger adult check than a classifieds board normally has, and it comes
- * free from the consent mechanism.
- */
-async function currentAccountId(): Promise<string | null> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
-
-  const { data } = await supabase
-    .from("accounts")
-    .select("id")
-    .eq("owner_user_id", user.id)
-    .maybeSingle();
-
-  return data?.id ?? null;
-}
 
 export async function createListing(
   _prev: ExchangeActionState,

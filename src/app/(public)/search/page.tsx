@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
+import Link from "next/link";
 
 import { Alert, Button, Card, Input } from "@/components/ui";
+import { saveBookmark } from "@/lib/bookmarks/actions";
 import { MAX_QUERY_LENGTH, runSearch, throttleKeys } from "@/lib/search/core";
 import { configuredProviders } from "@/lib/search/providers";
 import { getSearchThrottle } from "@/lib/search/throttle";
@@ -12,6 +14,9 @@ export const metadata: Metadata = {
   description:
     "One query across state networks, publishers, and curriculum vendors. Nothing about a search is stored.",
 };
+
+/** Subjects a parent files a saved resource under — the same set the bookmarks surface groups by. */
+const SUBJECTS = ["general", "curriculum", "math", "reading", "science", "history", "arts"];
 
 function hostnameOf(url: string): string {
   try {
@@ -24,9 +29,9 @@ function hostnameOf(url: string): string {
 export default async function SearchPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; saved?: string }>;
 }) {
-  const { q } = await searchParams;
+  const { q, saved } = await searchParams;
   const query = (q ?? "").trim();
 
   const supabase = await createClient();
@@ -72,6 +77,18 @@ export default async function SearchPage({
         <Button type="submit">Search</Button>
       </form>
 
+      {saved === "1" ? (
+        <div className="mt-4" role="status">
+          <Alert>
+            Saved to your bookmarks —{" "}
+            <Link href="/portal/bookmarks" className="underline">
+              see your collection
+            </Link>
+            .
+          </Alert>
+        </div>
+      ) : null}
+
       {query && providers.length === 0 ? (
         <Card className="mt-8 text-sm text-ink-soft">
           Search isn&apos;t wired up yet — no provider is configured. The{" "}
@@ -106,7 +123,7 @@ export default async function SearchPage({
             </Card>
           ) : (
             <ul className="mt-8 space-y-4">
-              {outcome.hits.map((hit) => (
+              {outcome.hits.map((hit, i) => (
                 <li key={hit.url}>
                   <Card>
                     <a
@@ -123,6 +140,39 @@ export default async function SearchPage({
                     {hit.snippet ? (
                       <p className="mt-2 text-sm text-ink-soft">{hit.snippet}</p>
                     ) : null}
+                    {/* Saving is the deliberate end of a search: the action
+                        carries the hit's own url and title, the subject is the
+                        parent's choice, and RLS binds the row to the saver. */}
+                    <form action={saveBookmark} className="mt-3 flex flex-wrap items-center gap-2">
+                      <input type="hidden" name="url" value={hit.url} />
+                      <input type="hidden" name="title" value={hit.title} />
+                      <input type="hidden" name="source_label" value={`via ${hit.provider}`} />
+                      <input
+                        type="hidden"
+                        name="next"
+                        value={`/search?q=${encodeURIComponent(query)}`}
+                      />
+                      <label className="sr-only" htmlFor={`subject-${i}`}>
+                        Subject
+                      </label>
+                      <select
+                        id={`subject-${i}`}
+                        name="subject"
+                        className="rounded-md border border-rule bg-canvas px-2 py-1.5 text-sm text-ink"
+                      >
+                        {SUBJECTS.map((subject) => (
+                          <option key={subject} value={subject}>
+                            {subject}
+                          </option>
+                        ))}
+                      </select>
+                      <button
+                        type="submit"
+                        className="rounded-md border border-rule px-3 py-1.5 text-sm text-ink hover:border-brand hover:text-brand"
+                      >
+                        Save
+                      </button>
+                    </form>
                   </Card>
                 </li>
               ))}

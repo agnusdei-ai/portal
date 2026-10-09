@@ -9,6 +9,23 @@ jobs:
   quality-gate:
     name: Typecheck, test, build
     runs-on: ubuntu-latest
+    # The bookmark RLS test runs the real migrations against a real Postgres
+    # and speaks as the `authenticated` role — it needs a live server, not a
+    # mock, because the invariant it checks lives in the policies.
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      TEST_DATABASE_URL: postgres://postgres@localhost:5432/
     steps:
       - name: Check out repository
         uses: actions/checkout@v4

@@ -128,6 +128,9 @@ export default async function PortalPage() {
       </p>
       <div className="mt-4 flex gap-3">
         <ButtonLink href="/exchange">Browse the exchange</ButtonLink>
+        <ButtonLink href="/portal/bookmarks" variant="secondary">
+          Your bookmarks
+        </ButtonLink>
         <Link
           href="/exchange/new"
           className="inline-flex items-center text-sm text-ink-soft underline"
