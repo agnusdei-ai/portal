@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test tests/*.test.mjs"
+    "test": "tsx --test --tsconfig tsconfig.test.json tests/*.test.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",

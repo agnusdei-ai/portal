@@ -29,6 +29,8 @@ export type ConsentState =
   | "withdrawn"
   | "disputed";
 
+export type OnboardingPersona = "parent" | "educator" | "guide";
+
 export type VerificationMethod = "socure_id_plus_docv";
 export type VerificationDocumentType = "drivers_license" | "passport";
 export type VerificationState =
@@ -208,6 +210,18 @@ export type PaymentDispute = {
 };
 
 /**
+ * The persona checklist (0007_onboarding.sql). The account's persona choice
+ * and the ids of self-markable steps it marked done; every derived step's
+ * state is read from its own table at render time and never stored here.
+ */
+export type OnboardingChecklist = {
+  account_id: string;
+  persona: OnboardingPersona;
+  marked_steps: string[];
+  updated_at: string;
+};
+
+/**
  * The outcome of the Socure ID+ / DocV evaluation — an attestation, never an
  * identity. 0003_verification.sql is the source of truth for the column
  * allowlist; tests/schema-invariants.test.mjs fails if this row ever gains a
@@ -276,6 +290,7 @@ export interface Database {
         CoopAffiliation,
         [FK<"coop_listing_id", "coop_listings">, FK<"account_id", "accounts">]
       >;
+      onboarding_checklists: Table<OnboardingChecklist>;
       verification_attestations: Table<VerificationAttestation>;
     };
     Views: { [_ in never]: never };

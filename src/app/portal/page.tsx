@@ -4,6 +4,12 @@ import { redirect } from "next/navigation";
 import { seatNamesForAccount } from "@/lib/consent/record";
 import { createClient } from "@/lib/supabase/server";
 import { verificationGate } from "@/lib/verification/gate";
+import { currentOnboarding } from "@/lib/onboarding/actions";
+import {
+  buildChecklist,
+  checklistComplete,
+  isPersona,
+} from "@/lib/onboarding/checklist";
 import { LicenceForm } from "@/components/setup/licence-form";
 import { ButtonLink, Card } from "@/components/ui";
 import type { Bookmark, PortalRole, Seat } from "@/lib/types";
@@ -48,7 +54,7 @@ export default async function PortalPage() {
 
   // Bookmarks and reply stamps are RLS-scoped account data (0001/0004): the
   // queries carry no account filter because the policies are the filter.
-  const [{ data: seats }, { data: roles }, { data: attestation }, { data: bookmarks }, { data: replyStamps }] =
+  const [{ data: seats }, { data: roles }, { data: attestation }, { data: bookmarks }, { data: replyStamps }, { count: listings }, { data: vouches }, onboarding] =
     await Promise.all([
       supabase.from("seats").select("*").eq("account_id", account.id).order("issued_at"),
       supabase.from("user_roles").select("*").eq("user_id", user.id),
@@ -66,9 +72,33 @@ export default async function PortalPage() {
         .from("listing_replies")
         .select("listing_id, created_at")
         .order("created_at", { ascending: false }),
+      supabase
+        .from("listings")
+        .select("id", { count: "exact", head: true })
+        .eq("posted_by_account", account.id),
+      supabase
+        .from("coop_affiliations")
+        .select("class")
+        .eq("account_id", account.id)
+        .is("revoked_at", null),
+      currentOnboarding(account.id),
     ]);
 
   const verified = verificationGate(attestation?.state ?? null) === "allowed";
+
+  // The persistent first-run checklist: same builder as /portal/start, a
+  // banner-sized summary here. It disappears only when every step is done.
+  const persona = isPersona(onboarding.persona) ? onboarding.persona : "parent";
+  const neededClass = persona === "educator" ? "teacher" : persona === "guide" ? "guide" : null;
+  const startSteps = buildChecklist(persona, {
+    hasAccount: true,
+    verificationState: attestation?.state ?? null,
+    vouched: neededClass !== null && (vouches ?? []).some((v) => v.class === neededClass),
+    hasParticipated: (listings ?? 0) > 0 || (replyStamps?.length ?? 0) > 0,
+    markedSteps: onboarding.marked_steps,
+  });
+  const startDone = checklistComplete(startSteps);
+  const startRemaining = startSteps.filter((s) => !s.done).length;
 
   // The child account names live in the consent schema, which no client can
   // reach. Read here, server-side, having already established that this user
@@ -113,6 +143,24 @@ export default async function PortalPage() {
           </div>
         </Card>
       )}
+
+      {!startDone ? (
+        <Link
+          href="/portal/start"
+          className="mt-6 block rounded-lg border border-brand/40 bg-white p-4 hover:bg-parchment-deep/40"
+        >
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 className="font-medium">Your first days here</h2>
+            <span className="text-xs text-ink-faint">
+              {startRemaining} {startRemaining === 1 ? "step" : "steps"} to go
+            </span>
+          </div>
+          <p className="mt-1 max-w-xl text-sm text-ink-soft">
+            Verification, your co-operative, the exchange — the guided path,
+            one step at a time.
+          </p>
+        </Link>
+      ) : null}
 
       <h2 className="mt-10 text-lg font-medium">The exchange</h2>
       <p className="mt-1 max-w-xl text-sm text-ink-soft">

@@ -369,6 +369,8 @@ test("migrations create only the allowlisted tables", () => {
     "communication_waivers", "payment_disputes",
     // wave one of the security-and-resource-exchange spec
     "verification_attestations", "bookmarks", "abuse_events",
+    // 0007 — the persona checklist: a persona choice and self-marks; no PII
+    "onboarding_checklists",
   ]);
   const created = [...[...migrationSql.values()].join("\n").matchAll(
     /create table (?:if not exists )?(?:public\.|consent\.)?(\w+)/g,
