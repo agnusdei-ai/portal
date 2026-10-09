@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
 import { OnboardingChecklist } from "@/components/onboarding/checklist";
 import { Button, Card } from "@/components/ui";
@@ -125,9 +126,9 @@ export default async function StartPage() {
         <p className="mt-1 max-w-xl text-sm text-ink-soft">
           The portal certifies that you are an adult and nothing else. Standing
           is earned in the co-operative, never issued by the platform —{" "}
-          <a href="/docs" className="underline">
+          <Link href="/docs" className="underline">
             the guides explain
-          </a>
+          </Link>
           .
         </p>
       </Card>

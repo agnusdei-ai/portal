@@ -29,6 +29,9 @@ export async function SiteHeader() {
           <Link href="/exchange" className="hover:text-ink">
             Exchange
           </Link>
+          <Link href="/docs" className="hover:text-ink">
+            Guides
+          </Link>
         </nav>
 
         <div className="ml-auto flex items-center gap-3 text-sm">
