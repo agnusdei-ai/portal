@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  quality-gate:
+    name: Typecheck, test, build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          # npm test runs `node --test "tests/*.test.mjs"` — a quoted glob the
+          # shell never expands. The test runner only expands glob patterns
+          # since Node 21, so pinning 20 would fail the gate on every PR.
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck, test, and build
+        run: npm run typecheck && npm test && npm run build
