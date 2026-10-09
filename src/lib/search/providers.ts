@@ -34,7 +34,13 @@ export async function configuredProviders(): Promise<SearchProvider[]> {
   ].slice(0, MAX_LENS_DOMAINS);
 
   return [
-    createGoogleProvider("web", { apiKey, cx }),
+    createGoogleProvider("web", {
+      apiKey,
+      cx,
+      // Overridable so dogfooding and fixture tests can point the adapter at
+      // a local server; production always leaves it unset.
+      baseUrl: process.env.GOOGLE_SEARCH_BASE_URL,
+    }),
     ...(domains.length
       ? [createGoogleProvider("homeschool", { apiKey, cx, lensDomains: domains })]
       : []),
