@@ -96,6 +96,13 @@ rather than a gap to fill. A class at a co-op is a different object — several
 families, parents present, an institution accountable — which is why
 `class_offering` is carried and private tutoring is not.
 
+What the tutor ruling of 2026-10-09 (option C, staged) adds is one vetted,
+read-only surface beside this rule, not an exception to it: a verified adult
+principal can let their household-owned agent system discover vouched tutors and
+trust signals (`docs/agent-interface.md`). No tutoring sessions, chat, or model
+inference run in the portal, and no identity or reputation records are built for
+it — the vouch remains the only trust fact shown.
+
 ## The communication waiver
 
 Separate from the parental consent, and never presented as one thing with it.
@@ -178,6 +185,7 @@ src/
     setup/             age gate, notice, consent, completion
     portal/            seats and licence keys
     api/webhooks/      the processor callback that grants consent
+    api/agents/        the tutor phase-B discovery API (docs/agent-interface.md)
   lib/
     consent/           the notice text, its hash, and every consent-record write
     billing/           Stripe, and the funding check §3 requires
