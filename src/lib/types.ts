@@ -29,6 +29,15 @@ export type ConsentState =
   | "withdrawn"
   | "disputed";
 
+export type VerificationMethod = "socure_id_plus_docv";
+export type VerificationDocumentType = "drivers_license" | "passport";
+export type VerificationState =
+  | "pending"
+  | "verified"
+  | "retry_required"
+  | "manual_review"
+  | "declined";
+
 export type Account = {
   id: string;
   owner_user_id: string;
@@ -187,6 +196,25 @@ export type PaymentDispute = {
   outcome: string | null;
 };
 
+/**
+ * The outcome of the Socure ID+ / DocV evaluation — an attestation, never an
+ * identity. 0003_verification.sql is the source of truth for the column
+ * allowlist; tests/schema-invariants.test.mjs fails if this row ever gains a
+ * column that could hold a name, birthdate, address, document image or number.
+ */
+export type VerificationAttestation = {
+  id: string;
+  account_id: string;
+  method: VerificationMethod;
+  document_type: VerificationDocumentType | null;
+  vendor_evaluation_id: string;
+  docv_reference_id: string | null;
+  state: VerificationState;
+  reason_codes: string[];
+  verified_at: string | null;
+  created_at: string;
+};
+
 type Table<Row, Rels extends Relationship[] = []> = {
   Row: Row;
   Insert: Partial<Row>;
@@ -236,6 +264,7 @@ export interface Database {
         CoopAffiliation,
         [FK<"coop_listing_id", "coop_listings">, FK<"account_id", "accounts">]
       >;
+      verification_attestations: Table<VerificationAttestation>;
     };
     Views: { [_ in never]: never };
     Functions: { [_ in never]: never };

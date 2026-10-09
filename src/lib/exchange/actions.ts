@@ -13,6 +13,7 @@ import {
 } from "@/lib/exchange/schema";
 import { CATEGORY_CLASSES } from "@/lib/exchange/axes";
 import { waiverAccepted } from "@/lib/exchange/waiver";
+import { requireVerifiedAccount } from "@/lib/verification/gate";
 import type { ParticipantClass } from "@/lib/types";
 
 /** No more than this many listings from one account in twenty-four hours. */
@@ -75,6 +76,8 @@ export async function createListing(
       error: "Posting needs a household licence. Browsing is free and always will be.",
     };
   }
+
+  await requireVerifiedAccount(accountId);
 
   if (!(await waiverAccepted(accountId))) {
     redirect("/exchange/waiver");
@@ -144,6 +147,8 @@ export async function replyToListing(
   if (!accountId) {
     return { ok: false, error: "Replying needs a household licence." };
   }
+
+  await requireVerifiedAccount(accountId);
 
   if (!(await waiverAccepted(accountId))) {
     redirect("/exchange/waiver");
