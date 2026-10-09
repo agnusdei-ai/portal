@@ -1,4 +1,4 @@
-import type { SearchHit, SearchProvider } from "../types";
+import type { SearchProvider } from "../types";
 
 /**
  * Google Programmable Search JSON API, the wave-one general provider (spec:

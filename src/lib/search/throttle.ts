@@ -68,7 +68,6 @@ const SEARCH_CAPACITY = 6;
 const SEARCH_REFILL_PER_MINUTE = 12;
 
 declare global {
-  // eslint-disable-next-line no-var
   var __searchThrottle: Throttle | undefined;
 }
 
