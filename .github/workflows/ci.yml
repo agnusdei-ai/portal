@@ -16,9 +16,10 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          # npm test runs `node --test "tests/*.test.mjs"` — a quoted glob the
-          # shell never expands. The test runner only expands glob patterns
-          # since Node 21, so pinning 20 would fail the gate on every PR.
+          # npm test runs `tsx --test tests/*.test.mjs`: the tests import the
+          # TypeScript sources directly (fixture-driven logic tests), which no
+          # Node version resolves without a loader. Any recent Node works; 22
+          # is what the suite is run against.
           node-version: 22
           cache: npm
 
