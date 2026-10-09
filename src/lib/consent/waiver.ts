@@ -14,7 +14,11 @@ import { documentHash, type ConsentDocument } from "@/lib/consent/document";
  * afterwards would have traded on a guarantee it was not providing. It is stated
  * first, in those words, and not softened.
  */
-const VERSION = "2026-08-08.2";
+// 2026-08-08.2 was the first version in force; 2026-10-09.1 adds the misuse
+// clause — no cryptocurrency dealing, no off-platform payment steering, no
+// automated bulk retrieval — and the version bump is what makes every account
+// re-accept exactly once (spec art_ztdch8TP, "Governing text").
+const VERSION = "2026-10-09.1";
 
 const LEAD =
   "The exchange is where you talk to other adults about materials, classes and co-operatives. Please read this before you use it, because it does not work the way Locuto messaging works.";
@@ -53,6 +57,13 @@ const SECTIONS = [
     body: [
       "You arrange handovers yourselves. Meet in a public place. We do not vet the people you meet, we are not a party to what you agree, and we do not hold anyone's money.",
       "Fraud is a crime and we will cooperate with a lawful investigation of one, but the first protection is your own caution.",
+    ],
+  },
+  {
+    heading: "No payments are arranged here, and no cryptocurrency at all",
+    body: [
+      "The exchange carries talk, not money. We never process a payment and we hold no one's funds, so a listing or reply that solicits one is not allowed: no cryptocurrency addresses, no requests for a wallet address, a seed phrase or a keystore, no bitcoin, ethereum or other coin transfers, and no steering to Cash App, Venmo, Zelle or any other payment app.",
+      "A submission that does this is blocked, and a caller that keeps trying has their session ended; both are kept in a safety-review record that shows the account and the action, not the message. Retrieving the portal's pages in bulk with automated tools is treated the same way.",
     ],
   },
   {
