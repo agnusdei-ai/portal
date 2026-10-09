@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { WAIVER, WAIVER_SHA256 } from "@/lib/consent/waiver";
 import { createClient } from "@/lib/supabase/server";
 import { requireAal2 } from "@/lib/auth/enforcement";
+import { requireVerifiedAccount } from "@/lib/verification/gate";
 import type { ExchangeActionState } from "@/lib/exchange/schema";
 
 /**
@@ -51,6 +52,8 @@ export async function acceptWaiver(
     .maybeSingle();
 
   if (!account) redirect("/setup");
+
+  await requireVerifiedAccount(account.id);
 
   const { error } = await supabase.from("communication_waivers").upsert(
     {

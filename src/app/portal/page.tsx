@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { seatNamesForAccount } from "@/lib/consent/record";
 import { createClient } from "@/lib/supabase/server";
+import { verificationGate } from "@/lib/verification/gate";
 import { LicenceForm } from "@/components/setup/licence-form";
 import { ButtonLink, Card } from "@/components/ui";
 import type { PortalRole, Seat } from "@/lib/types";
@@ -30,10 +31,17 @@ export default async function PortalPage() {
   // to show because nothing has been created.
   if (!account) redirect("/setup");
 
-  const [{ data: seats }, { data: roles }] = await Promise.all([
+  const [{ data: seats }, { data: roles }, { data: attestation }] = await Promise.all([
     supabase.from("seats").select("*").eq("account_id", account.id).order("issued_at"),
     supabase.from("user_roles").select("*").eq("user_id", user.id),
+    supabase
+      .from("verification_attestations")
+      .select("state")
+      .eq("account_id", account.id)
+      .maybeSingle(),
   ]);
+
+  const verified = verificationGate(attestation?.state ?? null) === "allowed";
 
   // The child account names live in the consent schema, which no client can
   // reach. Read here, server-side, having already established that this user
@@ -56,6 +64,20 @@ export default async function PortalPage() {
           Settings
         </Link>
       </div>
+
+      {!verified ? (
+        <Card className="mt-6 border-brand/40">
+          <h2 className="font-medium">Verify your identity to take part</h2>
+          <p className="mt-1 max-w-xl text-sm text-ink-soft">
+            The exchange is for adults. A one-time identity check with our
+            verification provider opens posting, replying, and licence keys —
+            your details go to the check and are not kept here.
+          </p>
+          <div className="mt-4">
+            <ButtonLink href="/portal/verify">Start verification</ButtonLink>
+          </div>
+        </Card>
+      ) : null}
 
       <h2 className="mt-10 text-lg font-medium">Seats</h2>
       <p className="mt-1 max-w-xl text-sm text-ink-soft">

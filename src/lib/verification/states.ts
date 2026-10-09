@@ -56,3 +56,15 @@ export function permittedDocuments(
 ): VerificationDocumentType[] {
   return residency === "us" ? ["drivers_license", "passport"] : ["passport"];
 }
+
+/**
+ * The verified-adult participation rule, pure and exported for the refusal
+ * tests: an account may take part in the exchange only on a verified
+ * attestation. Every other state — no attestation, pending, in review, in
+ * need of a retry, declined — is refused; browsing needs nothing.
+ */
+export function verificationGate(
+  state: VerificationState | null,
+): "allowed" | "verification-required" {
+  return state === "verified" ? "allowed" : "verification-required";
+}

@@ -8,6 +8,7 @@ import { createConsentCheckout } from "@/lib/billing/checkout";
 import { getRecord, openRecord } from "@/lib/consent/record";
 import { mintLicenceToken } from "@/lib/licence";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { requireVerifiedAccount } from "@/lib/verification/gate";
 
 export interface ActionState {
   ok: boolean;
@@ -143,6 +144,16 @@ export async function issueLicence(
 
   const user = await requireUser();
   const supabase = await createClient();
+
+  const { data: account } = await supabase
+    .from("accounts")
+    .select("id")
+    .eq("owner_user_id", user.id)
+    .maybeSingle();
+  if (!account) return { ok: false, error: "That seat is not yours." };
+
+  // A household credential is minted only to a verified adult.
+  await requireVerifiedAccount(account.id);
 
   // Read through the caller's own session, so RLS is what proves they own the
   // seat rather than a check written here that could drift from the policy.
