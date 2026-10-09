@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { challengeRequired, isExchangeWriteEntry, mfaSessionState } from "@/lib/auth/aal";
 
 /** Everything under these prefixes requires a session. */
 const PROTECTED_PREFIXES = ["/portal", "/setup/notice", "/setup/consent", "/exchange/new"];
@@ -70,6 +71,21 @@ export async function middleware(request: NextRequest) {
       idle.pathname = "/auth/idle";
       idle.search = "";
       return NextResponse.redirect(idle);
+    }
+
+    // AAL2 for participation writes (spec art_ztdch8TP, "Exchange
+    // enforcement"): once a factor is enrolled, the entry points of the
+    // exchange's write actions require a session that has satisfied it.
+    // The challenge page itself is exempt — it is how a session gets there.
+    if (isExchangeWriteEntry(pathname)) {
+      const state = await mfaSessionState(supabase);
+      if (challengeRequired(state)) {
+        const mfa = request.nextUrl.clone();
+        mfa.pathname = "/auth/mfa";
+        mfa.search = "";
+        mfa.searchParams.set("next", pathname);
+        return NextResponse.redirect(mfa);
+      }
     }
 
     response.cookies.set(ACTIVITY_COOKIE, String(Date.now()), {

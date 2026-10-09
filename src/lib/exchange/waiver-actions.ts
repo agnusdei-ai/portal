@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 import { WAIVER, WAIVER_SHA256 } from "@/lib/consent/waiver";
 import { createClient } from "@/lib/supabase/server";
+import { requireAal2 } from "@/lib/auth/enforcement";
 import type { ExchangeActionState } from "@/lib/exchange/schema";
 
 /**
@@ -20,6 +21,8 @@ export async function acceptWaiver(
   _prev: ExchangeActionState,
   formData: FormData,
 ): Promise<ExchangeActionState> {
+  await requireAal2();
+
   if (formData.get("accepted") !== "on") {
     return { ok: false, error: "Please confirm you have read it." };
   }
