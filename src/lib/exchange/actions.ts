@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
+import { requireAal2 } from "@/lib/auth/enforcement";
 import {
   EXCHANGE_IDLE,
   listingSchema,
@@ -48,6 +49,8 @@ export async function createListing(
   _prev: ExchangeActionState,
   formData: FormData,
 ): Promise<ExchangeActionState> {
+  await requireAal2();
+
   const parsed = listingSchema.safeParse({
     category: formData.get("category"),
     title: formData.get("title"),
@@ -123,6 +126,8 @@ export async function replyToListing(
   _prev: ExchangeActionState,
   formData: FormData,
 ): Promise<ExchangeActionState> {
+  await requireAal2();
+
   const parsed = replySchema.safeParse({
     listing_id: formData.get("listing_id"),
     body: formData.get("body"),

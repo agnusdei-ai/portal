@@ -222,3 +222,40 @@ test("settings hosts the enrollment card and the portal links to it", () => {
   assert.ok(portal.includes('"/portal/settings"'), "The portal home must link to settings.");
 });
 
+// The AAL2 enforcement wiring, structurally. The behavioral half lives in the
+// pure decisions above; what the structure must guarantee is that the gate is
+// actually in the path — a gate nobody calls protects no one.
+
+test("participation write actions require AAL2", () => {
+  const actions = readStripped(new URL("../src/lib/exchange/actions.ts", import.meta.url));
+  const waiverActions = readStripped(new URL("../src/lib/exchange/waiver-actions.ts", import.meta.url));
+  for (const source of [actions, waiverActions]) {
+    assert.ok(source.includes("requireAal2()"), "Participation writes must pass the AAL2 gate.");
+  }
+  // Withdrawing the waiver revokes participation; a safety valve must not
+  // itself require the second factor.
+  assert.ok(
+    waiverActions.indexOf("requireAal2()") < waiverActions.indexOf("withdrawWaiver"),
+    "The AAL2 gate must sit in acceptWaiver, not in withdrawWaiver.",
+  );
+});
+
+test("the middleware consults the assurance gate on exchange write entries", () => {
+  const middleware = readStripped(new URL("../src/middleware.ts", import.meta.url));
+  for (const call of ["isExchangeWriteEntry(", "mfaSessionState(", "challengeRequired("]) {
+    assert.ok(middleware.includes(call), `The middleware must use ${call}.`);
+  }
+  assert.ok(
+    middleware.indexOf("IDLE_LIMIT_MS) {") < middleware.indexOf("isExchangeWriteEntry("),
+    "The idle sign-out must fire before the AAL2 check.",
+  );
+});
+
+test("the enforcement gate routes a blocked action to the challenge", () => {
+  const enforcement = readStripped(new URL("../src/lib/auth/enforcement.ts", import.meta.url));
+  assert.ok(
+    enforcement.includes('redirect("/auth/mfa?next=/exchange")'),
+    "A blocked action must land on the challenge page, which returns to the exchange.",
+  );
+});
+
