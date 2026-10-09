@@ -6,16 +6,27 @@ import { useSearchParams } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/client";
 import { Alert, Button, Card, Field, Input } from "@/components/ui";
+import type { Provider } from "@supabase/supabase-js";
+
+/** Supabase's Microsoft entry point is the `azure` provider. */
+const PROVIDERS: { id: Provider; label: string }[] = [
+  { id: "google", label: "Continue with Google" },
+  { id: "azure", label: "Continue with Microsoft" },
+  { id: "github", label: "Continue with GitHub" },
+];
 
 function LoginForm() {
   const params = useSearchParams();
   const next = params.get("next") ?? "/portal";
   const isSignup = params.get("mode") === "signup";
   const expired = params.get("expired") === "1";
+  const callbackError = params.get("error");
 
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(
+    callbackError ? "That sign-in link has expired or was already used. Start again." : null,
+  );
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -41,6 +52,23 @@ function LoginForm() {
     setStatus("sent");
   }
 
+  async function signInWith(provider: Provider) {
+    setError(null);
+    const supabase = createClient();
+    const origin =
+      process.env.NEXT_PUBLIC_SITE_URL ?? (typeof window !== "undefined" ? window.location.origin : "");
+
+    // The callback route exchanges the PKCE code, routes an enrolled factor
+    // to the challenge, and only then continues to `next`.
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(next)}`,
+      },
+    });
+    if (error) setError(error.message);
+  }
+
   return (
     <Card className="w-full max-w-sm p-8">
       <h1 className="text-2xl font-semibold">
@@ -62,23 +90,45 @@ function LoginForm() {
       ) : null}
 
       {status !== "sent" ? (
-        <form onSubmit={onSubmit} className="mt-6 space-y-4">
-          {error ? <Alert>{error}</Alert> : null}
-          <Field label="Email">
-            <Input
-              type="email"
-              name="email"
-              required
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-            />
-          </Field>
-          <Button type="submit" className="w-full" disabled={status === "sending"}>
-            {status === "sending" ? "Sending…" : "Email me a link"}
-          </Button>
-        </form>
+        <>
+          <form onSubmit={onSubmit} className="mt-6 space-y-4">
+            {error ? <Alert>{error}</Alert> : null}
+            <Field label="Email">
+              <Input
+                type="email"
+                name="email"
+                required
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+              />
+            </Field>
+            <Button type="submit" className="w-full" disabled={status === "sending"}>
+              {status === "sending" ? "Sending…" : "Email me a link"}
+            </Button>
+          </form>
+
+          <div className="mt-6">
+            <div className="flex items-center gap-3 text-xs text-ink-faint">
+              <span className="h-px flex-1 bg-rule" />
+              or continue with
+              <span className="h-px flex-1 bg-rule" />
+            </div>
+            <div className="mt-3 space-y-2">
+              {PROVIDERS.map((p) => (
+                <Button
+                  key={p.id}
+                  variant="secondary"
+                  className="w-full"
+                  onClick={() => signInWith(p.id)}
+                >
+                  {p.label}
+                </Button>
+              ))}
+            </div>
+          </div>
+        </>
       ) : null}
 
       <p className="mt-6 text-xs text-ink-faint">
