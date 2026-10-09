@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { createClient } from "@/lib/supabase/server";
 import { ButtonLink, Card } from "@/components/ui";
+import { CoopDirectory } from "@/components/coops/directory";
 
 export const metadata: Metadata = {
   title: "Homeschool co-op directory",
@@ -16,7 +17,13 @@ export default async function CoopsPage({
 }) {
   const { state } = await searchParams;
   const supabase = await createClient();
-  let q = supabase.from("coop_listings").select("*").eq("is_listed", true).order("name");
+  let q = supabase
+    .from("coop_listings")
+    .select(
+      "id, name, state_code, region, description, meeting_day, meeting_area_lat, meeting_area_lng, meeting_area_radius_mi",
+    )
+    .eq("is_listed", true)
+    .order("name");
   if (state) q = q.eq("state_code", state.toUpperCase());
   const { data } = await q;
   const coops = data ?? [];
@@ -35,20 +42,7 @@ export default async function CoopsPage({
           publish theirs from the portal.
         </Card>
       ) : (
-        <ul className="mt-8 grid gap-4 md:grid-cols-2">
-          {coops.map((c) => (
-            <li key={c.id}>
-              <Card className="h-full">
-                <h2 className="text-lg font-semibold">{c.name}</h2>
-                <p className="text-sm text-ink-faint">
-                  {[c.region, c.state_code].filter(Boolean).join(", ")}
-                  {c.meeting_day ? ` · Meets ${c.meeting_day}` : ""}
-                </p>
-                <p className="mt-3 text-sm text-ink-soft">{c.description}</p>
-              </Card>
-            </li>
-          ))}
-        </ul>
+        <CoopDirectory coops={coops} />
       )}
 
       <Card className="mt-10 flex flex-wrap items-center justify-between gap-4 p-6">
