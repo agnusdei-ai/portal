@@ -29,7 +29,7 @@ export type ConsentState =
   | "withdrawn"
   | "disputed";
 
-export type OnboardingPersona = "parent" | "educator" | "guide";
+export type OnboardingPersona = "parent" | "educator" | "guide" | "tutor";
 
 export type VerificationMethod = "socure_id_plus_docv";
 export type VerificationDocumentType = "drivers_license" | "passport";

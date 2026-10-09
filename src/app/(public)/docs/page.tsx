@@ -1,9 +1,8 @@
 import Link from "next/link";
 
-import { Card } from "@/components/ui";
-import { DOC_SETS, TUTOR_SLOT } from "@/lib/docs/content";
+import { DOC_SETS } from "@/lib/docs/content";
 
-/** The docs index: a shelf per persona, and a held seat for the tutor. */
+/** The docs index: a shelf per persona. */
 export default function DocsPage() {
   return (
     <div className="mx-auto max-w-4xl px-6 py-12">
@@ -34,13 +33,6 @@ export default function DocsPage() {
             </ul>
           </section>
         ))}
-
-        <section>
-          <h2 className="text-lg font-medium text-ink-faint">{TUTOR_SLOT.label}</h2>
-          <Card className="mt-3 border-dashed bg-parchment-deep/30">
-            <p className="text-sm text-ink-soft">{TUTOR_SLOT.note}</p>
-          </Card>
-        </section>
       </div>
     </div>
   );

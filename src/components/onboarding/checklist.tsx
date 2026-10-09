@@ -40,7 +40,7 @@ export function OnboardingChecklist({ steps }: { steps: readonly OnboardingStep[
                 <ButtonLink href={step.href}>{step.linkLabel}</ButtonLink>
               )}
 
-              {!step.done && step.selfMarkable ? (
+              {!step.done && step.selfMarkable && !step.waitsOnVouching ? (
                 <form action={markStepDone}>
                   <input type="hidden" name="stepId" value={step.id} />
                   <Button variant="secondary">Mark done</Button>

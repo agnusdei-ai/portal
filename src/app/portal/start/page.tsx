@@ -9,14 +9,10 @@ import {
   buildChecklist,
   checklistComplete,
   isPersona,
+  vouchClass,
 } from "@/lib/onboarding/checklist";
 import { choosePersona, currentOnboarding } from "@/lib/onboarding/actions";
 import type { OnboardingPersona, VerificationState } from "@/lib/types";
-
-/** The class a persona's vouch elevates to (coop_affiliations.class). */
-function vouchClass(persona: OnboardingPersona): "teacher" | "guide" | null {
-  return persona === "educator" ? "teacher" : persona === "guide" ? "guide" : null;
-}
 
 export default async function StartPage() {
   const supabase = await createClient();
@@ -81,7 +77,7 @@ export default async function StartPage() {
         Every path passes the same identity check. What differs is where it
         takes you afterwards. You can change this later.
       </p>
-      <div className="mt-4 grid gap-3 sm:grid-cols-3">
+      <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {(Object.keys(PERSONA_COPY) as OnboardingPersona[]).map((p) => (
           <Card
             key={p}

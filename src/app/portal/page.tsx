@@ -9,6 +9,7 @@ import {
   buildChecklist,
   checklistComplete,
   isPersona,
+  vouchClass,
 } from "@/lib/onboarding/checklist";
 import { LicenceForm } from "@/components/setup/licence-form";
 import { ButtonLink, Card } from "@/components/ui";
@@ -89,7 +90,7 @@ export default async function PortalPage() {
   // The persistent first-run checklist: same builder as /portal/start, a
   // banner-sized summary here. It disappears only when every step is done.
   const persona = isPersona(onboarding.persona) ? onboarding.persona : "parent";
-  const neededClass = persona === "educator" ? "teacher" : persona === "guide" ? "guide" : null;
+  const neededClass = vouchClass(persona);
   const startSteps = buildChecklist(persona, {
     hasAccount: true,
     verificationState: attestation?.state ?? null,

@@ -4,16 +4,16 @@ import type { OnboardingPersona } from "@/lib/types";
  * The persona checklist (spec art_ztdch8TP, "Personas and guided onboarding").
  *
  * Pure and import-free on purpose: the checklist is a decision, and the tests
- * execute the decision directly. Three personas ship — parent/co-op member is
- * the default path; educator and guide are the same trust path (verify first)
- * with vouching-gated steps. The tutor persona is deferred pending the
- * operator's portal-assistant ruling and appears nowhere here.
+ * execute the decision directly. Four personas ship — parent/co-op member is
+ * the default path; educator, guide, and tutor are the same trust path (verify
+ * first, then a co-operative's vouch) with vouching-gated steps. The tutor's
+ * final step is guidance to the shipped agent API (phase B, option C): the
+ * portal deliberately keeps no record of a household agent system, so like the
+ * parent's co-op discovery it is the path's one human-choice step.
  *
- * The no-bypass rule is structural: every step's `done` comes from a system
- * fact — the consent transaction, the attestation, an unrevoked vouch, a
- * listing or reply — except the one step that is a human choice (finding a
- * co-operative), and only that id is ever read from `markedSteps`. There is
- * no flag, literal, or path by which a caller can mark a derived step done.
+ * The no-bypass rule is structural: every other step's `done` comes from a
+ * system fact — the consent transaction, the attestation, an unrevoked vouch,
+ * a listing or reply — and no caller can mark a derived step done.
  */
 
 export type { OnboardingPersona as Persona };
@@ -34,10 +34,17 @@ export const PERSONA_COPY: Record<OnboardingPersona, { label: string; blurb: str
     blurb:
       "Verify first; a co-operative's vouch elevates your account to the guide class. The platform does not credential — vouching alone does.",
   },
+  tutor: {
+    label: "Tutor (agent to agent)",
+    blurb:
+      "Verify first; a co-operative's vouch elevates your account to the tutor's teaching class. Then your own household systems reach the vetted discovery API as you — tutoring runs there, never here.",
+  },
 };
 
 export function isPersona(value: unknown): value is OnboardingPersona {
-  return value === "parent" || value === "educator" || value === "guide";
+  return (
+    value === "parent" || value === "educator" || value === "guide" || value === "tutor"
+  );
 }
 
 export type ChecklistFacts = {
@@ -80,20 +87,40 @@ const VERIFY_STEP: Omit<OnboardingStep, "done" | "selfMarkable" | "waitsOnVouchi
   docSlug: null,
 };
 
-/** Educator and guide share one trust path; only the class the vouch elevates differs. */
+/**
+ * The class a persona's vouch elevates to (coop_affiliations.class, 0002).
+ * Tutors ride the teaching class — "an adult offering instruction, vouched
+ * for by a co-operative" — which is the class the agent API publishes to
+ * parent principals through the parent ↔ teacher axis. A parent's path needs
+ * no vouch, so null.
+ */
+export function vouchClass(persona: OnboardingPersona): "teacher" | "guide" | null {
+  if (persona === "guide") return "guide";
+  if (persona === "parent") return null;
+  return "teacher";
+}
+
+/** Educator, guide, and tutor share one trust path; only the vouch's class and words differ. */
 function vouchStep(
   persona: Exclude<OnboardingPersona, "parent">,
 ): Omit<OnboardingStep, "done" | "selfMarkable" | "waitsOnVouching"> {
+  const word = {
+    educator: { people: "educators", klass: "educator" },
+    guide: { people: "guides", klass: "guide" },
+    tutor: { people: "tutors", klass: "tutor's teaching" },
+  }[persona];
   return {
     id: "vouch",
     title: "Get vouched by a co-operative",
-    description:
-      persona === "educator"
-        ? "The portal certifies that you are an adult and nothing else. It does not credential educators: a co-operative's vouch is what elevates your account to the educator class."
-        : "The portal certifies that you are an adult and nothing else. It does not credential guides: a co-operative's vouch is what elevates your account to the guide class.",
+    description: `The portal certifies that you are an adult and nothing else. It does not credential ${word.people}: a co-operative's vouch is what elevates your account to the ${word.klass} class.`,
     href: "/coops",
     linkLabel: "Find a co-operative to vouch for you",
-    docSlug: persona === "educator" ? "educator-vouching" : "guide-onboarding",
+    docSlug:
+      persona === "educator"
+        ? "educator-vouching"
+        : persona === "tutor"
+          ? "tutor-onboarding"
+          : "guide-onboarding",
   };
 }
 
@@ -148,6 +175,37 @@ export function buildChecklist(
         done: facts.hasParticipated,
         selfMarkable: false,
         waitsOnVouching: false,
+      },
+    ];
+  }
+
+  if (persona === "tutor") {
+    return [
+      {
+        ...VERIFY_STEP,
+        done: verified,
+        selfMarkable: false,
+        waitsOnVouching: false,
+      },
+      {
+        ...vouchStep(persona),
+        done: facts.vouched,
+        selfMarkable: false,
+        waitsOnVouching: false,
+      },
+      {
+        id: "enroll",
+        title: "Connect your household agent system",
+        description:
+          "Your tutoring runs on systems you own, never here. Point them at the portal's vetted discovery API: it speaks for you only while you are signed in, verified, and vouched, and it returns trust signals — never identity details.",
+        href: "/docs/tutor-agent-interface",
+        linkLabel: "Read the agent-interface guide",
+        docSlug: "tutor-agent-interface",
+        // The portal keeps no record of a household agent system — by design —
+        // so, like the parent's co-op discovery, this is a human-choice step.
+        done: marked("enroll"),
+        selfMarkable: true,
+        waitsOnVouching: !facts.vouched,
       },
     ];
   }
