@@ -1,0 +1,34 @@
+import { redirect } from "next/navigation";
+
+import { TotpEnroll } from "@/components/auth/TotpEnroll";
+import { createClient } from "@/lib/supabase/server";
+import { Card } from "@/components/ui";
+
+export default async function SettingsPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login?next=/portal/settings");
+
+  const { data: factors } = await supabase.auth.mfa.listFactors();
+  const enrolled = (factors?.all ?? []).some(
+    (f) => f.factor_type === "totp" && f.status === "verified",
+  );
+
+  return (
+    <div className="mx-auto max-w-4xl px-6 py-12">
+      <h1 className="text-3xl font-semibold">Settings</h1>
+
+      <h2 className="mt-10 text-lg font-medium">Two-factor sign-in</h2>
+      <p className="mt-1 max-w-xl text-sm text-ink-soft">
+        A second step at sign-in: a rotating 6-digit code from an authenticator
+        app. Once enrolled, exchange actions require it in the same session —
+        sign-in asks for the code first.
+      </p>
+      <Card className="mt-4">
+        <TotpEnroll initiallyEnrolled={enrolled} />
+      </Card>
+    </div>
+  );
+}

@@ -49,6 +49,12 @@ export default async function PortalPage() {
             {roles.map((r) => ROLE_COPY[r.role]).join(" · ")}
           </span>
         ) : null}
+        <Link
+          href="/portal/settings"
+          className="ml-auto text-sm text-ink-soft underline"
+        >
+          Settings
+        </Link>
       </div>
 
       <h2 className="mt-10 text-lg font-medium">Seats</h2>

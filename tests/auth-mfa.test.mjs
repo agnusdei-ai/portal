@@ -188,3 +188,37 @@ test("no sign-in path creates an account", () => {
     "Only the Stripe webhook may create an account. An account ahead of the §3 charge would break the consent instrument.",
   );
 });
+
+// The enrollment and challenge surfaces, structurally. The MFA API is
+// vendor-locked in Supabase's client, so what matters here is that the
+// enrollment rides the standard otpauth:// secret — the reason one QR code
+// serves Google, Microsoft, and Yubico authenticators.
+
+const enroll = readStripped(new URL("../src/components/auth/TotpEnroll.tsx", import.meta.url));
+
+test("enrollment enrolls TOTP and renders the standard otpauth secret", () => {
+  assert.ok(enroll.includes('enroll({ factorType: "totp" })'), "Enrollment must request a TOTP factor.");
+  assert.ok(enroll.includes("data.totp.uri"), "The QR must encode the standard otpauth:// URI.");
+  assert.ok(enroll.includes("data.totp.secret"), "A manual-entry secret must accompany the QR.");
+  for (const call of ["mfa.challenge(", "mfa.verify("]) {
+    assert.ok(enroll.includes(call), `Enrollment must confirm through ${call}.`);
+  }
+  // Supabase never sees the rendered QR; it is drawn in the browser from the
+  // enrollment response.
+  assert.ok(enroll.includes("QRCode.toDataURL"), "The QR must be rendered locally.");
+});
+
+test("the challenge page verifies a code and promotes to AAL2 by navigation", () => {
+  const page = readStripped(new URL("../src/app/auth/mfa/page.tsx", import.meta.url));
+  for (const call of ["getAuthenticatorAssuranceLevel", "mfa.listFactors", "mfa.challenge(", "mfa.verify("]) {
+    assert.ok(page.includes(call), `The challenge page must use ${call}.`);
+  }
+});
+
+test("settings hosts the enrollment card and the portal links to it", () => {
+  const settings = readStripped(new URL("../src/app/portal/settings/page.tsx", import.meta.url));
+  assert.ok(settings.includes("<TotpEnroll"), "Settings must host the enrollment card.");
+  const portal = readStripped(new URL("../src/app/portal/page.tsx", import.meta.url));
+  assert.ok(portal.includes('"/portal/settings"'), "The portal home must link to settings.");
+});
+
