@@ -27,7 +27,7 @@ test("the only live download links are official Signal URLs", () => {
 test("the page does not pretend to offer app-account verification or encrypted Portal replies", () => {
   assert.match(page, /messaging-account confirmation has not launched/i);
   assert.match(page, /not end-to-end encrypted/i);
-  assert.match(page, /not.*replace identity verification/);
+  assert.match(page, /cannot\s+replace identity verification/);
   assert.doesNotMatch(page, /<form/);
   assert.doesNotMatch(page, /<button/);
 });
