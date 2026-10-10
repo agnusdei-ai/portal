@@ -21,7 +21,7 @@ export default async function DocPage({
     <article className="mx-auto max-w-2xl px-6 py-12">
       <p className="text-sm text-ink-faint">
         <Link href="/docs" className="underline">
-          Guides
+          Help &amp; guides
         </Link>
       </p>
       <h1 className="mt-2 text-3xl font-semibold">{doc.title}</h1>
