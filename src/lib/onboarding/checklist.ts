@@ -20,24 +20,24 @@ export type { OnboardingPersona as Persona };
 
 export const PERSONA_COPY: Record<OnboardingPersona, { label: string; blurb: string }> = {
   parent: {
-    label: "Parent / co-op member",
+    label: "Parent or co-op member",
     blurb:
-      "The default path: consent, verification, finding a co-operative, and taking part in the exchange.",
+      "Find a co-op, explore resources and exchange materials with other adults.",
   },
   educator: {
-    label: "K-12 educator",
+    label: "Teacher",
     blurb:
-      "Verify first; a co-operative's vouch elevates your account to the educator class. The platform does not credential — vouching alone does.",
+      "Share co-op classes after a co-op confirms your teaching role.",
   },
   guide: {
     label: "Homeschool guide",
     blurb:
-      "Verify first; a co-operative's vouch elevates your account to the guide class. The platform does not credential — vouching alone does.",
+      "Connect with co-ops that need someone to lead group classes.",
   },
   tutor: {
-    label: "Tutor (agent to agent)",
+    label: "Tutor",
     blurb:
-      "Verify first; a co-operative's vouch elevates your account to the tutor's teaching class. Then your own household systems reach the vetted discovery API as you — tutoring runs there, never here.",
+      "A co-op can confirm your role. Household-owned tools may use the limited discovery API; tutoring is not hosted here.",
   },
 };
 
@@ -79,9 +79,9 @@ export type OnboardingStep = {
 
 const VERIFY_STEP: Omit<OnboardingStep, "done" | "selfMarkable" | "waitsOnVouching"> = {
   id: "verify",
-  title: "Verify that you are an adult",
+  title: "Confirm you are an adult",
   description:
-    "A one-time identity check with our verification provider opens participation everywhere. Your details go to the check and are not kept here.",
+    "Our verification partner checks your identity so you can post or reply in the Exchange. We keep the result, not your identity documents.",
   href: "/portal/verify",
   linkLabel: "Start verification",
   docSlug: null,
@@ -111,10 +111,10 @@ function vouchStep(
   }[persona];
   return {
     id: "vouch",
-    title: "Get vouched by a co-operative",
-    description: `The portal certifies that you are an adult and nothing else. It does not credential ${word.people}: a co-operative's vouch is what elevates your account to the ${word.klass} class.`,
+    title: "Ask your co-op to confirm your role",
+    description: `The identity check confirms you are an adult. A co-op that knows your work must confirm your role before you can post as one of its ${word.people}.`,
     href: "/coops",
-    linkLabel: "Find a co-operative to vouch for you",
+    linkLabel: "Find a co-op",
     docSlug:
       persona === "educator"
         ? "educator-vouching"
@@ -136,9 +136,9 @@ export function buildChecklist(
       {
         ...VERIFY_STEP,
         id: "consent",
-        title: "Start with the consent transaction",
+        title: "Review the notice and consent",
         description:
-          "The one-time notice and card charge create your household account; the issuer's notification to you is the parental consent.",
+          "Review the notice and complete the required payment on your own card. It provides the consent needed to create your household account.",
         href: "/setup",
         linkLabel: "Review the notice",
         docSlug: "parent-getting-started",
@@ -154,11 +154,11 @@ export function buildChecklist(
       },
       {
         id: "coop",
-        title: "Find your co-operative",
+        title: "Explore local co-ops",
         description:
-          "Browse the directory by state and region. A listing advertises existence — the meeting place is arranged privately, through the relay.",
+          "Browse co-ops by state or area. Contact a co-op through its available enquiry path to learn more.",
         href: "/coops",
-        linkLabel: "Browse co-operatives",
+        linkLabel: "Find co-ops",
         docSlug: "parent-coop-membership",
         done: marked("coop"),
         selfMarkable: true,
@@ -168,7 +168,7 @@ export function buildChecklist(
         id: "participate",
         title: "Take part in the exchange",
         description:
-          "Post a listing or reply to one. The communication waiver is accepted at first participation.",
+          "Post a listing or reply to one after accepting the separate Exchange communication waiver.",
         href: "/exchange",
         linkLabel: "Open the exchange",
         docSlug: "parent-waiver-plain-language",
@@ -195,11 +195,11 @@ export function buildChecklist(
       },
       {
         id: "enroll",
-        title: "Connect your household agent system",
+        title: "Explore the tutor discovery guide",
         description:
-          "Your tutoring runs on systems you own, never here. Point them at the portal's vetted discovery API: it speaks for you only while you are signed in, verified, and vouched, and it returns trust signals — never identity details.",
+          "Tutoring stays on household-owned systems. The Portal provides limited co-op and tutor discovery information, not tutoring or private messages.",
         href: "/docs/tutor-agent-interface",
-        linkLabel: "Read the agent-interface guide",
+        linkLabel: "Read the tutor discovery guide",
         docSlug: "tutor-agent-interface",
         // The portal keeps no record of a household agent system — by design —
         // so, like the parent's co-op discovery, this is a human-choice step.
@@ -229,8 +229,8 @@ export function buildChecklist(
       title: persona === "educator" ? "Offer instruction" : "Work with your co-operative",
       description:
         persona === "educator"
-          ? "Post a class offering as an educator, and reply through the relay."
-          : "Reply through the relay; leading classes is arranged with the co-operative that vouched for you.",
+          ? "Post a co-op class offering and read replies in the Portal."
+          : "Reply in the Portal and arrange group classes with the co-op that confirmed your role.",
       href: "/exchange",
       linkLabel: "Open the exchange",
       docSlug,
