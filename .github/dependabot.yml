@@ -1,0 +1,14 @@
+# Weekly dependency updates: npm packages and the GitHub Actions this repo
+# runs. Updates land as normal PRs; the dependency-audit job in ci.yml
+# decides whether the chain is clean enough to merge.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
