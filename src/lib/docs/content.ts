@@ -47,6 +47,7 @@ export const DOC_SETS: PersonaDocs[] = [
               "First, review the parental consent notice and complete the required card payment for a child. The account is created after the charge succeeds. You can browse curriculum, co-ops and listings without paying.",
               "Next, verify your identity. Only real, verified adults may join and take part in the Exchange. Bots, synthetic identities and agents acting for a human cannot be members.",
               "Then explore local co-ops, exchange learning materials, and save resources you want to revisit. Your home page shows the next steps.",
+              "Private messaging is optional. Locuto is our preferred app and Signal is an alternative. You do not need either to be a member. For now, Exchange replies remain in the Portal and are not end-to-end encrypted.",
             ],
           },
           {
@@ -112,7 +113,7 @@ export const DOC_SETS: PersonaDocs[] = [
             heading: "The part that matters",
             body: [
               "Exchange replies are not end-to-end encrypted. Agnus Dei can read them for safety and fraud review. This is explained in the separate waiver you accept before posting or replying.",
-              "Replies arrive in your Portal inbox. They do not create a Locuto contact or automatically reveal a Locuto identity. Please avoid sharing sensitive details here.",
+              "Replies arrive in your Portal inbox. They do not create a Locuto or Signal contact. If two adults later choose to chat privately, they can independently agree to use Locuto or Signal. Neither app is required for membership. Please avoid sharing sensitive details in Portal replies.",
             ],
           },
           {
