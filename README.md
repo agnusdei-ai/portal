@@ -1,5 +1,20 @@
 # Agnus Dei — parent portal
 
+Agnus Dei Portal helps homeschooling families find co-ops, browse curriculum
+and exchange learning materials. The public directories are open to everyone.
+Verified adults with eligible accounts can post listings and reply through the
+Portal. Bede's household learning data belongs on hardware the family controls.
+
+**Messaging today:** Exchange replies are stored by the Portal and **are not
+end-to-end encrypted**. Operators may read them for safety and fraud review.
+Connecting a Portal contact request to Agnus Dei's Locuto messenger is planned,
+not implemented. See [the copy guide](docs/voice-and-security.md) and
+[the implementation checklist](docs/implementation-checklist.md).
+
+**Release status:** pre-release. This README describes the code, not a
+production deployment claim. The earlier September 30, 2026 target is historical,
+not a current launch commitment. See [CHANGELOG.md](CHANGELOG.md).
+
 **`locuto/docs/portal.md` is normative over this repository.** Where this code and
 that document disagree, that document governs and this code is wrong. Read it
 before changing anything here.
@@ -155,6 +170,20 @@ Suspended rather than deleted, because the record is what an investigation needs
 Also here: per-account daily listing limits, per-listing reporting, and expiry.
 That is the whole moderation toolkit, and the vouch is the strongest part of it.
 
+## Work under consideration
+
+**Portal-to-Locuto messaging:** Public discovery and the existing adults-only
+Exchange remain separate from private messages. The proposed path is an
+adult-only interest request, recipient acceptance, explicit contact verification
+and a native Locuto handoff. It cannot be described as shipped until the
+governing Locuto specification is amended, the Portal and clients interoperate,
+and release tests pass. The current waiver remains valid while replies stay
+readable by the operator.
+
+**Human-first copy:** The current branch rewrites screens without changing
+account permissions or encryption. The voice guide and checklist identify the
+remaining decisions and follow-up changes.
+
 ## Getting started
 
 ```bash
@@ -218,18 +247,16 @@ and discarded.
 implicit index signature, so it fails supabase-js's `GenericSchema` constraint and
 silently degrades every query in the codebase to `never`.
 
-## Not done
+## Known gaps and decisions
 
-- **Decision 61 is unanswered**, and it governs where the zone boundary falls. The
-  current shape assumes a per-seat licence, which makes consent-per-child fall out
-  naturally and sidesteps the flat-licence awkwardness in `parental-consent.md` §6.
+- **Decision 61 is partly settled:** one paid licence per child is the
+  chosen consent and licensing model. The remaining decision is whether
+  household deployments are licensed self-hosting or a hosted service.
 - **The co-op director experience** is a role, a policy and a vouch table, with
   no screens yet. Vouches must currently be inserted directly.
 - **Retention periods** for the fraud record are unset. `docs/portal.md` §13
   wants `observability.md` §6's treatment applied and that has not been done.
 - **The §6c liability term needs counsel review** before it is relied on.
-- **Decision 61 is only partly answered.** Per-seat settles the licensing
-  granularity; licensed self-hosting versus a hosted service is still open.
 - **Consent withdrawal** (`parental-consent.md` §5) is not built. The function
   that existed had no caller and was deleted rather than left as inventory.
 - **Moderator screens** for the report queue. `reportListing` is kept because
