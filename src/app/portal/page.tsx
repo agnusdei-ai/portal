@@ -215,6 +215,18 @@ export default async function PortalPage() {
         </Link>
       </div>
 
+      <Card className="mt-8">
+        <h2 className="font-medium">Private messaging is your choice</h2>
+        <p className="mt-2 text-sm text-ink-soft">
+          Locuto is our recommended app, and Signal is an option too.
+          Neither is required to join or verify your identity.
+          Setting up either app is separate from the Portal.
+        </p>
+        <Link href="/portal/messaging" className="mt-3 inline-block text-sm font-medium text-brand underline">
+          See messaging options
+        </Link>
+      </Card>
+
       <h2 className="mt-12 text-lg font-medium">Bede licences</h2>
       <p className="mt-1 max-w-xl text-sm text-ink-soft">
         Each licence covers one child. Your child&apos;s learning records belong
