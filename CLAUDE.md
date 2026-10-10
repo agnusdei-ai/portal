@@ -45,4 +45,4 @@ just write the ten lines?"
 
 `locuto/docs/portal.md` governs *what* this repository does. This file governs *how much code* is
 allowed to do it. Where a lean instinct and a compliance requirement conflict, compliance wins and
-the reason goes in one comment — that is the exception, not a licence to narrate.
+the reason goes in one comment — that is the exception, not a license to narrate.
