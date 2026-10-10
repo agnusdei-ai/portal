@@ -65,17 +65,16 @@ export default async function StartPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-12">
-      <h1 className="text-3xl font-semibold">Getting started</h1>
+      <h1 className="text-3xl font-semibold">Let&apos;s get you started</h1>
       <p className="mt-2 max-w-xl text-sm text-ink-soft">
-        Your first days here, one step at a time. The steps stay until they are
-        done — none is skippable, because each is what lets the next mean
-        something.
+        We&apos;ll help you through the steps for your role. Some steps require
+        verification or confirmation from a co-op.
       </p>
 
-      <h2 className="mt-10 text-lg font-medium">Which path is yours?</h2>
+      <h2 className="mt-10 text-lg font-medium">How will you use Agnus Dei?</h2>
       <p className="mt-1 max-w-xl text-sm text-ink-soft">
-        Every path passes the same identity check. What differs is where it
-        takes you afterwards. You can change this later.
+        Choose the description that fits you best. You can change it later.
+        Everyone who takes part in the Exchange must complete an adult identity check.
       </p>
       <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {(Object.keys(PERSONA_COPY) as OnboardingPersona[]).map((p) => (
@@ -92,10 +91,10 @@ export default async function StartPage() {
               <div className="mt-3">
                 {p === persona ? (
                   <Button variant="secondary" disabled>
-                    Your path
+                    Selected
                   </Button>
                 ) : (
-                  <Button variant="ghost">Use this path</Button>
+                  <Button variant="ghost">Choose this role</Button>
                 )}
               </div>
             </form>
@@ -106,10 +105,10 @@ export default async function StartPage() {
       <h2 className="mt-10 text-lg font-medium">Your steps</h2>
       {done ? (
         <Card className="mt-4 border-brand/40">
-          <h3 className="font-medium">Your path is set up.</h3>
+          <h3 className="font-medium">You&apos;re all set with these steps.</h3>
           <p className="mt-1 max-w-xl text-sm text-ink-soft">
-            Everything here is done. From now on the portal home is your desk:
-            seats, bookmarks and replies.
+            You can return to your home page to manage licences,
+            saved resources and Exchange replies.
           </p>
         </Card>
       ) : null}
@@ -118,10 +117,10 @@ export default async function StartPage() {
       </div>
 
       <Card className="mt-8 bg-parchment-deep/40">
-        <h3 className="font-medium">What verification does and does not confer</h3>
+        <h3 className="font-medium">What the identity check means</h3>
         <p className="mt-1 max-w-xl text-sm text-ink-soft">
-          The portal certifies that you are an adult and nothing else. Standing
-          is earned in the co-operative, never issued by the platform —{" "}
+          The check confirms that you are an adult. It is not a teaching
+          qualification or a background check. A co-op confirms teaching roles —{" "
           <Link href="/docs" className="underline">
             the guides explain
           </Link>
