@@ -120,7 +120,7 @@ export default async function StartPage() {
         <h3 className="font-medium">What the identity check means</h3>
         <p className="mt-1 max-w-xl text-sm text-ink-soft">
           The check confirms that you are an adult. It is not a teaching
-          qualification or a background check. A co-op confirms teaching roles —{" "
+          qualification or a background check. A co-op confirms teaching roles —{" "}
           <Link href="/docs" className="underline">
             the guides explain
           </Link>
