@@ -20,8 +20,8 @@
 
 | ID | Owner to approve | Choice / proposed answer | Acceptance requirement |
 | --- | --- | --- | --- |
-| P01 | Product + security | v1 Locuto handoff: native app and out-of-band code verification first | No silent member-to-Locuto account mapping |
-| P02 | Security | Remote invitation: defer until its interception, replay, MITM and revocation threats are reviewed | Unverified cannot be mislabeled Verified |
+| P01 | Product + security | Optional private messaging: Locuto (recommended), Signal, or no app until needed | Membership remains available without messaging setup |
+| P02 | Security | Locuto out-of-band peer check or Signal's own contact link and safety-number checks; no silently trusted introduction | App control and peer trust are not confused with human identity |
 | P03 | Product + safety | First-contact request: fixed interest types with no user-written message | No plaintext pre-chat sensitive material |
 | P04 | Safety + security | Request expiry, sender limits, decline/block and reporting policy | Verified actors only; abuse tests |
 | P05 | Security + identity vendor | Identity assurance: define liveness, synthetic-ID and impersonation detection, uniqueness, expiry, recheck, revocation and manual re-verification | Verified flag is evidence-backed and not permanently trusted by default |
@@ -33,6 +33,10 @@
 | P11 | Platform | Portal hosting/TLS, session separation, MFA, CI, rollback and monitoring | Security checks tied to exact deployment commit |
 | P12 | Product + platform | Browser encrypted client only if native phase passes evidence gates | No home-grown browser encryption |
 | P13 | Legal + product | Co-op self-service, parent consent eligibility and hosted/self-hosted licensing | No unshipped UI promises or policy shortcuts |
+| P14 | Security + product | Confirm delivery feasibility for an optional Locuto challenge; defer automatic Signal confirmation absent a reviewed integration | No unsupported provider identity claim |
+| P15 | Security + privacy | Approve challenge lifetime, confirmation method, anti-replay, retention, account scoping and cancellation | Only a recent provider proof earns a channel confirmation label |
+| P16 | Product + safety | Adults using different apps, or none, can decline/defer an introduction without losing membership | No forced app installation |
+| P17 | Product | Add Locuto's official App Store link after independent verification of release | No invented or premature download link |
 
 ## Work ordered by dependency
 
@@ -41,8 +45,10 @@
 - [ ] **W03 — Agent credential separation**: remove capability for an agent to act using a member's full session; replace read-only discovery with explicit, revocable, narrowly scoped non-member access only when authorized. No agent initiation of member activity.
 - [ ] **W04 — Governing protocol alignment**: update the private Locuto specification and reconcile privacy, first contact, consent and abuse rules, without weakening child protection.
 - [ ] **W05 — Adult-only interest requests**: model request/accept/decline/expiry in a separate store with RLS, server-side gates and fixed-format content. No automated member actions.
-- [ ] **W06 — Locuto client handoff**: explicit opt-in and authenticated out-of-band peer verification; keys never touch the Portal. Native-client interoperability evidence.
-- [ ] **W07 — Retire readable private replies**: introduce a reviewed cutover, accurately update waiver, preserve historical retention rules and audit old routes.
+- [ ] **W06 — Optional messaging guidance**: functional choice page, Signal official download links, and Locuto App Store link only after release. Never force a provider at signup.
+- [ ] **W06a — Channel confirmation**: provider-specific, consented one-time challenge only after real delivery and confirmation mechanisms exist. Signal integration remains unproven; no channel-verified badge yet. See [messaging channel design](messaging-channels.md).
+- [ ] **W06b — Peer verification**: Locuto verification and Signal safety numbers remain app-specific and distinct from Portal member identity.
+- [ ] **W07 — Retire readable private replies**: plan an honest transition to mutually selected external private messaging, accurately update waiver, and retain lawful history. Where no shared app is chosen, don't provide a hidden plaintext private-chat fallback.
 - [ ] **W08 — Moderation and agent safety**: voluntary message evidence, metadata-minimizing safeguards, per-member request limits, no unauthorized agent side effects.
 - [ ] **W09 — Release proof**: type-check, tests, build, RLS isolation, verification abuse tests, bot/impersonation exclusions, device/crypto evidence, accessibility and independent security review.
 
@@ -52,7 +58,9 @@
 - `CHANGELOG.md`: replace elapsed 2026-09-30 launch target and unsupported early beta/security claims.
 - `SECURITY.md`: maintain pre-release status; current Portal replies remain operator-readable.
 - `docs/agent-interface.md`: current authenticated read-only endpoint is **not** a machine entitlement to human membership.
-- `src/lib/docs/content.ts`: human-centered help; no invented agent/Locuto features.
+- `src/lib/docs/content.ts`: human-centered help; no invented agent or messaging-app checks.
+- `docs/messaging-channels.md`: provider choice, assurance boundaries and unresolved channel confirmation.
+- `src/app/portal/messaging/page.tsx`: informational options only; Signal links are verified, Locuto listing pending.
 - `src/lib/consent/waiver.ts`: legal disclosure remains accurate until implementation changes; edit with counsel review and versioning.
 - Private Locuto `docs/portal.md`, `identity.md`, `user-safety.md`, `agents.md` and release matrix: differentiate normative rules, approved direction and working code.
 
