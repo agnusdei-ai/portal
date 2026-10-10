@@ -15,6 +15,13 @@ not implemented. See [the copy guide](docs/voice-and-security.md) and
 production deployment claim. The earlier September 30, 2026 target is historical,
 not a current launch commitment. See [CHANGELOG.md](CHANGELOG.md).
 
+**Membership:** only genuinely identity-verified humans may be members. Bots,
+AI agents, robots, synthetic personalities, and synthetic representatives of a
+real human are not members and cannot take part as one. Anonymous browsing
+remains available. Read the [membership policy](docs/member-admission-policy.md),
+which also identifies admission and agent-session controls still awaiting
+implementation.
+
 **`locuto/docs/portal.md` is normative over this repository.** Where this code and
 that document disagree, that document governs and this code is wrong. Read it
 before changing anything here.
