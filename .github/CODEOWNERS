@@ -1,0 +1,7 @@
+# Default owner for everything: the repository owner reviews all changes.
+* @realjkg
+
+# Workflow and security-file changes always route to the owner as well,
+# even if a future directory-level owner is added above them.
+/.github/workflows/ @realjkg
+/SECURITY.md @realjkg

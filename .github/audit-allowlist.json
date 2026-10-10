@@ -1,0 +1,12 @@
+{
+  "_comment": "npm vulnerability findings this repo has deliberately decided NOT to fix by upgrading, with the reason recorded here rather than only in a conversation. Follows the portfolio convention from agnusdei-ai/bede's .github/audit-allowlist.json: entries are keyed by advisory ID, not package name, because the sibling findings npm reports on dependents of a vulnerable package are the same advisory. Read today by the dev-chain step of the dependency-audit job in .github/workflows/ci.yml (which warns instead of blocking on dev-chain findings); the production-chain step (npm audit --omit=dev) blocks on ANY high or critical and pays no attention to this file. Every entry needs an id, package, fix_version, reason, and added date. This file is for genuinely irreconcilable constraints, never a shortcut around a fix that could just be taken.",
+  "npm": [
+    {
+      "id": "GHSA-vfj7-8cjw-p6xm",
+      "package": "braces",
+      "fix_version": null,
+      "reason": "There is no version of braces that fixes this: the advisory covers every published release (3.0.3 is the latest and is still in range, which is why npm reports the vulnerable range as *), so npm's own suggested remedy is not a braces upgrade at all — it is a semver-major DOWNGRADE of eslint-config-next from 15.x to 14.2.35, which would drop the Next 15 lint rules this Next 15 app depends on while fixing nothing (the advisory has no fixed version for any package in the chain). The path braces takes into this repository is dev/lint-time only: eslint-config-next -> @next/eslint-plugin-next -> fast-glob -> micromatch -> braces, exercised when ESLint expands the file globs in this repo's own lint configuration during development and CI. It ships in no page bundle and no server runtime, so no visitor, parent, or child can reach it through the deployed app; an attacker would need repository write access to supply a malicious glob pattern, at which point the brace expander is not the problem. The four sibling findings npm reports alongside it (micromatch, fast-glob, @next/eslint-plugin-next, eslint-config-next) are not separate advisories — they are the packages that depend on this one. Revisit when braces publishes a fixed release (a one-line lockfile change) or when eslint-config-next drops the fast-glob chain.",
+      "added": "2026-10-10"
+    }
+  ]
+}
