@@ -4,11 +4,11 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Agnus Dei — homeschool co-ops and curriculum in one place",
+    default: "Agnus Dei — homeschool resources and community",
     template: "%s · Agnus Dei",
   },
   description:
-    "Browse homeschool co-ops and curriculum for free, then let Bede teach from the books you already own.",
+    "Explore homeschool co-ops, find curriculum, and exchange learning materials. Browse without an account.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
