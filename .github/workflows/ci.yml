@@ -70,5 +70,5 @@ jobs:
       - name: Audit production dependencies (blocks on high/critical)
         run: npm audit --omit=dev --audit-level=high
 
-      - name: Audit dev dependencies (non-blocking: allowlist or fix)
+      - name: "Audit dev dependencies (non-blocking: allowlist or fix)"
         run: npm audit --audit-level=critical || echo "::warning::dev-chain finding — allowlist or fix"
