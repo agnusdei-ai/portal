@@ -6,11 +6,11 @@ import { DOC_SETS } from "@/lib/docs/content";
 export default function DocsPage() {
   return (
     <div className="mx-auto max-w-4xl px-6 py-12">
-      <h1 className="text-3xl font-semibold">Guides</h1>
+      <h1 className="text-3xl font-semibold">Help &amp; guides</h1>
       <p className="mt-2 max-w-xl text-sm text-ink-soft">
-        How the portal works, written for the person using it. Every path passes
-        the same identity check; the platform certifies that you are an adult
-        and nothing else.
+        Find straightforward help with your account, the Exchange, co-ops,
+        and using Bede. Identity verification confirms you are an adult;
+        it is not a teaching credential or background check.
       </p>
 
       <div className="mt-8 space-y-10">
