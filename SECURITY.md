@@ -17,6 +17,12 @@ Exchange replies currently remain readable by the Portal operator and are
 integration that needs implementation, interoperability tests and security
 review before any new confidentiality claim.
 
+The member-admission policy excludes all non-human principals, including bots,
+AI agents and synthetic representatives of humans. The current read-only
+tutor discovery API still uses a human's session, so agent credential separation,
+identity assurance and anti-automation controls are **open security work**, not
+claims of already-complete enforcement. See [the admission policy](docs/member-admission-policy.md).
+
 | What | Where |
 | --- | --- |
 | Supported versions | None. No public release exists. |
