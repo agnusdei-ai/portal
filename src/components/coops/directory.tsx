@@ -56,7 +56,7 @@ export function CoopDirectory({ coops }: { coops: DirectoryCoop[] }) {
           disabled={locate.phase === "locating"}
           className="inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors ring-1 ring-rule bg-white text-ink hover:bg-parchment-deep disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {locate.phase === "locating" ? "Finding you…" : "Near me"}
+          {locate.phase === "locating" ? "Finding nearby co-ops…" : "Show co-ops near me"}
         </button>
         <p role="status" className="text-sm text-ink-soft">
           {locate.phase === "locating"

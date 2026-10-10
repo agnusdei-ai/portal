@@ -22,7 +22,7 @@ export function ListingForm({ classes }: { classes: ParticipantClass[] }) {
     <form action={formAction} className="max-w-lg space-y-5">
       {state.error ? <Alert>{state.error}</Alert> : null}
 
-      <Field label="Category" errors={state.fieldErrors?.category}>
+      <Field label="What are you listing?" errors={state.fieldErrors?.category}>
         <Select
           name="category"
           required
@@ -30,7 +30,7 @@ export function ListingForm({ classes }: { classes: ParticipantClass[] }) {
           onChange={(e) => setCategory(e.target.value)}
         >
           <option value="" disabled>
-            Pick…
+            Choose a category
           </option>
           {CATEGORIES.map((c) => (
             <option key={c.value} value={c.value}>
@@ -42,8 +42,8 @@ export function ListingForm({ classes }: { classes: ParticipantClass[] }) {
 
       {category ? (
         <Field
-          label="Posting as"
-          hint="An educator or guide must be vouched for by a co-operative."
+          label="Your role here"
+          hint="A co-op must confirm your teaching or guide role before you can post in that role."
           errors={state.fieldErrors?.posted_as}
         >
           <Select name="posted_as" required defaultValue={available[0] ?? ""}>
@@ -61,13 +61,13 @@ export function ListingForm({ classes }: { classes: ParticipantClass[] }) {
         </Field>
       ) : null}
 
-      <Field label="Title" errors={state.fieldErrors?.title}>
+      <Field label="Give it a short title" errors={state.fieldErrors?.title}>
         <Input name="title" required maxLength={120} placeholder="Saxon 7/6, good condition" />
       </Field>
 
       <Field
         label="Details"
-        hint="No contact details: replies come through the exchange."
+        hint="Describe the item or offer. Keep contact details out; replies come through the Portal."
         errors={state.fieldErrors?.body}
       >
         <Textarea name="body" rows={6} required maxLength={4000} />
@@ -75,8 +75,8 @@ export function ListingForm({ classes }: { classes: ParticipantClass[] }) {
 
       <div className="grid gap-4 sm:grid-cols-[1fr_6rem]">
         <Field
-          label="Region"
-          hint="A metropolitan area or county, never an address."
+          label="Area"
+          hint="Use a city area or county, never a street address."
           errors={state.fieldErrors?.region}
         >
           <Input name="region" required maxLength={80} placeholder="North Dallas" />
@@ -89,8 +89,8 @@ export function ListingForm({ classes }: { classes: ParticipantClass[] }) {
       <label className="flex items-start gap-3 text-sm">
         <input type="checkbox" name="attested" required className="mt-0.5 size-4 shrink-0" />
         <span className="text-ink-soft">
-          This listing names no child, includes no member or attendee list, and
-          gives no contact details or address.
+          I&apos;ve left out children&apos;s details, member lists,
+          contact information, and exact addresses.
         </span>
       </label>
       {state.fieldErrors?.attested ? (

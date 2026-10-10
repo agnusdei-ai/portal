@@ -34,7 +34,7 @@ export function OnboardingChecklist({ steps }: { steps: readonly OnboardingStep[
             <div className="mt-3 flex flex-wrap items-center gap-3">
               {step.done ? null : step.waitsOnVouching ? (
                 <p className="text-sm text-ink-faint">
-                  This opens when a co-operative has vouched for you.
+                  This opens after a co-op confirms your role.
                 </p>
               ) : (
                 <ButtonLink href={step.href}>{step.linkLabel}</ButtonLink>

@@ -62,9 +62,9 @@ export default async function VerifyPage({
     <div className="mx-auto max-w-2xl px-6 py-12">
       <h1 className="text-3xl font-semibold">Verify your identity</h1>
       <p className="mt-3 max-w-xl text-sm text-ink-soft">
-        The exchange is for adults. A one-time identity check — run by our
-        verification provider, Socure — proves that, and then participation is
-        open: posting, replying, and everything else on the exchange.
+        Agnus Dei membership is for real people, not bots or synthetic accounts.
+        Our verification partner, Socure, checks your identity before you can
+        take part in the adults-only Exchange.
       </p>
       <p className="mt-3 max-w-xl text-sm text-ink-faint">
         The details you give here are sent to Socure for the check and are not

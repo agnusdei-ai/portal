@@ -30,16 +30,16 @@ export default async function CoopsPage({
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-14">
-      <h1 className="text-4xl font-semibold">Co-ops</h1>
+      <h1 className="text-4xl font-semibold">Find a homeschool co-op</h1>
       <p className="mt-3 max-w-xl text-ink-soft">
-        Co-operatives list themselves here. Enquire through the exchange; who
-        belongs to a co-op is the co-op&apos;s business and is not recorded by us.
+        Explore co-ops that have chosen to be listed here. See their general
+        meeting area, schedule, and what they offer. We do not publish member lists.
       </p>
 
       {coops.length === 0 ? (
         <Card className="mt-8 text-sm text-ink-soft">
-          No co-ops listed{state ? ` in ${state.toUpperCase()}` : ""} yet. Directors can
-          publish theirs from the portal.
+          No co-ops listed{state ? ` in ${state.toUpperCase()}` : ""} yet.
+          Try another area or check back later.
         </Card>
       ) : (
         <CoopDirectory coops={coops} />
@@ -47,10 +47,10 @@ export default async function CoopsPage({
 
       <Card className="mt-10 flex flex-wrap items-center justify-between gap-4 p-6">
         <p className="max-w-md text-sm text-ink-soft">
-          Don&apos;t see yours? Directors can list a co-op so families can find it.
+          Lead a co-op? Learn how the directory works before getting started.
         </p>
-        <ButtonLink href="/setup?role=director" variant="secondary">
-          List your co-op
+        <ButtonLink href="/docs" variant="secondary">
+          Learn more
         </ButtonLink>
       </Card>
     </div>

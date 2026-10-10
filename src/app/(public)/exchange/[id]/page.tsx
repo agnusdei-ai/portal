@@ -34,18 +34,18 @@ export default async function ListingPage({
       </p>
 
       <Card className="mt-10">
-        <h2 className="font-medium">Reply</h2>
+        <h2 className="font-medium">Ask about this listing</h2>
         <p className="mt-1 text-sm text-ink-soft">
-          Your reply reaches the poster here in the portal. Neither of you sees the
-          other&apos;s Locuto identity, and replying does not add anyone to your
-          contacts.
+          Your reply appears in the Portal. Agnus Dei can read Exchange replies
+          for safety and fraud reviews. They are not end-to-end encrypted.
+          Please do not include sensitive or private contact details.
         </p>
         <div className="mt-4">
           {user ? (
             <ReplyForm listingId={listing.id} />
           ) : (
             <p className="text-sm text-ink-faint">
-              Replying needs a household licence. Browsing does not.
+              Sign in with an eligible household account to reply. Browsing is free.
             </p>
           )}
         </div>

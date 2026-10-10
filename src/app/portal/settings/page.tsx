@@ -20,11 +20,10 @@ export default async function SettingsPage() {
     <div className="mx-auto max-w-4xl px-6 py-12">
       <h1 className="text-3xl font-semibold">Settings</h1>
 
-      <h2 className="mt-10 text-lg font-medium">Two-factor sign-in</h2>
+      <h2 className="mt-10 text-lg font-medium">Extra sign-in security</h2>
       <p className="mt-1 max-w-xl text-sm text-ink-soft">
-        A second step at sign-in: a rotating 6-digit code from an authenticator
-        app. Once enrolled, exchange actions require it in the same session —
-        sign-in asks for the code first.
+        Use an authenticator app for an extra check when you sign in.
+        Once enabled, you will need its six-digit code for protected Exchange actions.
       </p>
       <Card className="mt-4">
         <TotpEnroll initiallyEnrolled={enrolled} />

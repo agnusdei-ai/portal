@@ -7,7 +7,7 @@ import { ButtonLink, Card } from "@/components/ui";
 import type { Listing, ListingCategory } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "The exchange",
+  title: "Share and exchange homeschool materials",
   description:
     "Homeschool materials, co-op openings and classes, offered by households near you. Free to browse.",
 };
@@ -36,16 +36,16 @@ export default async function ExchangePage({
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-14">
-      <h1 className="text-4xl font-semibold">The exchange</h1>
+      <h1 className="text-4xl font-semibold">Share, swap, and find what you need</h1>
       <p className="mt-3 max-w-xl text-ink-soft">
-        Materials, co-op openings and classes, posted by other households. Free to
-        browse without an account. You arrange the handover yourselves, in person.
+        Browse books, supplies, classes, and co-op openings shared by other adults.
+        Looking around is free. You and the other person arrange any handover.
       </p>
 
       {posted ? (
         <Card className="mt-6 border-emerald-200 bg-emerald-50">
           <p className="text-sm text-emerald-900">
-            Posted. It stays up for thirty days, then expires on its own.
+            Your listing is live. It will close automatically after 30 days.
           </p>
         </Card>
       ) : null}
@@ -64,7 +64,7 @@ export default async function ExchangePage({
 
       {listings.length === 0 ? (
         <Card className="mt-8 text-sm text-ink-soft">
-          Nothing posted here yet.
+          Nothing here just yet. Try another category or check back later.
         </Card>
       ) : (
         <ul className="mt-8 grid gap-4 md:grid-cols-2">
@@ -87,12 +87,11 @@ export default async function ExchangePage({
 
       <Card className="mt-10 flex flex-wrap items-center justify-between gap-4 p-6">
         <div className="max-w-md">
-          <p className="text-sm font-medium text-ink">Meeting someone in person</p>
+          <p className="text-sm font-medium text-ink">A note about meeting up</p>
           <p className="mt-1 text-sm text-ink-soft">
-            Arrange the handover in a public place, and keep the arrangement
-            between adults. Listings never name children, and we do not carry
-            tutoring, childcare or lift-sharing, because we cannot make those safe
-            with the tools we are willing to build.
+            Arrange handovers in a public place. Leave children&apos;s names and private
+            details out of listings. This adults-only exchange does not arrange
+            childcare, private tutoring, or rides.
           </p>
         </div>
         <ButtonLink href="/exchange/new" variant="secondary">

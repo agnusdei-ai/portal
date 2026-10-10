@@ -109,8 +109,8 @@ test("the vouch step is done only on a vouch — never on a mark", () => {
 
 test("the tutor's vouch step names the class and the no-credentialing rule", () => {
   const vouch = find("tutor", facts(), "vouch");
-  assert.ok(vouch?.description.includes("does not credential tutors"));
-  assert.ok(vouch?.description.includes("tutor's teaching"));
+  assert.ok(vouch?.description.includes("co-op that knows your work"));
+  assert.ok(vouch?.description.includes("confirm your role"));
 });
 
 test("no bypass: marks cannot complete any derived step, on any persona", () => {

@@ -72,7 +72,7 @@ function LoginForm() {
   return (
     <Card className="w-full max-w-sm p-8">
       <h1 className="text-2xl font-semibold">
-        {isSignup ? "Start with Bede" : "Sign in"}
+        {isSignup ? "Get started" : "Sign in"}
       </h1>
       <p className="mt-2 text-sm text-ink-soft">
         {status === "sent"

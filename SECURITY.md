@@ -7,9 +7,21 @@ security report.
 
 ## Status
 
-Portal is pre-release. There is no supported public version line and no claim
-that current `main` is release-ready; reports are welcome against the code as
-it stands.
+Portal is pre-release. No public version is currently supported, and
+neither the default branch nor the October 2026 copy review is a statement
+of deployment or release readiness. Reports are welcome against the code
+as it stands.
+
+Exchange replies currently remain readable by the Portal operator and are
+**not end-to-end encrypted**. The proposed Locuto handoff is a separate
+integration that needs implementation, interoperability tests and security
+review before any new confidentiality claim.
+
+The member-admission policy excludes all non-human principals, including bots,
+AI agents and synthetic representatives of humans. The current read-only
+tutor discovery API still uses a human's session, so agent credential separation,
+identity assurance and anti-automation controls are **open security work**, not
+claims of already-complete enforcement. See [the admission policy](docs/member-admission-policy.md).
 
 | What | Where |
 | --- | --- |

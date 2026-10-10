@@ -11,18 +11,17 @@ import { ButtonLink, Card } from "@/components/ui";
 export default function SetupPage() {
   return (
     <div className="mx-auto max-w-2xl px-6 py-16">
-      <h1 className="text-3xl font-semibold">Setting up an account</h1>
+      <h1 className="text-3xl font-semibold">Let&apos;s set up your account</h1>
       <p className="mt-3 text-ink-soft">
-        Who is this account for? The answer changes what happens next, because an
-        account for a child under thirteen requires a parent or guardian to set it
-        up.
+        Who will use this account? A parent or guardian must complete setup
+        for a child under thirteen.
       </p>
 
       <div className="mt-8 grid gap-4">
         <Card>
           <h2 className="font-medium">Someone aged thirteen or over</h2>
           <p className="mt-2 text-sm text-ink-soft">
-            Ordinary setup, run by the person themselves on their own device.
+            Continue with account setup on your own device.
           </p>
           <div className="mt-4">
             <ButtonLink href="/setup/adult" variant="secondary">
@@ -34,9 +33,8 @@ export default function SetupPage() {
         <Card>
           <h2 className="font-medium">A child under thirteen</h2>
           <p className="mt-2 text-sm text-ink-soft">
-            A parent or guardian continues from here, on their own device. There
-            is a notice to read first, and setting up the account is the last step
-            rather than the first.
+            A parent or guardian should complete the steps on their own
+            device. You will review a notice before giving consent.
           </p>
           <div className="mt-4">
             <ButtonLink href="/setup/notice">I am the parent or guardian</ButtonLink>

@@ -1,4 +1,27 @@
-# Agent interface — vetted tutor discovery (phase B)
+# Tutor discovery API — what it does today
+
+This is a technical reference for household-owned software. The Portal provides
+a limited, read-only list of co-op-confirmed tutor roles. It does not arrange
+lessons, schedule tutoring, send messages or give agents access to private
+conversations.
+
+**Human-only membership:** bots, synthetic agents, robots and automated
+representatives of a real person are **never members**. This remains true even
+when a person says the software acts for them. An agent cannot post, reply,
+join, accept contacts or transact as a member. The [membership policy](member-admission-policy.md)
+sets this boundary.
+
+**Current authentication limitation:** this API uses the adult's existing
+Portal session, including its cookies. This is not an independently scoped
+agent credential. It is a **known design gap** under the human-only membership
+rule: do not present a user's cookies to untrusted software, and do not
+extend this mechanism to synthetic Exchange participation. A restricted,
+non-member discovery permission must replace direct session delegation before
+unattended agent access is approved.
+
+A future Portal-to-Locuto handoff is tracked in the
+[implementation checklist](implementation-checklist.md); it is not part of
+this API.
 
 Spec: the portal specification's tutor persona row and the "Tutor agent-to-agent
 architecture" ruling of 2026-10-09 (option C, staged). Phase B is this API and
