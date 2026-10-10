@@ -1,16 +1,18 @@
-# Portal → Locuto: decisions and work checklist
+# Portal messaging: decisions and work checklist
 
 **Status:** product direction agreed, implementation not complete. Work on language and documentation first, then the membership gate, then the secure Locuto handoff. The private Locuto blueprint is tracked in [Locuto PR #375](https://github.com/agnusdei-ai/locuto/pull/375) and [Issue #374](https://github.com/agnusdei-ai/locuto/issues/374). The governing specification remains `agnusdei-ai/locuto/docs/portal.md`; this is the Portal delivery view.
 
 ## Accepted product direction
 
 - [x] **D01 — Public discovery.** Curriculum, broad-area listings and co-op descriptions are freely browseable.
-- [x] **D02 — Sensitive conversations.** The first private free-text message and sensitive arrangements will travel through Locuto E2EE, without plaintext fallback masquerading as private.
+- [x] **D02 — Sensitive conversations.** Private conversations may take place in Locuto (preferred) or Signal, chosen by the adults involved. Do not represent the Portal's existing plaintext reply inbox as encrypted.
 - [x] **D03 — Adults-only Exchange.** No children, family rosters, child educational details or public directory of people. Existing allowed adult role pairs remain closed.
 - [x] **D04 — Human-only membership.** Every member must be a genuine, identity-verified human. No anonymous, fabricated or synthetic identities; no bots, agents, robots, software actors or synthetic representatives of any human may be admitted as members, regardless of delegation.
 - [x] **D05 — No agent impersonation.** A non-member tool may assist only with separately scoped, approved tasks; it cannot impersonate a member, share their session, post/reply/accept/perform transactions on their behalf as a synthetic actor, or read Locuto messages.
-- [x] **D06 — Separate trust checks.** A verified Portal member is not automatically a verified Locuto contact; peer cryptographic verification remains necessary.
+- [x] **D06 — Separate trust checks.** Portal identity, messaging-channel control, and the peer trust checks in Locuto or Signal are different claims.
 - [x] **D07 — Consent boundaries.** The Exchange communication waiver, verified-adult membership, and Bede per-child consent and licensing are separate.
+- [x] **D08 — Optional messaging.** Locuto is preferred; Signal is an alternative. Neither is a condition of membership or identity verification.
+- [x] **D09 — Separate confirmation.** A messaging-app confirmation demonstrates channel access, not real-world identity. Never request an app's account or recovery secrets.
 
 **Already-accepted policy is not a claim that the current code fully enforces it.** See [admission policy](member-admission-policy.md).
 
