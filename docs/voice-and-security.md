@@ -15,7 +15,11 @@ Identity verification does **not** require publishing a person's legal name, pri
 - Browsing public listings, curriculum and co-ops does not require an account.
 - An eligible account, adult identity verification and a separate Exchange communication waiver are required to post or reply.
 - **Portal Exchange replies are not end-to-end encrypted today.** The service operator may read them for safety and fraud review.
-- Locuto provides a separate encrypted messenger. **It is not yet integrated with the Portal's reply path.**
+- Locuto is the **recommended but optional** private messenger; Signal is also an approved choice for separate private conversations. Neither is a condition of membership, consent, adult verification or use of the public Portal.
+- Neither app is currently integrated with the Portal's reply path. Link only to verified official app listings. Locuto's App Store URL is not yet established.
+- A one-time messaging-channel challenge, if implemented, proves control or reachability **only**, never government-identity verification, a verified Locuto peer, or a Signal safety number.
+- A verification *code* is not a cryptographic encryption key, private key, Signal PIN or Locuto recovery phrase. Never collect account secrets.
+- Signal contact links and usernames can change. Do not create a searchable directory or durable identity mapping from a Signal handle or Locuto fingerprint.
 - Household learning records, co-op family rosters, children's progress and Locuto identifiers do not belong in the hosted Portal.
 - Verification checks an adult's identity; it is not a teaching credential, background check or Locuto peer authentication.
 - Bede consent/licensing is separate from adult Exchange participation.
