@@ -19,8 +19,8 @@ export type Doc = {
 };
 
 /** The two sentences every persona's onboarding path must say plainly. */
-export const CERTIFIES_ADULTHOOD = "The portal certifies that you are an adult and nothing else.";
-export const STANDING_IS_EARNED = "Standing is earned in the co-operative, never issued by the platform.";
+export const CERTIFIES_ADULTHOOD = "The identity check confirms you are an adult. It is not a teaching qualification or a background check.";
+export const STANDING_IS_EARNED = "A co-op confirms someone's teaching role. Agnus Dei does not issue teaching credentials.";
 
 export type PersonaDocs = {
   persona: OnboardingPersona;
@@ -33,26 +33,26 @@ export const DOC_SETS: PersonaDocs[] = [
   {
     persona: "parent",
     label: "For parents and co-op members",
-    intro: "The default path — from the consent transaction to your first exchange trade.",
+    intro: "Get set up, find resources and learn how the Exchange works.",
     docs: [
       {
         slug: "parent-getting-started",
         persona: "parent",
         title: "Getting started",
-        intro: "What this portal is, and the order things happen in.",
+        intro: "A quick guide to the account and community features.",
         sections: [
           {
             heading: "Three things happen, in order",
             body: [
-              "First, consent: you read a short notice and make a one-time card payment. The receipt from your card issuer is the parental consent, and the payment creates your household account. Browsing the catalogue, the co-op directory and the exchange is free and needs no account; the payment is what makes your household real to us.",
-              "Second, verification: a one-time identity check that proves you are an adult. It opens participation — posting, replying, licence keys.",
-              "Third, everything else: finding a co-operative, trading materials, keeping bookmarks. None of it is urgent, and the checklist on the portal home walks you through it a step at a time.",
+              "First, review the parental consent notice and complete the required card payment for a child. The account is created after the charge succeeds. You can browse curriculum, co-ops and listings without paying.",
+              "Next, verify your identity. Only real, verified adults may join and take part in the Exchange. Bots, synthetic identities and agents acting for a human cannot be members.",
+              "Then explore local co-ops, exchange learning materials, and save resources you want to revisit. Your home page shows the next steps.",
             ],
           },
           {
             heading: "What we keep, and what we never see",
             body: [
-              "Your account holds a billing state, a seat record per child, and your bookmarks. That is nearly all of it. What your child studies, and everything about how you homeschool, lives on your own hardware — we have no table for it, and the tests that keep it that way fail the build if one appears.",
+              "The Portal keeps account and consent records, one licence per child, and resources you save. Your child's study records belong on household-controlled devices, not in a public directory.",
               CERTIFIES_ADULTHOOD,
               STANDING_IS_EARNED,
             ],
@@ -105,20 +105,20 @@ export const DOC_SETS: PersonaDocs[] = [
       {
         slug: "parent-waiver-plain-language",
         persona: "parent",
-        title: "The communication waiver, in plain language",
-        intro: "The one disclosure to actually read before you trade with another household.",
+        title: "Before you reply in the Exchange",
+        intro: "Who can read your replies and how the Exchange works.",
         sections: [
           {
             heading: "The part that matters",
             body: [
-              "Replies on the exchange are not end-to-end encrypted. The operator can read them, and must be able to: when money changes hands between strangers, the ability to investigate a complaint is a safety feature, not a convenience. That is the whole disclosure, and it is in the waiver you accept before your first participation.",
-              "Replies arrive in your portal inbox and stay in the portal — the other side never learns your email or your identity on any other service.",
+              "Exchange replies are not end-to-end encrypted. Agnus Dei can read them for safety and fraud review. This is explained in the separate waiver you accept before posting or replying.",
+              "Replies arrive in your Portal inbox. They do not create a Locuto contact or automatically reveal a Locuto identity. Please avoid sharing sensitive details here.",
             ],
           },
           {
             heading: "The rules the waiver carries",
             body: [
-              "No cryptocurrency, and no payments off the platform: solicitations for bitcoin, wallets, or steering to Cash App, Venmo, Zelle or the like are refused automatically and recorded. No automated harvesting — the search and exchange are for people reading, not scripts scraping. Breaking these ends your session, and repeats end your account's participation.",
+              "Listings and replies must not request cryptocurrency, wallet information or off-platform payments. Automated harvesting is also prohibited. The service may block prohibited submissions and terminate accounts involved in repeated misuse.",
               "When the waiver changes, you accept the new version once at your next participation — a single yes, then you are done.",
             ],
           },
@@ -129,7 +129,7 @@ export const DOC_SETS: PersonaDocs[] = [
   {
     persona: "educator",
     label: "For K-12 educators",
-    intro: "The same identity check as everyone, then a co-operative's vouch.",
+    intro: "Confirm your identity, then have your co-op confirm your teaching role.",
     docs: [
       {
         slug: "educator-onboarding",
@@ -173,19 +173,19 @@ export const DOC_SETS: PersonaDocs[] = [
         slug: "educator-etiquette",
         persona: "educator",
         title: "Exchange etiquette",
-        intro: "How teaching offers work on a relay, without chat.",
+        intro: "How to share classes and answer questions through the Exchange.",
         sections: [
           {
             heading: "How the exchange works",
             body: [
-              "Listings are offers and openings; replies travel through the portal relay and arrive in the other side's inbox. There is no chat and no comment thread — a reply is a considered letter, not a message bubble.",
+              "You can post a class or opening through the Exchange. Replies appear in the Portal inbox. This is not an end-to-end encrypted chat, and it does not create a Locuto contact.",
               "Say what you offer, for what ages, at what cadence, and what the family arranges with you privately. The exchange advertises existence, the way a co-op listing does; the arrangement itself happens outside the portal, by whatever channels the two of you choose.",
             ],
           },
           {
             heading: "The lines that are not etiquette but rules",
             body: [
-              "Payment stays off the platform and out of listings: no wallet addresses, no payment-app handles. The heuristics refuse them and record the attempt. Children are never participants — replies come from adults, and anything addressed to a child is removed.",
+              "Keep payment details and personal contact information out of listings. Only verified human adults may participate: children, bots and synthetic representatives cannot post or reply.",
             ],
           },
         ],
@@ -217,7 +217,7 @@ export const DOC_SETS: PersonaDocs[] = [
   {
     persona: "guide",
     label: "For homeschool guides",
-    intro: "Leading classes, publishing a co-operative, and the duties that follow.",
+    intro: "How to take part in co-op classes and explain your role.",
     docs: [
       {
         slug: "guide-onboarding",
@@ -240,7 +240,7 @@ export const DOC_SETS: PersonaDocs[] = [
         slug: "guide-coop-publishing",
         persona: "guide",
         title: "Co-op publishing rules",
-        intro: "What a listing may say about where you meet — and the line it may not cross.",
+        intro: "How to share a general meeting area without giving away a private location.",
         sections: [
           {
             heading: "Advertise existence, never meeting places",
@@ -261,7 +261,7 @@ export const DOC_SETS: PersonaDocs[] = [
         slug: "guide-moderation-disputes",
         persona: "guide",
         title: "Moderation and dispute handling",
-        intro: "What you can act on yourself, and what you hand to the operator.",
+        intro: "How to report concerns and handle co-op decisions.",
         sections: [
           {
             heading: "Your tools",
@@ -282,8 +282,8 @@ export const DOC_SETS: PersonaDocs[] = [
   },
   {
     persona: "tutor",
-    label: "For tutors (agent to agent)",
-    intro: "The same identity check as everyone, a co-operative's vouch, and an API your own systems call.",
+    label: "For tutors",
+    intro: "How identity checks, co-op confirmation and tutor discovery fit together.",
     docs: [
       {
         slug: "tutor-onboarding",
@@ -314,13 +314,13 @@ export const DOC_SETS: PersonaDocs[] = [
         slug: "tutor-agent-interface",
         persona: "tutor",
         title: "The agent-interface guide",
-        intro: "For household-systems integrators: how an agent signs in as you, what the discovery API returns, and where the portal's part ends.",
+        intro: "A technical guide to the limited tutor discovery API and its current restrictions.",
         sections: [
           {
             heading: "Enrollment: the session is the credential",
             body: [
-              "There are no API keys to mint and no tokens to store. A household agent system calls the API as you — it presents your own signed-in portal session, the same cookies your browser holds — so it inherits every rule your session already carries: the 30-minute idle sign-out, and the second factor when one is enrolled.",
-              "Because the agent acts as your principal, the account gates apply to it in the same order they apply to you: a valid session, the second-factor challenge when enrolled, and a verified-adult attestation. A refusal comes back as a typed error — unauthenticated, assurance-required, or verification-required — with the fix named in the repo's agent-interface guide, never a redirect.",
+              "The current API has no API keys; it uses an adult's existing Portal session. This is a known limitation, not permission to give an automated agent your member identity. Bots and synthetic representatives cannot be members, and the API must move to separately scoped, non-member credentials before unattended agent use is approved.",
+              "Today the API checks for a signed-in, verified adult, plus the extra sign-in code when enrolled. It responds with one of three documented errors if access is denied. This read-only endpoint does not authorize an agent to post, reply, or represent you as a member.",
             ],
           },
           {
@@ -333,7 +333,7 @@ export const DOC_SETS: PersonaDocs[] = [
           {
             heading: "The boundary: tutoring runs in household systems",
             body: [
-              "The portal's part ends at that response. Sessions with students, scheduling, tutoring records, and the agent's own behaviour live in the systems you own and control. The portal never brokers contact either: reaching a family still travels the way it always has, through the exchange reply relay or a co-operative's enquiry path.",
+              "The Portal ends its role at discovery. Tutoring sessions, schedules and student records stay with household-owned systems. The Portal-to-Locuto connection is planned, not active; Exchange replies currently stay in the Portal and are not end-to-end encrypted.",
               CERTIFIES_ADULTHOOD,
               STANDING_IS_EARNED,
             ],
