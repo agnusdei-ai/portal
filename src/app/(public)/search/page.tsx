@@ -10,9 +10,9 @@ import { getSearchThrottle } from "@/lib/search/throttle";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Search homeschooling resources",
+  title: "Find homeschool resources",
   description:
-    "One query across state networks, publishers, and curriculum vendors. Nothing about a search is stored.",
+    "Search homeschool resources from available providers and save useful finds.",
 };
 
 /** Subjects a parent files a saved resource under — the same set the bookmarks surface groups by. */
@@ -57,11 +57,10 @@ export default async function SearchPage({
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-14">
-      <h1 className="text-4xl font-semibold">Search</h1>
+      <h1 className="text-4xl font-semibold">Find learning resources</h1>
       <p className="mt-3 max-w-xl text-ink-soft">
-        One query across the state networks, publishers, and catalogues worth
-        reading. Results are relayed from the sources at request time and
-        nothing about a search is kept — what you save is yours alone.
+        Search homeschool resources from the available sources in one place.
+        Save anything you want to come back to.
       </p>
 
       <form action="/search" method="get" className="mt-6 flex gap-2">
@@ -70,7 +69,7 @@ export default async function SearchPage({
           name="q"
           defaultValue={query}
           maxLength={MAX_QUERY_LENGTH}
-          placeholder="Try: algebra manipulatives"
+          placeholder="Try: fourth-grade fractions activities"
           aria-label="Search query"
           className="flex-1"
         />
@@ -80,7 +79,7 @@ export default async function SearchPage({
       {saved === "1" ? (
         <div className="mt-4" role="status">
           <Alert>
-            Saved to your bookmarks —{" "}
+            Saved to your resources —{" "}
             <Link href="/portal/bookmarks" className="underline">
               see your collection
             </Link>
@@ -91,16 +90,15 @@ export default async function SearchPage({
 
       {query && providers.length === 0 ? (
         <Card className="mt-8 text-sm text-ink-soft">
-          Search isn&apos;t wired up yet — no provider is configured. The{" "}
-          catalogue and co-op directory work meanwhile.
+          Resource search isn&apos;t available right now. You can still browse
+          our curriculum and co-op directories.
         </Card>
       ) : null}
 
       {outcome?.kind === "rate_limited" ? (
         <div className="mt-8">
           <Alert>
-            You are searching faster than the relay can carry. Wait a minute and
-            try again — the pause is what keeps search honest for everyone.
+            Too many searches in a short time. Try again in a minute.
           </Alert>
         </div>
       ) : null}
@@ -110,16 +108,14 @@ export default async function SearchPage({
           {outcome.failedProviders.length > 0 ? (
             <div className="mt-8">
               <Alert>
-                {outcome.failedProviders.join(", ")} did not answer — these
-                results are from the sources that did.
+                Some sources weren&apos;t available, so these are the results we could find.
               </Alert>
             </div>
           ) : null}
 
           {outcome.hits.length === 0 ? (
             <Card className="mt-8 text-sm text-ink-soft">
-              Nothing came back for that. Fewer words, or different ones, often
-              finds it.
+              No matches this time. Try a shorter or different search.
             </Card>
           ) : (
             <ul className="mt-8 space-y-4">
@@ -158,7 +154,7 @@ export default async function SearchPage({
                       <select
                         id={`subject-${i}`}
                         name="subject"
-                        className="rounded-md border border-rule bg-canvas px-2 py-1.5 text-sm text-ink"
+                        className="rounded-md border border-rule bg-white px-2 py-1.5 text-sm text-ink"
                       >
                         {SUBJECTS.map((subject) => (
                           <option key={subject} value={subject}>
