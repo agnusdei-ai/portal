@@ -113,7 +113,7 @@ export default async function PortalPage() {
   return (
     <div className="mx-auto max-w-4xl px-6 py-12">
       <div className="flex flex-wrap items-baseline gap-3">
-        <h1 className="text-3xl font-semibold">Your household</h1>
+        <h1 className="text-3xl font-semibold">Your home</h1>
         {roles?.length ? (
           <span className="text-sm text-ink-faint">
             {roles.map((r) => ROLE_COPY[r.role]).join(" · ")}
@@ -129,15 +129,16 @@ export default async function PortalPage() {
 
       {verified ? (
         <p className="mt-3 text-sm text-ink-faint">
-          Identity verified — you can take part everywhere in the exchange.
+          Adult identity check complete. You can take part in the Exchange,
+          subject to the rules for your role.
         </p>
       ) : (
         <Card className="mt-6 border-brand/40">
-          <h2 className="font-medium">Verify your identity to take part</h2>
+          <h2 className="font-medium">Confirm you&apos;re an adult to take part</h2>
           <p className="mt-1 max-w-xl text-sm text-ink-soft">
-            The exchange is for adults. A one-time identity check with our
-            verification provider opens posting, replying, and licence keys —
-            your details go to the check and are not kept here.
+            The Exchange is for adults. Our verification partner checks your
+            identity before you can post, reply, or request licence keys.
+            The Portal keeps the result, not your identity documents.
           </p>
           <div className="mt-4">
             <ButtonLink href="/portal/verify">Start verification</ButtonLink>
@@ -151,30 +152,28 @@ export default async function PortalPage() {
           className="mt-6 block rounded-lg border border-brand/40 bg-white p-4 hover:bg-parchment-deep/40"
         >
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h2 className="font-medium">Your first days here</h2>
+            <h2 className="font-medium">Let&apos;s get you settled</h2>
             <span className="text-xs text-ink-faint">
               {startRemaining} {startRemaining === 1 ? "step" : "steps"} to go
             </span>
           </div>
           <p className="mt-1 max-w-xl text-sm text-ink-soft">
-            Verification, your co-operative, the exchange — the guided path,
-            one step at a time.
+            Review the steps for your role and pick up where you left off.
           </p>
         </Link>
       ) : null}
 
       <h2 className="mt-10 text-lg font-medium">The exchange</h2>
       <p className="mt-1 max-w-xl text-sm text-ink-soft">
-        Buy, sell and trade materials with other households, and find co-ops.
-        Replies arrive here rather than in Locuto, and neither side learns the
-        other&apos;s Locuto identity.
+        Find learning materials and connect with other adults. Replies stay
+        in the Portal and are not end-to-end encrypted. They are not Locuto messages.
       </p>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         <Card>
           <Link href="/portal/inbox" className="group block">
             <div className="flex items-baseline justify-between gap-2">
-              <h3 className="font-medium group-hover:text-brand">Replies inbox</h3>
+              <h3 className="font-medium group-hover:text-brand">Your replies</h3>
               <span className="text-xs text-ink-faint">
                 {conversations === 1 ? "1 conversation" : `${conversations} conversations`}
               </span>
@@ -190,7 +189,7 @@ export default async function PortalPage() {
           <div className="flex items-baseline justify-between gap-2">
             <h3 className="font-medium">
               <Link href="/portal/bookmarks" className="hover:text-brand">
-                Your bookmarks
+                Saved resources
               </Link>
             </h3>
             <span className="text-xs text-ink-faint">
@@ -198,7 +197,7 @@ export default async function PortalPage() {
             </span>
           </div>
           <p className="mt-1 text-sm text-ink-soft">
-            Resources you chose to keep, private to your account.
+            Resources you saved to your account for later.
           </p>
         </Card>
       </div>
@@ -216,11 +215,11 @@ export default async function PortalPage() {
         </Link>
       </div>
 
-      <h2 className="mt-12 text-lg font-medium">Seats</h2>
+      <h2 className="mt-12 text-lg font-medium">Bede licences</h2>
       <p className="mt-1 max-w-xl text-sm text-ink-soft">
-        One seat per child. The seat authorises your household build to run.
-        Everything about what your child studies lives on your own hardware and
-        never reaches us.
+        Each licence covers one child. Your child&apos;s learning records belong
+        on household-controlled hardware; the Portal manages the licence and
+        parental consent record.
       </p>
 
       <ul className="mt-4 space-y-3">
@@ -229,7 +228,7 @@ export default async function PortalPage() {
             <Card>
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <h3 className="font-medium">
-                  {names.get(seat.id) ?? "Seat"}
+                  {names.get(seat.id) ?? "Bede licence"}
                 </h3>
                 <span className="text-xs text-ink-faint">
                   {seat.state === "active" ? "Active" : "Revoked"} · issued{" "}
@@ -249,8 +248,8 @@ export default async function PortalPage() {
 
       <Card className="mt-6 flex flex-wrap items-center justify-between gap-4">
         <p className="max-w-md text-sm text-ink-soft">
-          Adding another child needs its own notice and its own consent, because
-          consent is per child rather than per household.
+          To add another child, you&apos;ll review a separate consent notice
+          and complete the required purchase for that child.
         </p>
         <ButtonLink href="/setup/notice" variant="secondary">
           Add a child
@@ -259,18 +258,18 @@ export default async function PortalPage() {
 
       <section className="mt-12">
         <div className="flex flex-wrap items-baseline justify-between gap-3">
-          <h2 className="text-lg font-medium">Kept for later</h2>
+          <h2 className="text-lg font-medium">Saved for later</h2>
           <Link href="/portal/bookmarks" className="text-sm text-ink-soft underline">
-            All bookmarks
+            View all
           </Link>
         </div>
         <p className="mt-1 max-w-xl text-sm text-ink-soft">
-          A shelf of what you saved from search, by subject.
+          Resources you saved from search, grouped by subject.
         </p>
 
         {bySubject.size === 0 ? (
           <Card className="mt-4 text-sm text-ink-soft">
-            Nothing kept yet.{" "}
+            Nothing saved yet.{" "}
             <Link href="/search" className="underline">
               Search
             </Link>{" "}
