@@ -29,7 +29,7 @@ const step = (over) => ({
   ...over,
 });
 
-const VOUCH_LOCKED = "This opens when a co-operative has vouched for you.";
+const VOUCH_LOCKED = "This opens after a co-op confirms your role.";
 
 test("a self-markable step offers 'Mark done'; nothing else does", () => {
   const html = renderToStaticMarkup(
@@ -109,7 +109,7 @@ test("the tutor checklist renders: the vouch-locked enroll step is explained, ne
   const html = renderToStaticMarkup(OnboardingChecklist({ steps }));
   assert.ok(html.includes(VOUCH_LOCKED), "the lock is explained, as on the educator path");
   assert.ok(
-    !html.includes("Read the agent-interface guide"),
+    !html.includes("Read the tutor discovery guide"),
     "no action link while locked — only the ever-present guide anchor",
   );
   assert.equal(
