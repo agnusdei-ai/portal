@@ -11,40 +11,40 @@ export async function SiteHeader() {
 
   return (
     <header className="border-b border-rule bg-parchment/80 backdrop-blur">
-      <div className="mx-auto flex max-w-5xl items-center gap-6 px-6 py-4">
+      <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-4 px-6 py-4 sm:gap-6">
         <Link href="/" className="font-serif text-lg font-semibold text-ink">
           Agnus&nbsp;Dei
         </Link>
 
-        <nav className="flex items-center gap-5 text-sm text-ink-soft">
+        <nav aria-label="Main navigation" className="order-3 flex w-full flex-wrap items-center gap-x-5 gap-y-2 text-sm text-ink-soft sm:order-none sm:w-auto">
           <Link href="/curriculum" className="hover:text-ink">
             Curriculum
           </Link>
           <Link href="/search" className="hover:text-ink">
-            Search
+            Resources
           </Link>
           <Link href="/coops" className="hover:text-ink">
-            Co-ops
+            Find co-ops
           </Link>
           <Link href="/exchange" className="hover:text-ink">
             Exchange
           </Link>
           <Link href="/docs" className="hover:text-ink">
-            Guides
+            Help
           </Link>
         </nav>
 
         <div className="ml-auto flex items-center gap-3 text-sm">
           {user ? (
             <ButtonLink href="/portal" variant="secondary">
-              Portal
+              My home
             </ButtonLink>
           ) : (
             <>
               <Link href="/login" className="text-ink-soft hover:text-ink">
                 Sign in
               </Link>
-              <ButtonLink href="/setup">Start with Bede</ButtonLink>
+              <ButtonLink href="/setup">Get started</ButtonLink>
             </>
           )}
         </div>
