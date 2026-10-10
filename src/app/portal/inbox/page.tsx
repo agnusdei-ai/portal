@@ -82,7 +82,7 @@ function ConversationCard({
               >
                 <p className="whitespace-pre-wrap text-sm text-ink">{reply.body}</p>
                 <p className="mt-1 text-xs text-ink-faint">
-                  {mine ? "Your reply" : "Their reply"} · {formatStamp(reply.created_at)}
+                  {mine ? "You" : "Other participant"} · {formatStamp(reply.created_at)}
                 </p>
               </li>
             );
@@ -133,18 +133,16 @@ export default async function InboxPage() {
         </ButtonLink>
       </div>
       <p className="mt-2 max-w-xl text-sm text-ink-soft">
-        Replies to your listings and your own replies, threaded by listing. The
-        relay keeps both sides of every conversation strangers: no identity, no
-        contact created — you reply here, and the other party reads in their
-        own portal.
+        Find replies to listings you posted or responded to. These replies
+        are not end-to-end encrypted. Agnus Dei can read them for safety
+        and fraud reviews. They do not create Locuto contacts.
       </p>
 
       {conversations.length === 0 ? (
         <Card className="mt-8 text-sm text-ink-soft">
-          Nothing yet. When another adult replies to one of your listings — or
-          you reply to one — the conversation gathers here.{" "}
+          No replies yet. Browse the Exchange or post a listing to get started.{" "}
           <Link href="/exchange" className="underline">
-            The exchange is this way.
+            Browse the Exchange.
           </Link>
         </Card>
       ) : (
