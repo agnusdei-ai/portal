@@ -7,8 +7,11 @@ Portal. Bede's household learning data belongs on hardware the family controls.
 
 **Messaging today:** Exchange replies are stored by the Portal and **are not
 end-to-end encrypted**. Operators may read them for safety and fraud review.
-Connecting a Portal contact request to Agnus Dei's Locuto messenger is planned,
-not implemented. See [the copy guide](docs/voice-and-security.md) and
+The proposed future private-conversation path allows members to choose **Locuto
+(preferred) or Signal**, and neither app is required for membership or identity
+verification. There is currently no automatic Signal or Locuto proof-of-control
+in the Portal. See [messaging guidance](src/app/portal/messaging/page.tsx),
+[the copy guide](docs/voice-and-security.md), and
 [the implementation checklist](docs/implementation-checklist.md).
 
 **Release status:** pre-release. This README describes the code, not a
