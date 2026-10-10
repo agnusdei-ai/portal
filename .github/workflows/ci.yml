@@ -4,6 +4,11 @@ on:
   pull_request:
     branches:
       - main
+# Neither job needs a write token: the quality gate reads the repo and
+# the audit gate only reads lockfiles. Scope the token down from the
+# repo default so a compromised workflow cannot mutate anything.
+permissions:
+  contents: read
 
 jobs:
   quality-gate:
@@ -19,7 +24,7 @@ jobs:
       TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
 
       - name: Start the preinstalled PostgreSQL and allow TCP password auth
         run: |
@@ -27,7 +32,7 @@ jobs:
           sudo -u postgres psql -c "alter user postgres password 'postgres';"
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           # npm test runs `tsx --test tests/*.test.mjs`: the tests import the
           # TypeScript sources directly (fixture-driven logic tests), which no
@@ -41,3 +46,29 @@ jobs:
 
       - name: Typecheck, test, and build
         run: npm run typecheck && npm test && npm run build
+
+  dependency-audit:
+    name: Dependency audit (production chain blocks)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # The production chain (what ships) blocks the PR on any high or
+      # critical finding; the dev chain warns instead of blocking, so
+      # lint-time-only findings ride a recorded exception in
+      # .github/audit-allowlist.json rather than an unwatched failure.
+      - name: Audit production dependencies (blocks on high/critical)
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Audit dev dependencies (non-blocking: allowlist or fix)
+        run: npm audit --audit-level=critical || echo "::warning::dev-chain finding — allowlist or fix"
