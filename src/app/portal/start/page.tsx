@@ -116,6 +116,18 @@ export default async function StartPage() {
         <OnboardingChecklist steps={steps} />
       </div>
 
+      <Card className="mt-8">
+        <h3 className="font-medium">Private messaging is optional</h3>
+        <p className="mt-2 text-sm text-ink-soft">
+          When you want to talk privately with another adult, you may choose
+          Locuto or Signal. Neither app is needed for membership or identity
+          verification, and this is not a required onboarding step.
+        </p>
+        <Link href="/portal/messaging" className="mt-3 inline-block text-sm font-medium text-brand underline">
+          Learn about messaging choices
+        </Link>
+      </Card>
+
       <Card className="mt-8 bg-parchment-deep/40">
         <h3 className="font-medium">What the identity check means</h3>
         <p className="mt-1 max-w-xl text-sm text-ink-soft">
