@@ -7,7 +7,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       <main className="flex-1">{children}</main>
       <footer className="border-t border-rule">
         <div className="mx-auto max-w-5xl px-6 py-8 text-sm text-ink-faint">
-          Browsing co-ops and curriculum is free and always will be. Bede is the paid part.
+          Browse co-ops and curriculum without signing in. An eligible account is needed to post, reply, or set up Bede.
         </div>
       </footer>
     </div>
