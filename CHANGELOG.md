@@ -1,27 +1,29 @@
 # Changelog
 
-All notable changes to the Homeschool Community Portal will be documented in this file.
+Changes to Agnus Dei Portal are recorded here when the corresponding code and tests are available. This repository is **pre-release**; its current `main` branch is not a supported public release.
 
-The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project uses pre-1.0 iterative versioning until General Availability.
+## Unreleased — copy and documentation review (2026-10-10)
 
-## [v0.1] - 2026-08-15 - Pre-release
+### Proposed
+- Clearer language across the homepage, navigation, curriculum, co-op directory, Exchange, replies, member home, and onboarding.
+- Updated developer and help documentation to separate what works today from what is planned.
+- A Portal-to-Locuto private-messaging handoff, with decisions and security requirements tracked in the private Locuto blueprint. **Not implemented in this Portal.**
 
-**Status:** Pre-release / Beta. This release supports iterative testing of a secure household-member portal and exchange. General Availability is targeted for on or before **September 30, 2026**, subject to successful safety, security, fraud-prevention, and load testing. The portal will be declared viable for general user traffic only after that testing confirms readiness.
+### Current boundaries
+- The Exchange currently stores replies in the Portal; **they are not end-to-end encrypted**, and the service operator can read them.
+- The verified-adult account workflow, permitted exchange roles, communication waiver, per-child consent/licensing model, and narrow tutor discovery API are separate functions; they do not mean tutor sessions or private messaging are hosted here.
+- Co-op member rosters and children's learning records do not belong in the hosted Portal.
+- No general-availability date or certification is asserted. Security and deployment readiness require their own evidence.
 
-### Added
-- Secure, verified household-member messaging and exchange capabilities
-- License-based verification during onboarding
-- Household-controlled installation option for deployment on customer-owned hardware
-- Local session-data model for self-hosted deployments; session data remains on the customer’s hardware
-- Privacy-minimizing data design, retaining only the minimum operational, security, verification-outcome, and moderation records needed to protect the service
-- Policy-violation and safety-event logging to support moderation and investigations
-- Anti-fraud foundation including account-verification controls, rate limits, suspicious-activity monitoring, duplicate-account prevention, reporting, blocking, and administrative review workflows
+## v0.1 — initial scaffold (2026-08-15)
 
-### Hardware and self-hosting notice
-Customers are responsible for procuring, operating, securing, maintaining, and backing up their own hardware and self-hosted deployments. Bede and Agnus Dei Technologies make no express warranty regarding customer-owned hardware and disclaim liability to the extent permitted by applicable law for its ownership, operation, availability, security, maintenance, or failure.
+This was an **early development milestone**, not proof that every planned feature was delivered. The old beta label, September 30, 2026 general-availability target, and blanket claims of secure member messaging, complete moderation tooling, and household deployment support have been removed because they were not backed by a release-evidence inventory.
 
-### Roadmap to v1.0
-- Complete fraud, safety, security, and load testing
-- Expand moderation, investigation, and account-review workflows
-- Validate onboarding and verification controls against abuse scenarios
-- Declare production readiness only after testing confirms viability for user traffic
+The application includes public discovery, an adults-only Exchange with readable reply messages, and account/consent structures under development. For current feature and verification details, see the [README](README.md) and [security policy](SECURITY.md).
+
+## Before declaring a release
+
+- Validate the exact commit with type-checking, tests, and a production build.
+- Verify account and payment/consent flows, abuse handling, data isolation, deployment controls, and mobile accessibility.
+- Obtain the required product, security, and legal reviews for any new claims.
+- Describe Locuto E2EE as available in the Portal only after an actual interoperable, tested release.
