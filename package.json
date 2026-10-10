@@ -14,7 +14,7 @@
     "test": "tsx --test --tsconfig tsconfig.test.json tests/*.test.mjs"
   },
   "dependencies": {
-    "@supabase/ssr": "^0.12.4",
+    "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.117.3",
     "next": "^16.4.0",
     "pg": "^8.23.1",
