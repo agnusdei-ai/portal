@@ -2,16 +2,16 @@ import { ButtonLink, Card } from "@/components/ui";
 
 const LAYERS = [
   {
-    title: "Bede knows your books",
-    body: "Point Bede at the curriculum already on your shelf. It teaches from that scope and sequence — not a generic syllabus it invented.",
+    title: "Start with your own books",
+    body: "Look up the curriculum you already use and see where Bede is designed to help. You choose what your family learns.",
   },
   {
-    title: "Bede runs on your hardware",
-    body: "Your curriculum, your children's progress, and everything Bede knows about them stays on a machine you own. None of it reaches us, by construction rather than by promise.",
+    title: "Keep learning in the household",
+    body: "Children's learning records belong on hardware your household controls, not in the public Portal.",
   },
   {
-    title: "Bede keeps your records",
-    body: "Attendance, progress, and portfolios in the format your state actually asks for, generated as you go.",
+    title: "Know what is supported",
+    body: "Each curriculum listing describes Bede's level of support, so you can decide what fits your family.",
   },
 ];
 
@@ -20,29 +20,29 @@ export default function HomePage() {
     <>
       <section className="mx-auto max-w-5xl px-6 pt-20 pb-16">
         <p className="text-sm font-medium tracking-wide text-brand uppercase">
-          Homeschool co-ops &amp; curriculum
+          Made for homeschool families
         </p>
         <h1 className="mt-4 max-w-2xl text-5xl leading-tight font-semibold text-balance">
-          Every co-op and curriculum in one place. Free.
+          Find good resources. Meet your community.
         </h1>
         <p className="mt-5 max-w-xl text-lg text-ink-soft">
-          Browse without an account. When you&apos;re ready, Bede takes the curriculum
-          you already chose and turns it into a working school year.
+          Explore homeschool co-ops, browse curriculum, and exchange materials with
+          other families. You can look around without an account.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
-          <ButtonLink href="/exchange">Browse the exchange</ButtonLink>
-          <ButtonLink href="/curriculum" variant="secondary">
-            Browse curriculum
+          <ButtonLink href="/exchange">Explore the exchange</ButtonLink>
+          <ButtonLink href="/coops" variant="secondary">
+            Find a co-op
           </ButtonLink>
         </div>
       </section>
 
       <section className="border-y border-rule bg-parchment-deep">
         <div className="mx-auto max-w-5xl px-6 py-16">
-          <h2 className="text-2xl font-semibold">What you pay for</h2>
+          <h2 className="text-2xl font-semibold">Teaching with the books you choose</h2>
           <p className="mt-2 max-w-xl text-ink-soft">
-            Not the directory — that&apos;s a lookup you could do yourself. You pay for
-            the part that takes a shelf of books and runs the year.
+            Bede is designed to support the curriculum you have chosen. Browse the
+            directory to see where help is available before setting up.
           </p>
           <div className="mt-8 grid gap-4 md:grid-cols-3">
             {LAYERS.map((l) => (
@@ -58,14 +58,14 @@ export default function HomePage() {
       <section className="mx-auto max-w-5xl px-6 py-16">
         <Card className="flex flex-wrap items-center justify-between gap-6 p-8">
           <div>
-            <h2 className="text-2xl font-semibold">Lead a co-op?</h2>
+            <h2 className="text-2xl font-semibold">Lead a homeschool co-op?</h2>
             <p className="mt-2 max-w-md text-sm text-ink-soft">
-              List your co-operative so families can find it. We publish what you
-              teach and when you meet, and never hold a list of who belongs.
+              Help families learn about your co-op. The directory shows information
+              your co-op chooses to share, without publishing a member list.
             </p>
           </div>
-          <ButtonLink href="/setup?role=director">
-            Set up your co-op
+          <ButtonLink href="/coops">
+            Learn about co-ops
           </ButtonLink>
         </Card>
       </section>
