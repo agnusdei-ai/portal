@@ -24,10 +24,10 @@ export default async function CurriculumPage({
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-14">
-      <h1 className="text-4xl font-semibold">Curriculum</h1>
+      <h1 className="text-4xl font-semibold">Explore homeschool curriculum</h1>
       <p className="mt-3 max-w-xl text-ink-soft">
-        Free to browse, no account needed. The badge tells you how much of the
-        teaching Bede can take on.
+        Browse by subject and see how much support Bede offers for the
+        books you already use. Looking around is free.
       </p>
 
       <nav className="mt-8 flex flex-wrap gap-2" aria-label="Filter by subject">
@@ -44,9 +44,8 @@ export default async function CurriculumPage({
 
       {curricula.length === 0 ? (
         <Card className="mt-8 text-sm text-ink-soft">
-          Nothing listed yet{subject ? ` under ${subject}` : ""}. Seed the catalogue
-          with <code className="mx-1 rounded bg-parchment-deep px-1">supabase/seed.sql</code>
-          to populate this page.
+          No curriculum listed{subject ? ` under ${subject}` : ""} yet.
+          Try another subject or check back later.
         </Card>
       ) : (
         <ul className="mt-8 grid gap-4 md:grid-cols-2">
@@ -68,7 +67,7 @@ export default async function CurriculumPage({
                 </p>
                 <div className="mt-4">
                   <ButtonLink href={`/setup?curriculum=${c.slug}`}>
-                    Use this with Bede
+                    Explore Bede setup
                   </ButtonLink>
                 </div>
               </Card>
