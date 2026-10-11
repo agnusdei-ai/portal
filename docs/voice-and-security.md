@@ -34,7 +34,7 @@ Identity verification does **not** require publishing a person's legal name, pri
 | Communication axes | Who can contact whom |
 | Verification principal | Verified adult |
 | Vouching | A co-op confirms your role |
-| Licence seat | Bede licence (one per child) |
+| License seat | Bede license (one per child) |
 | Enrol agent system | Read the tutor discovery guide |
 | No results returned | No matches yet. Try another search. |
 

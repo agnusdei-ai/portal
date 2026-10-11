@@ -61,7 +61,7 @@ verification. `docs/portal.md` §3 puts the public-to-portal boundary at the sam
 event. So one charge is simultaneously the paywall, the consent instrument and the
 data boundary, and three things follow.
 
-**It must be a genuine captured charge.** An authorisation hold released without
+**It must be a genuine captured charge.** An authorization hold released without
 notice, or a zero-amount trial, notifies nobody and silently voids the consent
 method. `src/lib/billing/checkout.ts` uses `mode: "payment"` with automatic
 capture for this reason.
@@ -74,9 +74,9 @@ setup leaves nothing behind because there was nothing to leave.
 `counsel-packet-40.md` records that a free tier, an institutional seat or a gift
 subscription each break the payment-card route.
 
-**The licence is per seat, one seat per child**, which follows the grain of the
+**The license is per seat, one seat per child**, which follows the grain of the
 consent method: each child's consent arrives with its own charge and its own
-cardholder notification, so the flat-licence awkward case in
+cardholder notification, so the flat-license awkward case in
 `parental-consent.md` §6 never arises. The hazard it introduces is closed —
 **no bulk purchase, no adjustable quantity, no gift path**, since a seat bought
 by anyone but the child's own parent carries no consent while still looking
@@ -142,7 +142,7 @@ it. Letting a parent discover that afterwards would be trading on a guarantee we
 were not providing. `src/lib/consent/waiver.ts` states it in those words.
 
 Withdrawal stops listings being shown and blocks posting and replying. It touches
-neither the household licence nor the parental consent.
+neither the household license nor the parental consent.
 
 ## The session risk, and the idle timeout
 
@@ -222,7 +222,7 @@ src/
   app/
     (public)/          catalogue, co-op listings, the exchange
     setup/             age gate, notice, consent, completion
-    portal/            seats and licence keys
+    portal/            seats and license keys
     api/webhooks/      the processor callback that grants consent
     api/agents/        the tutor phase-B discovery API (docs/agent-interface.md)
   lib/
@@ -243,7 +243,7 @@ tests/                 the invariants that keep the prohibitions structural
 holding any token can reach it. Exposing it to make the SDK usable there would
 undo the separation the schema exists to create.
 
-**Why the licence token is minted from the portal, not the webhook.** A token
+**Why the license token is minted from the portal, not the webhook.** A token
 minted in a webhook is a secret coming into existence with nobody present to
 receive it, and the only places left to put it are the database in plaintext or
 the processor's metadata. The parent mints it from their own session; only the
@@ -259,7 +259,7 @@ silently degrades every query in the codebase to `never`.
 
 ## Known gaps and decisions
 
-- **Decision 61 is partly settled:** one paid licence per child is the
+- **Decision 61 is partly settled:** one paid license per child is the
   chosen consent and licensing model. The remaining decision is whether
   household deployments are licensed self-hosting or a hosted service.
 - **The co-op director experience** is a role, a policy and a vouch table, with
