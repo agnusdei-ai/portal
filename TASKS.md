@@ -23,5 +23,5 @@
 - [x] F10 | Dockerfile, env-only config, /health | npm run build | none
 - [x] F12 | Security headers, strict CSP, origin allow-list | T() tests/headers.test.mjs | none
 - [x] F11 | CI: lint, typecheck, test, build, secret scan, RLS coverage | CI dry run | T00
-- [ ] F13 | Runbooks: key rotation, data exposure, rollback, cert failure | markdown lint | none
+- [x] F13 | Runbooks: key rotation, data exposure, rollback, cert failure | markdown lint | none
 - [ ] F14 | Release-gate script covering blueprint section 9, amendment 1 section 5 | npm run gates | all above
