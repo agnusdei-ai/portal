@@ -1,6 +1,6 @@
 # Queue. Format: - [ ] ID | title | gate | blocked-by      (T() = npx tsx --test --tsconfig tsconfig.test.json)
 - [x] T00 | Harness: scripts "gates" (lint, typecheck, test, build, secret-scan) and "db:test:up"; CI database; new tests named tests/*.test.mjs | npm run lint && npm run typecheck && npm test | none
-- [ ] F01 | Migration: child_account_name -> seat_label; no real-name requirement; keep notice hash, timestamp, adult id; no history | T() tests/seat-label-schema.test.mjs | T00
+- [x] F01 | Migration: child_account_name -> seat_label; no real-name requirement; keep notice hash, timestamp, adult id; no history | T() tests/seat-label-schema.test.mjs | T00
 - [ ] F02 | Seat-label generator + name/initials/date warning | T() tests/seat-label.test.mjs | T00
 - [ ] F03 | Update setup action, consent record, consent page, notice form, types.ts, existing test | npm run typecheck && npm test | F01,F02
 - [ ] F04 | Notice v-next private-label wording; bump version and hash | T() tests/notice.test.mjs | F03

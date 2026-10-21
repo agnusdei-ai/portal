@@ -160,7 +160,7 @@ const FORBIDDEN_KEYS = [
   "address", "street", "postcode", "postal_code", "zip",
   "document_number", "document_image", "selfie", "photo", "image",
   "owner_user_id", "vendor_evaluation_id", "docv_reference_id", "reason_codes",
-  "enquiry_ref", "licence_token", "token", "secret", "child", "child_account_name",
+  "enquiry_ref", "licence_token", "token", "secret", "child", "seat_label",
   "ip", "user_agent", "listing_replies", "replies", "message", "messages",
 ];
 

@@ -97,7 +97,7 @@ test(
 
     await t.test("a consent cannot be marked granted without its evidence", () => {
       assert.throws(
-        () => psql(`insert into consent.consent_records (owner_user_id, notice_version, notice_acknowledged_at, child_account_name, state) values ('${USER_A}','v1',now(),'Cecilia','granted');`),
+        () => psql(`insert into consent.consent_records (owner_user_id, notice_version, notice_acknowledged_at, seat_label, state) values ('${USER_A}','v1',now(),'lantern.k7q2','granted');`),
         (err) => /granted_is_evidenced|violates/.test(String(err.stderr ?? err.message)),
       );
     });
