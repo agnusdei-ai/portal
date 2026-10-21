@@ -4,7 +4,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { CATEGORIES } from "@/lib/exchange/schema";
 import { ButtonLink, Card } from "@/components/ui";
-import type { Listing, ListingCategory } from "@/lib/types";
+import type { ListingCategory, ListingView } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "Share and exchange homeschool materials",
@@ -21,7 +21,7 @@ export default async function ExchangePage({
   const supabase = await createClient();
 
   let query = supabase
-    .from("listings")
+    .from("listings_v")
     .select("*")
     .eq("state", "active")
     .gt("expires_at", new Date().toISOString())
@@ -32,7 +32,7 @@ export default async function ExchangePage({
   if (isCategory(category)) query = query.eq("category", category);
 
   const { data } = await query;
-  const listings = (data ?? []) as Listing[];
+  const listings = (data ?? []) as ListingView[];
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-14">

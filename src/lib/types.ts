@@ -129,6 +129,13 @@ export type ListingReply = {
   created_at: string;
 };
 
+/**
+ * What a client may read (migration 0008): the safe columns plus a computed
+ * `mine`. The account id behind it is never selectable by a client role.
+ */
+export type ListingView = Omit<Listing, "posted_by_account"> & { mine: boolean };
+export type ListingReplyView = Omit<ListingReply, "from_account"> & { mine: boolean };
+
 export type ListingReport = {
   id: string;
   listing_id: string;
@@ -293,7 +300,10 @@ export interface Database {
       onboarding_checklists: Table<OnboardingChecklist>;
       verification_attestations: Table<VerificationAttestation>;
     };
-    Views: { [_ in never]: never };
+    Views: {
+      listings_v: { Row: ListingView; Relationships: [] };
+      listing_replies_v: { Row: ListingReplyView; Relationships: [] };
+    };
     Functions: { [_ in never]: never };
     Enums: {
       seat_state: SeatState;

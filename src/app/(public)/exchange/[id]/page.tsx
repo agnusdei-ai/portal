@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { CATEGORIES } from "@/lib/exchange/schema";
 import { ReplyForm } from "@/components/exchange/reply-form";
 import { Card } from "@/components/ui";
-import type { Listing } from "@/lib/types";
+import type { ListingView } from "@/lib/types";
 
 export default async function ListingPage({
   params,
@@ -14,9 +14,9 @@ export default async function ListingPage({
   const { id } = await params;
   const supabase = await createClient();
 
-  const { data } = await supabase.from("listings").select("*").eq("id", id).maybeSingle();
+  const { data } = await supabase.from("listings_v").select("*").eq("id", id).maybeSingle();
   if (!data) notFound();
-  const listing = data as Listing;
+  const listing = data as ListingView;
 
   const {
     data: { user },

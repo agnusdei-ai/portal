@@ -74,9 +74,9 @@ export default async function PortalPage() {
         .select("listing_id, created_at")
         .order("created_at", { ascending: false }),
       supabase
-        .from("listings")
+        .from("listings_v")
         .select("id", { count: "exact", head: true })
-        .eq("posted_by_account", account.id),
+        .eq("mine", true),
       supabase
         .from("coop_affiliations")
         .select("class")

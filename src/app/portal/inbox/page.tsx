@@ -13,7 +13,7 @@ import { CATEGORIES } from "@/lib/exchange/schema";
 import { ReplyForm } from "@/components/exchange/reply-form";
 import { UnreadBadge } from "@/components/inbox/unread-badge";
 import { ButtonLink, Card } from "@/components/ui";
-import type { Listing, ListingReply } from "@/lib/types";
+import type { ListingReplyView, ListingView } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "Replies",
@@ -26,18 +26,12 @@ const ROLE_LINE: Record<Conversation["role"], string> = {
   owner_and_sender: "Your listing · you have replied here too",
 };
 
-function categoryLabel(listing: Listing | null): string | null {
+function categoryLabel(listing: ListingView | null): string | null {
   if (!listing) return null;
   return CATEGORIES.find((c) => c.value === listing.category)?.label ?? null;
 }
 
-function ConversationCard({
-  conversation,
-  accountId,
-}: {
-  conversation: Conversation;
-  accountId: string;
-}) {
+function ConversationCard({ conversation }: { conversation: Conversation }) {
   const meta = [
     ROLE_LINE[conversation.role],
     categoryLabel(conversation.listing),
@@ -72,7 +66,7 @@ function ConversationCard({
 
         <ul className="mt-4 space-y-3">
           {conversation.replies.map((reply) => {
-            const mine = reply.from_account === accountId;
+            const mine = reply.mine;
             return (
               <li
                 key={reply.id}
@@ -103,26 +97,28 @@ export default async function InboxPage() {
 
   const supabase = await createClient();
 
-  // No from_account or listing filter here on purpose: "reply visible to the
+  // No account or listing filter here on purpose: "reply visible to the
   // two parties" (0001_zones.sql) is the whole permission system, and
   // duplicating it in the application would be a second check to drift. What
   // RLS returns — the reader's own replies plus replies to the reader's
   // listings, and nothing else — is exactly what renders.
+  // The views (0008) carry the safe columns plus a computed `mine`; selecting
+  // everything from them cannot leak an account id.
   const { data: replies } = await supabase
-    .from("listing_replies")
+    .from("listing_replies_v")
     .select("*")
     .order("created_at");
 
-  const visible = (replies ?? []) as ListingReply[];
+  const visible = (replies ?? []) as ListingReplyView[];
   const listingIds = [...new Set(visible.map((r) => r.listing_id))];
 
-  let listings: Listing[] = [];
+  let listings: ListingView[] = [];
   if (listingIds.length > 0) {
-    const { data } = await supabase.from("listings").select("*").in("id", listingIds);
-    listings = (data ?? []) as Listing[];
+    const { data } = await supabase.from("listings_v").select("*").in("id", listingIds);
+    listings = (data ?? []) as ListingView[];
   }
 
-  const conversations = buildConversations(visible, listings, accountId);
+  const conversations = buildConversations(visible, listings);
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-12">
@@ -148,11 +144,7 @@ export default async function InboxPage() {
       ) : (
         <ul className="mt-8 space-y-6">
           {conversations.map((conversation) => (
-            <ConversationCard
-              key={conversation.listingId}
-              conversation={conversation}
-              accountId={accountId}
-            />
+            <ConversationCard key={conversation.listingId} conversation={conversation} />
           ))}
         </ul>
       )}

@@ -9,9 +9,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test --tsconfig tsconfig.test.json tests/*.test.mjs"
+    "test": "tsx --test --tsconfig tsconfig.test.json tests/*.test.mjs",
+    "secret-scan": "sh tools/secret-scan.sh",
+    "gates": "npm run lint && npm run typecheck && npm test && npm run build && npm run secret-scan",
+    "db:test:up": "docker run -d --rm --name portal-test-db -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres:16"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
@@ -32,9 +35,9 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "eslint": "^10.12.0",
-    "eslint-config-next": "^15.1.6",
+    "eslint-config-next": "^16.4.2",
     "tailwindcss": "^4.0.0",
     "tsx": "^4.23.15",
-    "typescript": "^7.0.2"
+    "typescript": "^6.0.3"
   }
 }

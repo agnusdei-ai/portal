@@ -12,7 +12,7 @@ import { permittedDocuments } from "./states";
  */
 const baseSchema = z.object({
   residency: z.enum(["us", "international"], {
-    errorMap: () => ({ message: "Choose where you live." }),
+    error: "Choose where you live.",
   }),
   firstName: z.string().trim().min(1, "Your first name is required.").max(80),
   middleName: z

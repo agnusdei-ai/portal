@@ -8,7 +8,7 @@ import { loadModule } from "./helpers.mjs";
  * test (inbox-rls.test.mjs) proves what the database returns; this one proves
  * that what renders from it is threaded, ordered, and unread-honest.
  */
-const { buildConversations, isUnread, formatStamp } = loadModule(
+const { buildConversations, isUnread, formatStamp } = await loadModule(
   new URL("../src/lib/inbox/conversations.ts", import.meta.url),
 );
 
@@ -16,7 +16,7 @@ const READER = "aaaaaaaa-0000-0000-0000-000000000001";
 const OTHER = "aaaaaaaa-0000-0000-0000-000000000002";
 
 function reply(id, listingId, from, createdAt) {
-  return { id, listing_id: listingId, from_account: from, body: `body ${id}`, created_at: createdAt };
+  return { id, listing_id: listingId, mine: from === READER, body: `body ${id}`, created_at: createdAt };
 }
 
 function listing(id, postedBy) {
@@ -27,7 +27,7 @@ function listing(id, postedBy) {
     body: "…",
     state_code: "TX",
     region: "Austin",
-    posted_by_account: postedBy,
+    mine: postedBy === READER,
     posted_as: "parent",
     state: "active",
     expires_at: "2026-11-01T00:00:00Z",
@@ -45,7 +45,6 @@ test("replies thread by listing, oldest first, conversations newest-first", () =
       reply("r2", "listing-a", OTHER, "2026-10-08T11:00:00Z"),
     ],
     [listingA, listingB],
-    READER,
   );
 
   assert.deepEqual(
@@ -80,7 +79,6 @@ test("role reflects the reader's relation to each conversation", () => {
       reply("r4", "listing-c", READER, "2026-10-08T13:00:00Z"),
     ],
     [listingA, listingB, listingC],
-    READER,
   );
 
   const byId = new Map(conversations.map((c) => [c.listingId, c]));
@@ -95,7 +93,6 @@ test("an own reply whose listing is no longer readable still renders, without a 
   const conversations = buildConversations(
     [reply("r1", "listing-gone", READER, "2026-10-08T10:00:00Z")],
     [], // the listings lookup returned nothing for this id
-    READER,
   );
 
   assert.equal(conversations.length, 1);
@@ -116,7 +113,6 @@ test("unread means an incoming reply newer than the browser's last look", () => 
   const onlyMine = buildConversations(
     [reply("r1", "listing-a", READER, "2026-10-08T10:00:00Z")],
     [listing("listing-a", OTHER)],
-    READER,
   );
   assert.equal(onlyMine[0].latestIncomingAt, null);
   assert.equal(isUnread(onlyMine[0].latestIncomingAt, null), false);

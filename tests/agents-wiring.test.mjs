@@ -14,7 +14,6 @@ import { readStripped } from "./helpers.mjs";
 
 const route = readStripped(new URL("../src/app/api/agents/tutors/route.ts", import.meta.url));
 const principal = readStripped(new URL("../src/lib/agents/principal.ts", import.meta.url));
-const discovery = readStripped(new URL("../src/lib/agents/discovery.ts", import.meta.url));
 
 function agentsSources() {
   const root = new URL("../src", import.meta.url).pathname;

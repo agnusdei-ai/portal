@@ -30,7 +30,7 @@ const noticeSchema = z.object({
     .min(1, "A name is required, and it appears on the purchase screen.")
     .max(60),
   acknowledged: z.literal("on", {
-    errorMap: () => ({ message: "The notice must be acknowledged to continue." }),
+    error: "The notice must be acknowledged to continue.",
   }),
 });
 

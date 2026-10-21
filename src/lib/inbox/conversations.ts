@@ -1,4 +1,4 @@
-import type { Listing, ListingReply } from "@/lib/types";
+import type { ListingReplyView, ListingView } from "@/lib/types";
 
 /**
  * The inbox's one job: take exactly the replies row-level security returned —
@@ -24,10 +24,10 @@ export type Conversation = {
    * the RLS policy, but the expired listing itself does not (only active
    * listings are selectable, and the owner has no exception to that).
    */
-  listing: Listing | null;
+  listing: ListingView | null;
   role: ConversationRole;
   /** Oldest first: a thread reads top to bottom. */
-  replies: ListingReply[];
+  replies: ListingReplyView[];
   latestReplyAt: string | null;
   /**
    * The newest reply that is not the reader's own. The only kind of reply
@@ -37,16 +37,15 @@ export type Conversation = {
 };
 
 export function buildConversations(
-  replies: ListingReply[],
-  listings: Listing[],
-  accountId: string,
+  replies: ListingReplyView[],
+  listings: ListingView[],
 ): Conversation[] {
-  const byListing = new Map<string, Listing>();
+  const byListing = new Map<string, ListingView>();
   for (const listing of listings) {
     byListing.set(listing.id, listing);
   }
 
-  const groups = new Map<string, ListingReply[]>();
+  const groups = new Map<string, ListingReplyView[]>();
   for (const reply of replies) {
     const group = groups.get(reply.listing_id) ?? [];
     group.push(reply);
@@ -55,9 +54,10 @@ export function buildConversations(
 
   const conversations: Conversation[] = [...groups].map(([listingId, group]) => {
     const ordered = [...group].sort((a, b) => a.created_at.localeCompare(b.created_at));
-    const incoming = ordered.filter((r) => r.from_account !== accountId);
-    const isOwner = byListing.get(listingId)?.posted_by_account === accountId;
-    const isSender = ordered.some((r) => r.from_account === accountId);
+    // `mine` is computed in the database (0008); no account id reaches here.
+    const incoming = ordered.filter((r) => !r.mine);
+    const isOwner = byListing.get(listingId)?.mine === true;
+    const isSender = ordered.some((r) => r.mine);
     const role: ConversationRole =
       isOwner && isSender ? "owner_and_sender" : isOwner ? "owner" : "sender";
 

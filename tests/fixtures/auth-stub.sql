@@ -55,13 +55,20 @@ do $$
           end;
         end if;
 
-        -- Run after the migrations: covers every table the schema defines,
-        -- including tables added by later migrations without each one
-        -- re-granting.
+        -- Run BEFORE the migrations, as Supabase's own grants are: default
+        -- privileges cover every table a later migration creates, and a
+        -- migration that then narrows a grant (0008's column privileges) has
+        -- the last word. Granting after the migrations would silently undo it.
         grant usage on schema public to anon, authenticated, service_role;
         grant all on all tables in schema public to anon, authenticated, service_role;
         grant all on all functions in schema public to anon, authenticated, service_role;
         grant all on all sequences in schema public to anon, authenticated, service_role;
+        alter default privileges in schema public
+          grant all on tables to anon, authenticated, service_role;
+        alter default privileges in schema public
+          grant all on functions to anon, authenticated, service_role;
+        alter default privileges in schema public
+          grant all on sequences to anon, authenticated, service_role;
         return;
       exception when others then
         if attempt = 25 then raise; end if;
