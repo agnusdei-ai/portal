@@ -16,3 +16,6 @@ next-env.d.ts
 # supabase
 .branches
 .temp
+
+# Written per commit by npm run release-gate
+release-evidence-*.json

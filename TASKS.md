@@ -24,4 +24,4 @@
 - [x] F12 | Security headers, strict CSP, origin allow-list | T() tests/headers.test.mjs | none
 - [x] F11 | CI: lint, typecheck, test, build, secret scan, RLS coverage | CI dry run | T00
 - [x] F13 | Runbooks: key rotation, data exposure, rollback, cert failure | markdown lint | none
-- [ ] F14 | Release-gate script covering blueprint section 9, amendment 1 section 5 | npm run gates | all above
+- [x] F14 | Release-gate script covering blueprint section 9, amendment 1 section 5 | npm run gates | all above

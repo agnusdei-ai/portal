@@ -14,7 +14,8 @@
     "test": "tsx --test --tsconfig tsconfig.test.json tests/*.test.mjs",
     "secret-scan": "sh tools/secret-scan.sh",
     "gates": "npm run lint && npm run typecheck && npm test && npm run build && npm run secret-scan",
-    "db:test:up": "docker run -d --rm --name portal-test-db -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres:16"
+    "db:test:up": "docker run -d --rm --name portal-test-db -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres:16",
+    "release-gate": "node tools/release-gate.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
