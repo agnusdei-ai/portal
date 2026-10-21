@@ -14,7 +14,7 @@
 - [x] H05 | Block learner-data fields on school plans until qualification flag | T() tests/school-gate.test.mjs | H01
 - [x] F09 | Catalog staging, validation, human-approval-only publish; bede_support NULL; faith_content flag | T() tests/catalog.test.mjs | T00
 - [x] H06 | School accounts filter faith_content by default; lifted only by allow_faith_content; test both states | T() tests/catalog-scope.test.mjs | F09,H01
-- [ ] G03 | Reply retention job (12 months), content-free logging | T() tests/retention.test.mjs | G01
+- [x] G03 | Reply retention job (12 months), content-free logging | T() tests/retention.test.mjs | G01
 - [ ] G04 | Operator read audit log + ticket reference | T() tests/operator-audit.test.mjs | G01
 - [ ] G05 | Posting reminder + report action | T() tests/exchange-ui.test.mjs | none
 - [ ] G06 | Notice: replies operator-readable; no "private/encrypted" claims | T() tests/notice-claims.test.mjs | F04
