@@ -13,7 +13,7 @@ import { loadModule, readStripped } from "./helpers.mjs";
  * decision module and the real document; the query path is checked
  * structurally.
  */
-const state = loadModule(new URL("../src/lib/exchange/waiver-state.ts", import.meta.url));
+const state = await loadModule(new URL("../src/lib/exchange/waiver-state.ts", import.meta.url));
 
 const source = readStripped(new URL("../src/lib/consent/waiver.ts", import.meta.url));
 const current = source.match(/const VERSION = "([^"]+)"/)?.[1];

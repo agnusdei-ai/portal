@@ -13,8 +13,8 @@ import { readStripped, loadModule } from "./helpers.mjs";
  * a gate that exists but is never called protects no one.
  */
 
-const aal = loadModule(new URL("../src/lib/auth/aal.ts", import.meta.url));
-const routing = loadModule(new URL("../src/lib/auth/callback.ts", import.meta.url));
+const aal = await loadModule(new URL("../src/lib/auth/aal.ts", import.meta.url));
+const routing = await loadModule(new URL("../src/lib/auth/callback.ts", import.meta.url));
 
 // ===========================================================================
 // The assurance gate, executed.

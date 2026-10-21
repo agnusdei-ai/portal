@@ -10,7 +10,7 @@ import { loadModule } from "./helpers.mjs";
  * than assumed. No network is touched, no credential is needed, and nothing
  * resembling a request body or an IP address ever appears in a row.
  */
-const events = loadModule(new URL("../src/lib/abuse/events.ts", import.meta.url));
+const events = await loadModule(new URL("../src/lib/abuse/events.ts", import.meta.url));
 
 function fakeAdmin() {
   const calls = { signOut: [], inserts: [] };

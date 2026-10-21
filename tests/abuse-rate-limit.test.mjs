@@ -11,8 +11,8 @@ import { loadModule, readStripped } from "./helpers.mjs";
  * abuse_events row are asserted, not assumed. The middleware wiring is
  * checked structurally, the way the idle sign-out is.
  */
-const buckets = loadModule(new URL("../src/lib/abuse/rate-limit.ts", import.meta.url));
-const events = loadModule(new URL("../src/lib/abuse/events.ts", import.meta.url));
+const buckets = await loadModule(new URL("../src/lib/abuse/rate-limit.ts", import.meta.url));
+const events = await loadModule(new URL("../src/lib/abuse/events.ts", import.meta.url));
 
 // --------------------------------------------------------------------------
 // Buckets — block, throttle, escalate.
