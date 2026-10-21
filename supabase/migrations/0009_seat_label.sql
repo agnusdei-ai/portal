@@ -26,3 +26,12 @@ alter table consent.consent_records
 -- adult because the account does not exist until consent is granted.
 create unique index consent_records_seat_code_idx
   on consent.consent_records (owner_user_id, split_part(seat_label, '.', 2));
+
+-- The code is drawn here so its alphabet sits beside the check that enforces
+-- it. Not a credential (DECISIONS.md), so random() is enough.
+create function consent.seat_code() returns text
+language sql volatile
+as $$
+  select string_agg(substr('23456789abcdefghjkmnpqrstuvwxyz', 1 + floor(random() * 31)::int, 1), '')
+    from generate_series(1, 5)
+$$;

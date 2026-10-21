@@ -52,7 +52,7 @@ test(
     });
 
     await t.test("a bare word, free text, or look-alike code is refused", () => {
-      for (const label of ["Cecilia", "cecilia", "Lantern.k7q2", "lantern.k7", "lantern.k7q2zzz", "lantern.ko12", "my kid.k7q2"]) {
+      for (const label of ["lantern", "lantern k7q2", "Lantern.k7q2", "lantern.k7", "lantern.k7q2zzz", "lantern.ko12", "my kid.k7q2"]) {
         assert.match(refused(() => open(ADULT_B, label)) ?? "", /seat_label_format/, label);
       }
     });
