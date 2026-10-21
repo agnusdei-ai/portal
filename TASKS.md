@@ -20,7 +20,7 @@
 - [x] G06 | Notice: replies operator-readable; no "private/encrypted" claims | T() tests/notice-claims.test.mjs | F04
 - [x] H02 | Remove hardcoded seat price and "Locuto household license" copy | T() tests/copy-claims.test.mjs | none
 - [x] H07 | Copy: Bede runs on customer hardware; faith modules optional, never "required"; no unshipped claims | T() tests/copy-claims.test.mjs | H02
-- [ ] F10 | Dockerfile, env-only config, /health | npm run build | none
+- [x] F10 | Dockerfile, env-only config, /health | npm run build | none
 - [ ] F12 | Security headers, strict CSP, origin allow-list | T() tests/headers.test.mjs | none
 - [ ] F11 | CI: lint, typecheck, test, build, secret scan, RLS coverage | CI dry run | T00
 - [ ] F13 | Runbooks: key rotation, data exposure, rollback, cert failure | markdown lint | none

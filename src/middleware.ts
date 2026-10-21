@@ -226,7 +226,8 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     // Everything except static assets — the session still needs refreshing on
-    // public pages so the header can show the right state.
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    // public pages so the header can show the right state. /health is a probe,
+    // and refreshing a session there would tie liveness to Supabase.
+    "/((?!_next/static|_next/image|favicon.ico|health$|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
