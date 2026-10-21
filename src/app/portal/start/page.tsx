@@ -42,9 +42,9 @@ export default async function StartPage() {
         .eq("account_id", account.id)
         .is("revoked_at", null),
       supabase
-        .from("listings")
+        .from("listings_v")
         .select("id", { count: "exact", head: true })
-        .eq("posted_by_account", account.id),
+        .eq("mine", true),
     ]);
 
   // Replies are RLS-scoped (0001_zones.sql): the caller sees exactly the ones

@@ -1,8 +1,7 @@
-import { execFileSync } from "node:child_process";
-import { readFileSync, readdirSync } from "node:fs";
-import { join } from "node:path";
 import test from "node:test";
 import assert from "node:assert/strict";
+
+import { dbHarness } from "./helpers.mjs";
 
 /**
  * Bookmarks are private to the account that kept them (spec: bookmarks —
@@ -27,65 +26,20 @@ const ACCOUNT_B = "bbbbbbbb-0000-0000-0000-000000000000";
 const USER_A = "11111111-1111-1111-1111-111111111111";
 const USER_B = "22222222-2222-2222-2222-222222222222";
 
-function psql(database, sql) {
-  const target = BASE ? `${BASE.replace(/\/+$/, "")}/${database}` : database;
-  // The connection target is psql's first positional. A stray program name at
-  // the front of the argument list made psql read the URL as the username and
-  // fail peer authentication — which the availability probe swallowed, so the
-  // test skipped although Postgres was up.
-  const args = BASE
-    ? ["-v", "ON_ERROR_STOP=1", "-tA", target]
-    : ["-u", "postgres", "psql", database, "-v", "ON_ERROR_STOP=1", "-tA"];
-  return execFileSync(BASE ? "psql" : "sudo", args, {
-    input: sql,
-    encoding: "utf8",
-  });
-}
-
-/** As the authenticated role wearing `sub`'s claims — the app's exact posture. */
-function asUser(sub, sql) {
-  return psql(
-    DB,
-    `set role authenticated; set request.jwt.claims = '${JSON.stringify({ sub, role: "authenticated" })}';\n${sql}`,
-  )
-    // psql echoes each SET's command tag; the queries' own output follows it.
-    .split("\n")
-    .filter((line) => line !== "SET")
-    .join("\n")
-    .trim();
-}
-
-function postgresAvailable() {
-  try {
-    psql("postgres", "select 1");
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-const ready = postgresAvailable();
+const { psql: psqlDb, admin, asUser, ready: probe, bootstrap } = dbHarness(DB);
+// Owner-level seeding targets the test database; anything else is a mistake.
+const psql = (database, sql) => {
+  if (database !== DB) throw new Error(`use admin() for ${database}`);
+  return psqlDb(sql);
+};
+const ready = probe();
 
 test(
   "bookmarks are private to their account",
   { skip: ready ? false : "no local postgres; set TEST_DATABASE_URL" },
   async (t) => {
-    // Fresh database, real migrations, the stub's grants applied last so every
-    // table — including this PR's — is covered by them.
-    try {
-      psql("postgres", `drop database if exists ${DB} with (force)`);
-    } catch {
-      // A missing database is not an error; "if exists" already said so.
-    }
-    psql("postgres", `create database ${DB}`);
-
-    psql(DB, readFileSync("tests/fixtures/auth-stub.sql", "utf8"));
-    for (const file of readdirSync("supabase/migrations")
-      .filter((f) => f.endsWith(".sql"))
-      .sort()) {
-      psql(DB, readFileSync(join("supabase/migrations", file), "utf8"));
-    }
-    psql(DB, readFileSync("tests/fixtures/auth-stub.sql", "utf8"));
+    // Fresh database, stub first, then the real migrations (helpers.mjs).
+    bootstrap();
 
     // Accounts exist only behind the webhook in production; seeding them as the
     // table owner mirrors the service role's write, not a user's.
@@ -138,7 +92,7 @@ test(
     });
 
     t.after(() => {
-      psql("postgres", `drop database if exists ${DB} with (force)`);
+      admin(`drop database if exists ${DB} with (force)`);
     });
   },
 );

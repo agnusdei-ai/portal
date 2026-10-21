@@ -96,11 +96,11 @@ export async function withdrawWaiver(): Promise<void> {
     .eq("account_id", account.id);
 
   // Their listings stop being shown. The rows stay, because a fraud
-  // investigation needs the record of what was posted.
+  // investigation needs the record of what was posted. No author filter: the
+  // update policy (0001) already confines this to the caller's own rows.
   await supabase
     .from("listings")
     .update({ state: "withdrawn" })
-    .eq("posted_by_account", account.id)
     .eq("state", "active");
 
   revalidatePath("/exchange", "layout");

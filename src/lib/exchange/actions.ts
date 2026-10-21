@@ -107,9 +107,9 @@ export async function createListing(
   // Rate limiting is most of what moderation without identity has available, so
   // it is checked rather than assumed. docs/portal.md §13.
   const { count } = await supabase
-    .from("listings")
+    .from("listings_v")
     .select("id", { count: "exact", head: true })
-    .eq("posted_by_account", accountId)
+    .eq("mine", true)
     .gt("created_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
 
   if ((count ?? 0) >= DAILY_LISTING_LIMIT) {
