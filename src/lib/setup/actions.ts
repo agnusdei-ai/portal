@@ -134,7 +134,7 @@ export async function startConsentCheckout(
 }
 
 /**
- * Mints the seat's licence token, in the parent's own authenticated session, and
+ * Mints the seat's license token, in the parent's own authenticated session, and
  * returns it for a single render. Only the hash is kept, so this is the one
  * moment the token exists anywhere legible. Calling it again rotates the token
  * and invalidates the previous one.

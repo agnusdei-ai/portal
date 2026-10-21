@@ -39,8 +39,8 @@ export function LicenceForm({
         {pending
           ? "Issuing…"
           : alreadyIssued
-            ? "Issue a new licence key"
-            : "Issue licence key"}
+            ? "Issue a new license key"
+            : "Issue license key"}
       </Button>
       {alreadyIssued ? (
         <p className="text-xs text-ink-faint">

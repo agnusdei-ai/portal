@@ -10,7 +10,7 @@ import { verificationGate } from "./states";
 /**
  * The verified-adult gate. One decision, applied at the head of every surface
  * where another adult can be reached or a household credential is minted:
- * posting, replying, waiver acceptance, licence issuance — and vouching, when
+ * posting, replying, waiver acceptance, license issuance — and vouching, when
  * a vouch action exists to gate. Unverified accounts may browse the exchange;
  * they cannot take part in it. The pure rule lives in states.ts so the
  * refusal tests can reach it without a server-only import.

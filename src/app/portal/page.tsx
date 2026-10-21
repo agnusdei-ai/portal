@@ -138,7 +138,7 @@ export default async function PortalPage() {
           <h2 className="font-medium">Confirm you&apos;re an adult to take part</h2>
           <p className="mt-1 max-w-xl text-sm text-ink-soft">
             The Exchange is for adults. Our verification partner checks your
-            identity before you can post, reply, or request licence keys.
+            identity before you can post, reply, or request license keys.
             The Portal keeps the result, not your identity documents.
           </p>
           <div className="mt-4">
@@ -228,10 +228,10 @@ export default async function PortalPage() {
         </Link>
       </Card>
 
-      <h2 className="mt-12 text-lg font-medium">Bede licences</h2>
+      <h2 className="mt-12 text-lg font-medium">Bede licenses</h2>
       <p className="mt-1 max-w-xl text-sm text-ink-soft">
-        Each licence covers one child. Your child&apos;s learning records belong
-        on household-controlled hardware; the Portal manages the licence and
+        Each license covers one child. Your child&apos;s learning records belong
+        on household-controlled hardware; the Portal manages the license and
         parental consent record.
       </p>
 
@@ -241,7 +241,7 @@ export default async function PortalPage() {
             <Card>
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <h3 className="font-medium">
-                  {labels.get(seat.id) ?? "Bede licence"}
+                  {labels.get(seat.id) ?? "Bede license"}
                 </h3>
                 <span className="text-xs text-ink-faint">
                   {seat.state === "active" ? "Active" : "Revoked"} · issued{" "}

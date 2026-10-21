@@ -11,8 +11,17 @@ export function stripe(): Stripe {
   return client;
 }
 
-/** One seat, in the smallest currency unit. Must be non-zero: see checkout.ts. */
-export const SEAT_PRICE_MINOR = Number(process.env.SEAT_PRICE_MINOR ?? 4900);
-export const SEAT_CURRENCY = process.env.SEAT_CURRENCY ?? "usd";
+/**
+ * The seat's amount, read from the Stripe Price the owner configures from the
+ * contract. A zero charge notifies nobody and voids the consent method, so it
+ * is refused rather than charged.
+ */
+export async function seatPrice(): Promise<{ unitAmount: number; currency: string }> {
+  const id = process.env.STRIPE_SEAT_PRICE_ID;
+  if (!id) throw new Error("STRIPE_SEAT_PRICE_ID is not set");
+  const price = await stripe().prices.retrieve(id);
+  if (!price.unit_amount) throw new Error("the seat price must be a non-zero fixed amount");
+  return { unitAmount: price.unit_amount, currency: price.currency };
+}
 
 export { instrumentEstablishesParent } from "@/lib/billing/instrument";

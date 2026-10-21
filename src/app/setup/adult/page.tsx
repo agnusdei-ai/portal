@@ -4,7 +4,7 @@ import { ButtonLink, Card } from "@/components/ui";
  * compliance/parental-consent.md §2 step 2: an indication of thirteen or above
  * proceeds to ordinary self-run setup, and that document does not apply. Setup
  * for an adult happens in the client, not here, because the portal exists for
- * the licence and the consent ceremony rather than for account creation.
+ * the license and the consent ceremony rather than for account creation.
  */
 export default function AdultSetupPage() {
   return (
@@ -17,7 +17,7 @@ export default function AdultSetupPage() {
           nothing to do here first.
         </p>
         <p className="mt-3 text-sm leading-relaxed text-ink-soft">
-          A household licence is still what lets the software run, and you can
+          A household license is still what lets the software run, and you can
           buy one from the portal.
         </p>
         <div className="mt-6 flex gap-3">

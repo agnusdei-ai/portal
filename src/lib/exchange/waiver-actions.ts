@@ -73,7 +73,7 @@ export async function acceptWaiver(
 }
 
 /**
- * Withdrawal. Touches nothing else: not the household licence, not the Locuto
+ * Withdrawal. Touches nothing else: not the household license, not the Locuto
  * account, and not the parental consent given for a child.
  */
 export async function withdrawWaiver(): Promise<void> {

@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 import { getRecord } from "@/lib/consent/record";
 import { consentStatement } from "@/lib/consent/notice";
-import { SEAT_CURRENCY, SEAT_PRICE_MINOR } from "@/lib/billing/stripe";
+import { seatPrice } from "@/lib/billing/stripe";
 import { ConsentForm } from "@/components/setup/consent-form";
 import { Alert, Card } from "@/components/ui";
 
@@ -20,10 +20,11 @@ export default async function ConsentPage({
   if (!record) redirect("/setup/notice");
   if (record.state === "granted") redirect("/portal");
 
+  const { unitAmount, currency } = await seatPrice();
   const price = new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: SEAT_CURRENCY.toUpperCase(),
-  }).format(SEAT_PRICE_MINOR / 100);
+    currency: currency.toUpperCase(),
+  }).format(unitAmount / 100);
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-16">
@@ -53,7 +54,7 @@ export default async function ConsentPage({
           {consentStatement(record.seat_label)}
         </p>
         <p className="mt-4 text-sm text-ink-soft">
-          The licence is {price}, charged once. The charge is what verifies that a
+          The seat is {price}, charged once. The charge is what verifies that a
           parent gave consent, because your card issuer notifies you of it, so it
           is a real charge rather than a hold.
         </p>

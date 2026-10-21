@@ -1,6 +1,6 @@
 import "server-only";
 
-import { SEAT_CURRENCY, SEAT_PRICE_MINOR, stripe } from "@/lib/billing/stripe";
+import { seatPrice, stripe } from "@/lib/billing/stripe";
 import { consentStatement, NOTICE } from "@/lib/consent/notice";
 
 /**
@@ -14,6 +14,7 @@ export async function createConsentCheckout(args: {
   customerEmail: string;
   origin: string;
 }) {
+  const { unitAmount, currency } = await seatPrice();
   return stripe().checkout.sessions.create({
     mode: "payment",
     customer_email: args.customerEmail,
@@ -25,10 +26,10 @@ export async function createConsentCheckout(args: {
         // (counsel-packet-40).
         quantity: 1,
         price_data: {
-          currency: SEAT_CURRENCY,
-          unit_amount: SEAT_PRICE_MINOR,
+          currency,
+          unit_amount: unitAmount,
           product_data: {
-            name: `Locuto household licence — ${args.seatLabel}`,
+            name: `Agnus Dei household seat — ${args.seatLabel}`,
             description:
               "One seat. Completing this purchase is your parental consent for this account.",
           },

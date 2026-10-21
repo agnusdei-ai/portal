@@ -107,7 +107,7 @@ export default async function StartPage() {
         <Card className="mt-4 border-brand/40">
           <h3 className="font-medium">You&apos;re all set with these steps.</h3>
           <p className="mt-1 max-w-xl text-sm text-ink-soft">
-            You can return to your home page to manage licences,
+            You can return to your home page to manage licenses,
             saved resources and Exchange replies.
           </p>
         </Card>

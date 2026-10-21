@@ -53,7 +53,7 @@ export const DOC_SETS: PersonaDocs[] = [
           {
             heading: "What we keep, and what we never see",
             body: [
-              "The Portal keeps account and consent records, one licence per child, and resources you save. Your child's study records belong on household-controlled devices, not in a public directory.",
+              "The Portal keeps account and consent records, one license per child, and resources you save. Your child's study records belong on household-controlled devices, not in a public directory.",
               CERTIFIES_ADULTHOOD,
               STANDING_IS_EARNED,
             ],

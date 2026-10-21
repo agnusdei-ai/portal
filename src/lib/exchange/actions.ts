@@ -83,7 +83,7 @@ export async function createListing(
   if (!accountId) {
     return {
       ok: false,
-      error: "Posting needs a household licence. Browsing is free and always will be.",
+      error: "Posting needs a household license. Browsing is free and always will be.",
     };
   }
 
@@ -159,7 +159,7 @@ export async function replyToListing(
 
   const accountId = await currentAccountId();
   if (!accountId) {
-    return { ok: false, error: "Replying needs a household licence." };
+    return { ok: false, error: "Replying needs a household license." };
   }
 
   await requireVerifiedAccount(accountId);

@@ -3,7 +3,7 @@ import "server-only";
 import { createHash, randomBytes } from "node:crypto";
 
 /**
- * A seat's licence token: shown once, stored only as a hash, rotated on re-issue.
+ * A seat's license token: shown once, stored only as a hash, rotated on re-issue.
  * It carries nothing about a child because the household build assembles its own
  * configuration (portal.md §5).
  */

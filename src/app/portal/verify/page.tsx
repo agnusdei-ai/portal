@@ -12,7 +12,7 @@ const OUTCOME_COPY: Record<VerificationState, { title: string; body: string }> =
   },
   verified: {
     title: "You're verified",
-    body: "Your identity check is complete. Participating in the exchange — posting, replying, accepting the communication waiver, issuing licence keys — is open to you.",
+    body: "Your identity check is complete. Participating in the exchange — posting, replying, accepting the communication waiver, issuing license keys — is open to you.",
   },
   retry_required: {
     title: "A detail needs correcting",

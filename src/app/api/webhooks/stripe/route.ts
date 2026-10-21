@@ -18,7 +18,7 @@ import { createServiceClient } from "@/lib/supabase/server";
  * account and key material are created only after consent, because creating them
  * first is collection before consent and no later consent cures it. The portal
  * never creates a child account at all, so what is issued here is a seat: a
- * licence the household build presents in order to run.
+ * license the household build presents in order to run.
  */
 export async function POST(request: NextRequest) {
   const signature = request.headers.get("stripe-signature");
@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // No licence token here. Minting one in a webhook means a secret coming into
+  // No license token here. Minting one in a webhook means a secret coming into
   // existence with nobody present to receive it, and the only places left to put
   // it are this table in plaintext or the processor's metadata, which is a third
   // party holding a credential to a household's own software. The parent mints
