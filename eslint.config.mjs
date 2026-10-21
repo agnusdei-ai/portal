@@ -1,10 +1,10 @@
-import { FlatCompat } from "@eslint/eslintrc";
+import coreWebVitals from "eslint-config-next/core-web-vitals";
+import typescript from "eslint-config-next/typescript";
 
-const compat = new FlatCompat({ baseDirectory: import.meta.dirname });
-
-// The configuration `next lint` scaffolds for a TypeScript App Router project.
-export default [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+const config = [
+  ...coreWebVitals,
+  ...typescript,
+  { ignores: [".next/**", "node_modules/**"] },
   {
     // `_`-prefixed parameters are deliberately unused (React's useActionState
     // hands every action the previous state first).
@@ -16,3 +16,5 @@ export default [
     },
   },
 ];
+
+export default config;

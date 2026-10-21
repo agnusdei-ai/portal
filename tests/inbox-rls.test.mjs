@@ -26,7 +26,6 @@ import { dbHarness } from "./helpers.mjs";
  */
 
 const DB = "inbox_rls_test";
-const BASE = process.env.TEST_DATABASE_URL;
 
 const OWNER = "aaaaaaaa-0000-0000-0000-000000000001"; // posts a materials listing
 const FRIEND = "aaaaaaaa-0000-0000-0000-000000000002"; // replies to it; posts their own

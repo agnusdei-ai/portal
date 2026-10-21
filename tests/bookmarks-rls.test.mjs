@@ -19,7 +19,6 @@ import { dbHarness } from "./helpers.mjs";
  */
 
 const DB = "bookmarks_rls_test";
-const BASE = process.env.TEST_DATABASE_URL;
 
 const ACCOUNT_A = "aaaaaaaa-0000-0000-0000-000000000000";
 const ACCOUNT_B = "bbbbbbbb-0000-0000-0000-000000000000";
