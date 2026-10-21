@@ -2,6 +2,9 @@ import { z } from "zod";
 
 import type { ListingCategory } from "@/lib/types";
 
+// Shown on every Exchange free-text field (amendment 1 §4.1).
+export const POSTING_REMINDER = "Do not include a child's name, school, address, or phone number.";
+
 export const CATEGORIES: { value: ListingCategory; label: string; blurb: string }[] = [
   {
     value: "materials",

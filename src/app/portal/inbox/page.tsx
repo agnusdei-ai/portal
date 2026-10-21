@@ -11,6 +11,7 @@ import {
 import { createClient } from "@/lib/supabase/server";
 import { CATEGORIES } from "@/lib/exchange/schema";
 import { ReplyForm } from "@/components/exchange/reply-form";
+import { ReportForm } from "@/components/exchange/report-form";
 import { UnreadBadge } from "@/components/inbox/unread-badge";
 import { ButtonLink, Card } from "@/components/ui";
 import type { ListingReplyView, ListingView } from "@/lib/types";
@@ -85,6 +86,9 @@ function ConversationCard({ conversation }: { conversation: Conversation }) {
 
         <div className="mt-4 border-t border-rule pt-4">
           <ReplyForm listingId={conversation.listingId} />
+        </div>
+        <div className="mt-4">
+          <ReportForm listingId={conversation.listingId} what="conversation" />
         </div>
       </Card>
     </li>

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { CATEGORIES } from "@/lib/exchange/schema";
 import { ReplyForm } from "@/components/exchange/reply-form";
+import { ReportForm } from "@/components/exchange/report-form";
 import { Card } from "@/components/ui";
 import type { ListingView } from "@/lib/types";
 
@@ -51,9 +52,12 @@ export default async function ListingPage({
         </div>
       </Card>
 
-      <p className="mt-6 text-xs text-ink-faint">
-        Expires {new Date(listing.expires_at).toLocaleDateString()}.
-      </p>
+      <div className="mt-6 flex flex-wrap items-start justify-between gap-4">
+        <p className="text-xs text-ink-faint">
+          Expires {new Date(listing.expires_at).toLocaleDateString()}.
+        </p>
+        <ReportForm listingId={listing.id} what="listing" />
+      </div>
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 
 import { EXCHANGE_IDLE, replyToListing } from "@/lib/exchange/actions";
+import { POSTING_REMINDER } from "@/lib/exchange/schema";
 import { Alert, Button, Field, Textarea } from "@/components/ui";
 
 export function ReplyForm({ listingId }: { listingId: string }) {
@@ -20,7 +21,7 @@ export function ReplyForm({ listingId }: { listingId: string }) {
     <form action={formAction} className="space-y-3">
       <input type="hidden" name="listing_id" value={listingId} />
       {state.error ? <Alert>{state.error}</Alert> : null}
-      <Field label="Your reply" errors={state.fieldErrors?.body}>
+      <Field label="Your reply" hint={POSTING_REMINDER} errors={state.fieldErrors?.body}>
         <Textarea
           name="body"
           rows={4}

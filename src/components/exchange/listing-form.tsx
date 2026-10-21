@@ -3,7 +3,7 @@
 import { useActionState, useState } from "react";
 
 import { createListing, EXCHANGE_IDLE } from "@/lib/exchange/actions";
-import { CATEGORIES } from "@/lib/exchange/schema";
+import { CATEGORIES, POSTING_REMINDER } from "@/lib/exchange/schema";
 import { CATEGORY_CLASSES, CLASS_COPY } from "@/lib/exchange/axes";
 import type { ParticipantClass } from "@/lib/types";
 import { Alert, Button, Field, Input, Select, Textarea } from "@/components/ui";
@@ -61,13 +61,13 @@ export function ListingForm({ classes }: { classes: ParticipantClass[] }) {
         </Field>
       ) : null}
 
-      <Field label="Give it a short title" errors={state.fieldErrors?.title}>
+      <Field label="Give it a short title" hint={POSTING_REMINDER} errors={state.fieldErrors?.title}>
         <Input name="title" required maxLength={120} placeholder="Saxon 7/6, good condition" />
       </Field>
 
       <Field
         label="Details"
-        hint="Describe the item or offer. Keep contact details out; replies come through the Portal."
+        hint={`Describe the item or offer. Replies come through the Portal. ${POSTING_REMINDER}`}
         errors={state.fieldErrors?.body}
       >
         <Textarea name="body" rows={6} required maxLength={4000} />
