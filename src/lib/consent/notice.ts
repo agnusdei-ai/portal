@@ -66,10 +66,10 @@ const LEAD =
  * as a confirmation accompanying the purchase rather than as a separate
  * ceremony. §3 of that document requires the purchase screen to state in terms
  * that completing the purchase constitutes consent, and to identify the child
- * account by the name the parent chose.
+ * account by the label the parent chose.
  */
-export function consentStatement(childAccountName: string): string {
-  return `Completing this purchase constitutes your parental consent to the creation of a Locuto account for ${childAccountName}, and to the collection described above.`;
+export function consentStatement(seatLabel: string): string {
+  return `Completing this purchase constitutes your parental consent to the creation of a Locuto account for the seat ${seatLabel}, and to the collection described above.`;
 }
 
 export const NOTICE: ConsentDocument = { version: VERSION, lead: LEAD, sections: SECTIONS };

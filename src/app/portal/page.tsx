@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { seatNamesForAccount } from "@/lib/consent/record";
+import { seatLabelsForAccount } from "@/lib/consent/record";
 import { createClient } from "@/lib/supabase/server";
 import { verificationGate } from "@/lib/verification/gate";
 import { currentOnboarding } from "@/lib/onboarding/actions";
@@ -101,10 +101,10 @@ export default async function PortalPage() {
   const startDone = checklistComplete(startSteps);
   const startRemaining = startSteps.filter((s) => !s.done).length;
 
-  // The child account names live in the consent schema, which no client can
-  // reach. Read here, server-side, having already established that this user
-  // owns this account.
-  const names = await seatNamesForAccount(account.id);
+  // Seat labels live in the consent schema, which no client can reach. Read
+  // here, server-side, having already established that this user owns this
+  // account.
+  const labels = await seatLabelsForAccount(account.id);
 
   const conversations = new Set((replyStamps ?? []).map((r) => r.listing_id)).size;
   const latestReplyAt = replyStamps?.[0]?.created_at ?? null;
@@ -240,7 +240,7 @@ export default async function PortalPage() {
             <Card>
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <h3 className="font-medium">
-                  {names.get(seat.id) ?? "Bede licence"}
+                  {labels.get(seat.id) ?? "Bede licence"}
                 </h3>
                 <span className="text-xs text-ink-faint">
                   {seat.state === "active" ? "Active" : "Revoked"} · issued{" "}

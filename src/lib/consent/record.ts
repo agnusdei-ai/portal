@@ -31,17 +31,17 @@ export async function ensureNoticeVersion(): Promise<void> {
  */
 export async function openRecord(args: {
   ownerUserId: string;
-  childAccountName: string;
+  seatWord: string;
   acknowledgedAt: Date;
 }): Promise<string> {
   await ensureNoticeVersion();
 
   const { rows } = await consentPool().query<{ id: string }>(
     `insert into consent.consent_records
-       (owner_user_id, notice_version, notice_acknowledged_at, child_account_name, state)
-     values ($1, $2, $3, $4, 'notice_acknowledged')
+       (owner_user_id, notice_version, notice_acknowledged_at, seat_label, state)
+     values ($1, $2, $3, $4 || '.' || consent.seat_code(), 'notice_acknowledged')
      returning id`,
-    [args.ownerUserId, NOTICE.version, args.acknowledgedAt, args.childAccountName],
+    [args.ownerUserId, NOTICE.version, args.acknowledgedAt, args.seatWord],
   );
 
   return rows[0].id;
@@ -119,7 +119,7 @@ export async function getRecord(recordId: string): Promise<ConsentRecord | null>
   const { rows } = await consentPool().query<ConsentRecord>(
     `select id, owner_user_id, account_id, notice_version,
             notice_acknowledged_at, consent_completed_at,
-            processor_reference, child_account_name,
+            processor_reference, seat_label,
             method, state, refusal_reason, seat_id, created_at
        from consent.consent_records
       where id = $1`,
@@ -129,24 +129,24 @@ export async function getRecord(recordId: string): Promise<ConsentRecord | null>
 }
 
 /**
- * The names a parent may see for their own seats. This is the only path by which
- * a child account name leaves the consent schema, and it is keyed by account so
- * a caller must already have been authorised as that account's owner.
+ * The labels a parent may see for their own seats. This is the only path by
+ * which a label leaves the consent schema, and it is keyed by account so a
+ * caller must already have been authorized as that account's owner.
  */
-export async function seatNamesForAccount(
+export async function seatLabelsForAccount(
   accountId: string,
 ): Promise<Map<string, string>> {
   const { rows } = await consentPool().query<{
     seat_id: string;
-    child_account_name: string;
+    seat_label: string;
   }>(
-    `select seat_id, child_account_name
+    `select seat_id, seat_label
        from consent.consent_records
       where account_id = $1 and state = 'granted' and seat_id is not null`,
     [accountId],
   );
 
-  return new Map(rows.map((r) => [r.seat_id, r.child_account_name]));
+  return new Map(rows.map((r) => [r.seat_id, r.seat_label]));
 }
 
 export async function findByProcessorReference(
@@ -155,7 +155,7 @@ export async function findByProcessorReference(
   const { rows } = await consentPool().query<ConsentRecord>(
     `select id, owner_user_id, account_id, notice_version,
             notice_acknowledged_at, consent_completed_at,
-            processor_reference, child_account_name,
+            processor_reference, seat_label,
             method, state, refusal_reason, seat_id, created_at
        from consent.consent_records
       where processor_reference = $1`,

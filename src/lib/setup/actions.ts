@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { createConsentCheckout } from "@/lib/billing/checkout";
 import { getRecord, openRecord } from "@/lib/consent/record";
+import { seatWordWarning } from "@/lib/consent/seat-label";
 import { mintLicenceToken } from "@/lib/licence";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { requireVerifiedAccount } from "@/lib/verification/gate";
@@ -14,6 +15,8 @@ export interface ActionState {
   ok: boolean;
   error?: string;
   fieldErrors?: Record<string, string[]>;
+  /** A seat word that may identify the child, echoed so the parent can keep or change it. */
+  seatWarning?: { word: string; message: string };
   /** Shown once and never retrievable again. */
   licenceToken?: string;
 }
@@ -24,11 +27,12 @@ export const IDLE: ActionState = { ok: false };
 const RECORD_COOKIE = "adx_consent_record";
 
 const noticeSchema = z.object({
-  child_account_name: z
+  // The schema enforces this shape; the regex is here only to say why.
+  seat_word: z
     .string()
     .trim()
-    .min(1, "A name is required, and it appears on the purchase screen.")
-    .max(60),
+    .toLowerCase()
+    .regex(/^[a-z]{2,24}$/, "Use one word of 2 to 24 letters, with no digits, spaces, or accents."),
   acknowledged: z.literal("on", {
     error: "The notice must be acknowledged to continue.",
   }),
@@ -56,7 +60,7 @@ export async function acknowledgeNotice(
   formData: FormData,
 ): Promise<ActionState> {
   const parsed = noticeSchema.safeParse({
-    child_account_name: formData.get("child_account_name"),
+    seat_word: formData.get("seat_word"),
     acknowledged: formData.get("acknowledged"),
   });
   if (!parsed.success) {
@@ -66,11 +70,16 @@ export async function acknowledgeNotice(
     };
   }
 
+  const warning = seatWordWarning(parsed.data.seat_word);
+  if (warning && formData.get("keep_word") !== "on") {
+    return { ok: false, seatWarning: { word: parsed.data.seat_word, message: warning } };
+  }
+
   const user = await requireUser();
 
   const recordId = await openRecord({
     ownerUserId: user.id,
-    childAccountName: parsed.data.child_account_name,
+    seatWord: parsed.data.seat_word,
     acknowledgedAt: new Date(),
   });
 
@@ -115,7 +124,7 @@ export async function startConsentCheckout(
 
   const session = await createConsentCheckout({
     consentRecordId: record.id,
-    childAccountName: record.child_account_name,
+    seatLabel: record.seat_label,
     customerEmail: user.email!,
     origin,
   });

@@ -7,18 +7,37 @@ import { Alert, Button, Field, Input } from "@/components/ui";
 
 export function NoticeForm() {
   const [state, formAction, pending] = useActionState(acknowledgeNotice, IDLE);
+  const warning = state.seatWarning;
 
   return (
     <form action={formAction} className="max-w-md space-y-5">
       {state.error ? <Alert>{state.error}</Alert> : null}
 
       <Field
-        label="What should the child's account be called?"
-        hint="This name appears on the purchase screen, so that the consent is tied to the account it authorises."
-        errors={state.fieldErrors?.child_account_name}
+        label="Pick a word for this seat"
+        hint="We add a short code, so the seat shows as something like lantern.k7q2. Only you see it. Do not use your child's name, initials, birthday, or school."
+        errors={state.fieldErrors?.seat_word}
       >
-        <Input name="child_account_name" required maxLength={60} placeholder="Cecilia" />
+        <Input
+          key={warning?.word}
+          name="seat_word"
+          required
+          maxLength={24}
+          defaultValue={warning?.word}
+          placeholder="lantern"
+          autoComplete="off"
+        />
       </Field>
+
+      {warning ? (
+        <div className="space-y-2">
+          <Alert>{warning.message}</Alert>
+          <label className="flex items-start gap-3 text-sm">
+            <input type="checkbox" name="keep_word" className="mt-0.5 size-4 shrink-0" />
+            <span>Keep this word anyway.</span>
+          </label>
+        </div>
+      ) : null}
 
       <label className="flex items-start gap-3 text-sm">
         <input

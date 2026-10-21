@@ -10,7 +10,7 @@ import { consentStatement, NOTICE } from "@/lib/consent/notice";
  */
 export async function createConsentCheckout(args: {
   consentRecordId: string;
-  childAccountName: string;
+  seatLabel: string;
   customerEmail: string;
   origin: string;
 }) {
@@ -28,7 +28,7 @@ export async function createConsentCheckout(args: {
           currency: SEAT_CURRENCY,
           unit_amount: SEAT_PRICE_MINOR,
           product_data: {
-            name: `Locuto household licence — ${args.childAccountName}`,
+            name: `Locuto household licence — ${args.seatLabel}`,
             description:
               "One seat. Completing this purchase is your parental consent for this account.",
           },
@@ -36,9 +36,9 @@ export async function createConsentCheckout(args: {
       },
     ],
     // Load-bearing: the consent statement is on the purchase screen itself, and
-    // the line item above names the child account (parental-consent.md §3).
+    // the line item above names the seat (parental-consent.md §3).
     custom_text: {
-      submit: { message: consentStatement(args.childAccountName) },
+      submit: { message: consentStatement(args.seatLabel) },
     },
     // The processor holds an opaque id only; the retained record is ours.
     metadata: {

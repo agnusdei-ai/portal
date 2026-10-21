@@ -170,7 +170,7 @@ export type ConsentRecord = {
   notice_acknowledged_at: string;
   consent_completed_at: string | null;
   processor_reference: string | null;
-  child_account_name: string;
+  seat_label: string;
   method: ConsentMethod;
   state: ConsentState;
   refusal_reason: string | null;

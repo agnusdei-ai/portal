@@ -50,7 +50,7 @@ export default async function ConsentPage({
 
       <Card className="mt-8">
         <p className="text-sm leading-relaxed text-ink">
-          {consentStatement(record.child_account_name)}
+          {consentStatement(record.seat_label)}
         </p>
         <p className="mt-4 text-sm text-ink-soft">
           The licence is {price}, charged once. The charge is what verifies that a
@@ -67,7 +67,7 @@ export default async function ConsentPage({
       </Card>
 
       <p className="mt-6 text-xs text-ink-faint">
-        The account for {record.child_account_name} is created after this step,
+        The account for {record.seat_label} is created after this step,
         never before it.
       </p>
     </div>
