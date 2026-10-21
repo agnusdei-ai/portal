@@ -375,6 +375,8 @@ test("migrations create only the allowlisted tables", () => {
     "entitlements",
     // 0014 — staged catalog metadata and links, published only by review
     "catalog_candidates",
+    // 0017 — who read which listing's replies and why; never what
+    "operator_reads",
   ]);
   const created = [...[...migrationSql.values()].join("\n").matchAll(
     /create table (?:if not exists )?(?:public\.|consent\.)?(\w+)/g,

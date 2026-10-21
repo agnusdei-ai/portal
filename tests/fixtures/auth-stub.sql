@@ -21,6 +21,11 @@ language sql stable as $$
   select nullif(current_setting('request.jwt.claims', true)::jsonb->>'role', '');
 $$;
 
+create or replace function auth.jwt() returns jsonb
+language sql stable as $$
+  select coalesce(nullif(current_setting('request.jwt.claims', true), ''), '{}')::jsonb;
+$$;
+
 -- Roles are cluster-wide but each test file bootstraps its own database
 -- concurrently, so racing clients collide on shared catalog state in two
 -- ways: concurrent `create role` raises unique_violation (23505) on the
