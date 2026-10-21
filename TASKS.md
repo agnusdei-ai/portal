@@ -9,7 +9,7 @@
 - [x] G01 | Exchange field allow-list test | T() tests/allowlist.test.mjs | T00
 - [x] F06 | Log-scrub test: labels, consent, tokens, listing/reply bodies never logged | T() tests/logscrub.test.mjs | F03
 - [x] F07 | Agent surface returns no labels or reply bodies | T() tests/agent-surface.test.mjs | F03
-- [ ] H03 | Seat-cap enforcement; null = unlimited; no capacity claim | T() tests/seat-cap.test.mjs | H01
+- [x] H03 | Seat-cap enforcement; null = unlimited; no capacity claim | T() tests/seat-cap.test.mjs | H01
 - [ ] H04 | Co-op billing by agreement ID, no roster | T() tests/coop-billing.test.mjs | H01
 - [ ] H05 | Block learner-data fields on school plans until qualification flag | T() tests/school-gate.test.mjs | H01
 - [ ] F09 | Catalog staging, validation, human-approval-only publish; bede_support NULL; faith_content flag | T() tests/catalog.test.mjs | T00
