@@ -34,3 +34,25 @@ test("copy says license, not licence", () => {
     .map(([f]) => f);
   assert.deepEqual(offences, []);
 });
+
+// DECISIONS.md: Bede always runs self-hosted; faith curricula are optional.
+// Blueprint principle 4: copy matches shipped behavior.
+const PUBLIC_COPY = SOURCES.filter(([f]) => f.startsWith("src/app/") || f.startsWith("src/components/") || f.startsWith("src/lib/docs/"));
+
+test("the landing page says Bede runs on hardware in the home", () => {
+  assert.match(readStripped("src/app/(public)/page.tsx"), /Bede runs on hardware in your home, not on our servers/);
+});
+
+test("no copy places Bede in our cloud or makes faith content required", () => {
+  const hosted = /Bede\b[^.]{0,40}\b(in the cloud|on our servers|hosted by)/i;
+  const required = /(faith|relig\w*|catech\w*|devotion\w*)[^.]{0,60}\b(required|mandatory|must)\b|\b(required|mandatory)\b[^.]{0,60}(faith|relig\w*|catech\w*)/i;
+  const offences = PUBLIC_COPY.filter(([, t]) => hosted.test(t.replace(/not on our servers/g, "")) || required.test(t)).map(([f]) => f);
+  assert.deepEqual(offences, []);
+});
+
+// Launch stores no support level (bede_support is NULL), so no copy may
+// promise one per listing.
+test("no copy promises a per-listing Bede support level", () => {
+  const promise = /level of support|how (deeply|much support) Bede|where (Bede|help) is available/i;
+  assert.deepEqual(PUBLIC_COPY.filter(([, t]) => promise.test(t)).map(([f]) => f), []);
+});

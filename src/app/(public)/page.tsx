@@ -3,15 +3,15 @@ import { ButtonLink, Card } from "@/components/ui";
 const LAYERS = [
   {
     title: "Start with your own books",
-    body: "Look up the curriculum you already use and see where Bede is designed to help. You choose what your family learns.",
+    body: "Look up the curriculum you already use. You choose what your family learns.",
   },
   {
-    title: "Keep learning in the household",
-    body: "Children's learning records belong on hardware your household controls, not in the public Portal.",
+    title: "Bede runs in your home",
+    body: "Bede runs on hardware in your home, not on our servers. Your child's learning records stay there, and the Portal never holds them.",
   },
   {
-    title: "Know what is supported",
-    body: "Each curriculum listing describes Bede's level of support, so you can decide what fits your family.",
+    title: "Check every listing",
+    body: "Each curriculum listing is reviewed by a person and links to its source, so you can check it yourself.",
   },
 ];
 
@@ -42,7 +42,7 @@ export default function HomePage() {
           <h2 className="text-2xl font-semibold">Teaching with the books you choose</h2>
           <p className="mt-2 max-w-xl text-ink-soft">
             Bede is designed to support the curriculum you have chosen. Browse the
-            directory to see where help is available before setting up.
+            directory before setting up.
           </p>
           <div className="mt-8 grid gap-4 md:grid-cols-3">
             {LAYERS.map((l) => (

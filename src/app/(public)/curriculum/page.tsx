@@ -7,7 +7,7 @@ import { ButtonLink, Card, SupportBadge } from "@/components/ui";
 export const metadata: Metadata = {
   title: "Curriculum directory",
   description:
-    "Browse homeschool curriculum by subject and teaching philosophy, and see how deeply Bede supports each one.",
+    "Browse reviewed homeschool curriculum by subject and teaching philosophy.",
 };
 
 export default async function CurriculumPage({
@@ -28,8 +28,8 @@ export default async function CurriculumPage({
     <div className="mx-auto max-w-5xl px-6 py-14">
       <h1 className="text-4xl font-semibold">Explore homeschool curriculum</h1>
       <p className="mt-3 max-w-xl text-ink-soft">
-        Browse by subject and see how much support Bede offers for the
-        books you already use. Looking around is free.
+        Browse reviewed curriculum by subject. Each listing links to its
+        source. Looking around is free.
       </p>
 
       <nav className="mt-8 flex flex-wrap gap-2" aria-label="Filter by subject">
