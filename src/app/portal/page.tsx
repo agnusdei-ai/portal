@@ -19,6 +19,7 @@ const ROLE_COPY: Record<PortalRole, string> = {
   account_owner: "Account owner",
   coop_director: "Co-op director",
   moderator: "Moderator",
+  catalog_reviewer: "Catalog reviewer",
 };
 
 /** The desk keeps bookmarks to a taste of each subject; the bookmarks page keeps the whole shelf. */

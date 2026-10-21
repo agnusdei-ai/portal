@@ -48,7 +48,12 @@ test(
       insert into public.entitlements (account_id, contract_id, plan_kind, billing_unit, term_start, price_ref) values ('${A}', 'c', 'family', 'household', '2026-11-01', 'p');
       insert into consent.notice_versions (version, sha256) values ('v1', '\\x00');
       insert into consent.consent_records (owner_user_id, account_id, notice_version, notice_acknowledged_at, seat_label) values ('${USER_A}', '${A}', 'v1', now(), 'lantern.k7q2');
+      insert into public.user_roles (user_id, role) values ('${USER_A}', 'catalog_reviewer');
+      insert into public.catalog_candidates (id, kind, title, publisher, subject, url, source_url, retrieved_on, agent_run_id) values
+        ('eeeeeeee-0000-0000-0000-00000000000a', 'curriculum', 'Test text', 'Test press', 'Math', 'https://example.test/a', 'https://example.test/a', '2026-10-21', 'run'),
+        ('eeeeeeee-0000-0000-0000-00000000000b', 'resource', 'Test link', null, 'Math', 'https://example.test/b', 'https://example.test/b', '2026-10-21', 'run');
     `);
+    asUser(USER_A, `select public.review_candidate('eeeeeeee-0000-0000-0000-00000000000a', true), public.review_candidate('eeeeeeee-0000-0000-0000-00000000000b', true);`);
 
     const columns = psql(`
       select c.conrelid::regclass || '.' || a.attname || '|' || case when c.confrelid = 'auth.users'::regclass then 'user' else 'account' end

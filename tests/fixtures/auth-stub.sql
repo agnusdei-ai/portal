@@ -54,6 +54,9 @@ do $$
           exception when duplicate_object or unique_violation then null;
           end;
         end if;
+        -- Supabase's service role bypasses RLS; a stub that did not would test a
+        -- weaker agent than production runs.
+        alter role service_role bypassrls;
 
         -- Run BEFORE the migrations, as Supabase's own grants are: default
         -- privileges cover every table a later migration creates, and a

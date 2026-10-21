@@ -96,7 +96,7 @@ const SUPPORT_COPY = {
  * about depth of support before a parent pays is the point.
  */
 export function SupportBadge({ level }: { level: keyof typeof SUPPORT_COPY }) {
-  const { label, tone } = SUPPORT_COPY[level] ?? SUPPORT_COPY.assisted;
+  const { label, tone } = SUPPORT_COPY[level];
   return (
     <span
       className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset ${tone}`}

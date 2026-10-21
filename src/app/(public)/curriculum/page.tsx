@@ -17,7 +17,9 @@ export default async function CurriculumPage({
 }) {
   const { subject } = await searchParams;
   const supabase = await createClient();
-  let q = supabase.from("curricula").select("*").order("publisher").order("title");
+  let q = supabase
+    .from("curricula")
+    .select("id, slug, title, publisher, subject, grade_min, grade_max, philosophy, bede_support").order("publisher").order("title");
   if (subject) q = q.eq("subject", subject);
   const { data } = await q;
   const curricula = data ?? [];
@@ -57,9 +59,8 @@ export default async function CurriculumPage({
                     <h2 className="text-lg font-semibold">{c.title}</h2>
                     <p className="text-sm text-ink-faint">{c.publisher}</p>
                   </div>
-                  <SupportBadge level={c.bede_support} />
+                  {c.bede_support ? <SupportBadge level={c.bede_support} /> : null}
                 </div>
-                <p className="mt-3 text-sm text-ink-soft">{c.description}</p>
                 <p className="mt-3 text-xs text-ink-faint">
                   {c.subject}
                   {c.grade_min && c.grade_max ? ` · Grades ${c.grade_min}–${c.grade_max}` : ""}

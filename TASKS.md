@@ -12,7 +12,7 @@
 - [x] H03 | Seat-cap enforcement; null = unlimited; no capacity claim | T() tests/seat-cap.test.mjs | H01
 - [x] H04 | Co-op billing by agreement ID, no roster | T() tests/coop-billing.test.mjs | H01
 - [x] H05 | Block learner-data fields on school plans until qualification flag | T() tests/school-gate.test.mjs | H01
-- [ ] F09 | Catalog staging, validation, human-approval-only publish; bede_support NULL; faith_content flag | T() tests/catalog.test.mjs | T00
+- [x] F09 | Catalog staging, validation, human-approval-only publish; bede_support NULL; faith_content flag | T() tests/catalog.test.mjs | T00
 - [ ] H06 | School accounts filter faith_content by default; lifted only by allow_faith_content; test both states | T() tests/catalog-scope.test.mjs | F09,H01
 - [ ] G03 | Reply retention job (12 months), content-free logging | T() tests/retention.test.mjs | G01
 - [ ] G04 | Operator read audit log + ticket reference | T() tests/operator-audit.test.mjs | G01

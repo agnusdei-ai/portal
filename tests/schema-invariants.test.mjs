@@ -373,6 +373,8 @@ test("migrations create only the allowlisted tables", () => {
     "onboarding_checklists",
     // 0010 — contract terms by reference; no amounts, no learner fields
     "entitlements",
+    // 0014 — staged catalog metadata and links, published only by review
+    "catalog_candidates",
   ]);
   const created = [...[...migrationSql.values()].join("\n").matchAll(
     /create table (?:if not exists )?(?:public\.|consent\.)?(\w+)/g,

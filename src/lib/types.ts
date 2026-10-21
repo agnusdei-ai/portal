@@ -11,7 +11,7 @@
  */
 
 export type SeatState = "active" | "revoked";
-export type PortalRole = "account_owner" | "coop_director" | "moderator";
+export type PortalRole = "account_owner" | "coop_director" | "moderator" | "catalog_reviewer";
 export type BedeSupport = "native" | "assisted" | "unsupported";
 export type ListingCategory =
   | "materials"
@@ -75,8 +75,14 @@ export type Curriculum = {
   grade_min: string | null;
   grade_max: string | null;
   philosophy: string | null;
-  description: string | null;
-  bede_support: BedeSupport;
+  url: string | null;
+  // Null until a published source supports a claim (DECISIONS.md).
+  bede_support: BedeSupport | null;
+  faith_content: boolean;
+  source_url: string | null;
+  retrieved_on: string | null;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
   created_at: string;
 };
 
@@ -85,7 +91,11 @@ export type ResourceLink = {
   title: string;
   url: string;
   subject: string | null;
-  description: string | null;
+  faith_content: boolean;
+  source_url: string | null;
+  retrieved_on: string | null;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
   created_at: string;
 };
 
