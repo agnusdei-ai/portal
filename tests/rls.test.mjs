@@ -93,3 +93,21 @@ test(
     });
   },
 );
+
+// Blueprint §9: every table has row-level security.
+const COVERAGE_DB = "rls_coverage_test";
+const coverage = dbHarness(COVERAGE_DB);
+
+test(
+  "every hosted table has row-level security on",
+  { skip: coverage.ready() ? false : "no local postgres; set TEST_DATABASE_URL" },
+  (t) => {
+    coverage.bootstrap();
+    t.after(() => coverage.admin(`drop database if exists ${COVERAGE_DB} with (force)`));
+    const off = coverage.psql(`
+      select string_agg(n.nspname || '.' || c.relname, ',') from pg_class c
+        join pg_namespace n on n.oid = c.relnamespace
+       where n.nspname in ('public', 'consent') and c.relkind = 'r' and not c.relrowsecurity;`).trim();
+    assert.equal(off, "");
+  },
+);
