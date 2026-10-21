@@ -5,7 +5,7 @@
 - [x] F03 | Update setup action, consent record, consent page, notice form, types.ts, existing test | npm run typecheck && npm test | F01,F02
 - [x] F04 | Notice v-next private-label wording; bump version and hash | T() tests/notice.test.mjs | F03
 - [x] H01 | Entitlement table (contract_id, plan_kind, billing_unit, seat_cap null=unlimited, minimum_monthly, term, price_ref, status, allow_faith_content); RLS owner-only; no price constants | T() tests/entitlement.test.mjs | F01
-- [ ] F05 | RLS tests: owner-only labels, reply participants only, no cross-account activity | T() tests/rls.test.mjs | F01
+- [x] F05 | RLS tests: owner-only labels, reply participants only, no cross-account activity | T() tests/rls.test.mjs | F01
 - [ ] G01 | Exchange field allow-list test | T() tests/allowlist.test.mjs | T00
 - [ ] F06 | Log-scrub test: labels, consent, tokens, listing/reply bodies never logged | T() tests/logscrub.test.mjs | F03
 - [ ] F07 | Agent surface returns no labels or reply bodies | T() tests/agent-surface.test.mjs | F03
