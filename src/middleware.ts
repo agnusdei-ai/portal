@@ -109,7 +109,7 @@ async function terminateAbusiveCaller(
   } catch (error) {
     // The throttle decision stands even when the termination machinery is
     // unavailable — but the failure is never silent.
-    console.error("abuse termination unavailable:", error);
+    console.error("abuse termination unavailable:", error instanceof Error ? error.message : String(error));
   }
 }
 

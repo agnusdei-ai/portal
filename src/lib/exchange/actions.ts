@@ -42,7 +42,7 @@ async function recordCryptoRefusal(accountId: string | null): Promise<void> {
     });
     for (const message of errors) console.error(`abuse event not recorded: ${message}`);
   } catch (error) {
-    console.error("abuse event not recorded:", error);
+    console.error("abuse event not recorded:", error instanceof Error ? error.message : String(error));
   }
 }
 

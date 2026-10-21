@@ -1,6 +1,6 @@
 import "server-only";
 
-import { consentPool } from "@/lib/db";
+import { consentQuery } from "@/lib/db";
 import { NOTICE, NOTICE_SHA256 } from "@/lib/consent/notice";
 import type { ConsentRecord } from "@/lib/types";
 
@@ -13,7 +13,7 @@ import type { ConsentRecord } from "@/lib/types";
 // A version already recorded under another hash means the wording changed
 // without a version bump, and every consent taken would evidence the wrong text.
 export async function ensureNoticeVersion(): Promise<void> {
-  const { rowCount } = await consentPool().query(
+  const { rowCount } = await consentQuery(
     `insert into consent.notice_versions (version, sha256)
      values ($1, decode($2, 'hex'))
      on conflict (version) do update set sha256 = excluded.sha256
@@ -41,7 +41,7 @@ export async function openRecord(args: {
 }): Promise<string> {
   await ensureNoticeVersion();
 
-  const { rows } = await consentPool().query<{ id: string }>(
+  const { rows } = await consentQuery<{ id: string }>(
     `insert into consent.consent_records
        (owner_user_id, notice_version, notice_acknowledged_at, seat_label, state)
      values ($1, $2, $3, $4 || '.' || consent.seat_code(), 'notice_acknowledged')
@@ -67,7 +67,7 @@ export async function grantConsent(args: {
   completedAt: Date;
   seatId: string;
 }): Promise<void> {
-  await consentPool().query(
+  await consentQuery(
     `update consent.consent_records
         set state = 'granted',
             account_id = $2,
@@ -97,7 +97,7 @@ export async function refuseConsent(args: {
   reason: string;
   processorReference: string | null;
 }): Promise<void> {
-  await consentPool().query(
+  await consentQuery(
     `update consent.consent_records
         set state = 'refused',
             method = 'fallback_pending',
@@ -114,14 +114,14 @@ export async function refuseConsent(args: {
  * what a fraud investigation and a card network both ask for.
  */
 export async function markDisputed(recordId: string): Promise<void> {
-  await consentPool().query(
+  await consentQuery(
     `update consent.consent_records set state = 'disputed' where id = $1`,
     [recordId],
   );
 }
 
 export async function getRecord(recordId: string): Promise<ConsentRecord | null> {
-  const { rows } = await consentPool().query<ConsentRecord>(
+  const { rows } = await consentQuery<ConsentRecord>(
     `select id, owner_user_id, account_id, notice_version,
             notice_acknowledged_at, consent_completed_at,
             processor_reference, seat_label,
@@ -141,7 +141,7 @@ export async function getRecord(recordId: string): Promise<ConsentRecord | null>
 export async function seatLabelsForAccount(
   accountId: string,
 ): Promise<Map<string, string>> {
-  const { rows } = await consentPool().query<{
+  const { rows } = await consentQuery<{
     seat_id: string;
     seat_label: string;
   }>(
@@ -157,7 +157,7 @@ export async function seatLabelsForAccount(
 export async function findByProcessorReference(
   reference: string,
 ): Promise<ConsentRecord | null> {
-  const { rows } = await consentPool().query<ConsentRecord>(
+  const { rows } = await consentQuery<ConsentRecord>(
     `select id, owner_user_id, account_id, notice_version,
             notice_acknowledged_at, consent_completed_at,
             processor_reference, seat_label,
