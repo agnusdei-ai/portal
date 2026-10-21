@@ -17,7 +17,7 @@
 - [x] G03 | Reply retention job (12 months), content-free logging | T() tests/retention.test.mjs | G01
 - [x] G04 | Operator read audit log + ticket reference | T() tests/operator-audit.test.mjs | G01
 - [x] G05 | Posting reminder + report action | T() tests/exchange-ui.test.mjs | none
-- [ ] G06 | Notice: replies operator-readable; no "private/encrypted" claims | T() tests/notice-claims.test.mjs | F04
+- [x] G06 | Notice: replies operator-readable; no "private/encrypted" claims | T() tests/notice-claims.test.mjs | F04
 - [ ] H02 | Remove hardcoded seat price and "Locuto household license" copy | T() tests/copy-claims.test.mjs | none
 - [ ] H07 | Copy: Bede runs on customer hardware; faith modules optional, never "required"; no unshipped claims | T() tests/copy-claims.test.mjs | H02
 - [ ] F10 | Dockerfile, env-only config, /health | npm run build | none
