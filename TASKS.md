@@ -3,7 +3,7 @@
 - [x] F01 | Migration: child_account_name -> seat_label; no real-name requirement; keep notice hash, timestamp, adult id; no history | T() tests/seat-label-schema.test.mjs | T00
 - [x] F02 | Seat-label generator + name/initials/date warning | T() tests/seat-label.test.mjs | T00
 - [x] F03 | Update setup action, consent record, consent page, notice form, types.ts, existing test | npm run typecheck && npm test | F01,F02
-- [ ] F04 | Notice v-next private-label wording; bump version and hash | T() tests/notice.test.mjs | F03
+- [x] F04 | Notice v-next private-label wording; bump version and hash | T() tests/notice.test.mjs | F03
 - [ ] H01 | Entitlement table (contract_id, plan_kind, billing_unit, seat_cap null=unlimited, minimum_monthly, term, price_ref, status, allow_faith_content); RLS owner-only; no price constants | T() tests/entitlement.test.mjs | F01
 - [ ] F05 | RLS tests: owner-only labels, reply participants only, no cross-account activity | T() tests/rls.test.mjs | F01
 - [ ] G01 | Exchange field allow-list test | T() tests/allowlist.test.mjs | T00

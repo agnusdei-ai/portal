@@ -10,13 +10,18 @@ import type { ConsentRecord } from "@/lib/types";
  * than being reassembled at each call site.
  */
 
+// A version already recorded under another hash means the wording changed
+// without a version bump, and every consent taken would evidence the wrong text.
 export async function ensureNoticeVersion(): Promise<void> {
-  await consentPool().query(
+  const { rowCount } = await consentPool().query(
     `insert into consent.notice_versions (version, sha256)
      values ($1, decode($2, 'hex'))
-     on conflict (version) do nothing`,
+     on conflict (version) do update set sha256 = excluded.sha256
+       where notice_versions.sha256 = excluded.sha256
+     returning version`,
     [NOTICE.version, NOTICE_SHA256],
   );
+  if (rowCount !== 1) throw new Error(`notice ${NOTICE.version} changed without a version bump`);
 }
 
 /**

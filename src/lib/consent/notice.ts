@@ -14,7 +14,7 @@ import { documentHash, type ConsentDocument } from "@/lib/consent/document";
  * retains the version and hash in order to establish what a parent was actually
  * shown rather than what the current notice says.
  */
-const VERSION = "2026-08-08.1";
+const VERSION = "2026-10-21.1";
 
 const SECTIONS = [
   {
@@ -28,6 +28,14 @@ const SECTIONS = [
     body: [
       "Setting up an account creates cryptographic keys, which remain on the child's device. The service that carries messages receives encrypted messages it cannot open, a rotating address that changes several times a day and cannot be traced back to the account, and, if notifications are turned on, a code that lets the child's device be woken when a message is waiting.",
       "Locuto does not ask for a telephone number. It does not ask for a home address. It does not read the contacts stored on the device. It does not build a profile, show advertising, or record who the child talks to.",
+    ],
+  },
+  // Not yet in direct-notice-to-parents.md §2; the locuto change awaits the
+  // owner's decision entry. Until it lands, this section is the divergence.
+  {
+    heading: "The seat label",
+    body: [
+      "We do not ask for your child's name. You choose a word, and we add a short code to make a seat label such as lantern.k7q2. The label is private to your account and is kept with the record of your consent. Do not put your child's name, initials, birth date, school, or anything else that identifies your child in it.",
     ],
   },
   {
