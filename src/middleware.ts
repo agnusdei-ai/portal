@@ -9,6 +9,7 @@ import {
   type BucketName,
   type BucketState,
 } from "@/lib/abuse/rate-limit";
+import { contentSecurityPolicy, originAllowed } from "@/lib/security/headers";
 
 /** Everything under these prefixes requires a session. */
 const PROTECTED_PREFIXES = ["/portal", "/setup/notice", "/setup/consent", "/exchange/new"];
@@ -114,6 +115,17 @@ async function terminateAbusiveCaller(
 }
 
 export async function middleware(request: NextRequest) {
+  const siteOrigin = process.env.NEXT_PUBLIC_SITE_URL
+    ? new URL(process.env.NEXT_PUBLIC_SITE_URL).origin
+    : request.nextUrl.origin;
+  if (!originAllowed(request.method, request.nextUrl.pathname, request.headers.get("origin"), siteOrigin)) {
+    return new NextResponse("Cross-origin request refused.", { status: 403 });
+  }
+
+  // Next reads the nonce from this request header and applies it to its scripts.
+  const csp = contentSecurityPolicy(btoa(crypto.randomUUID()), process.env.NODE_ENV === "development");
+  request.headers.set("Content-Security-Policy", csp);
+
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -220,6 +232,7 @@ export async function middleware(request: NextRequest) {
     response.cookies.delete(ACTIVITY_COOKIE);
   }
 
+  response.headers.set("Content-Security-Policy", csp);
   return response;
 }
 
